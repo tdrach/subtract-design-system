@@ -7,7 +7,16 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles/tokens": "./src/styles/tokens.scss",
-    "./styles/global": "./src/styles/global.scss"
+    "./styles/global": "./src/styles/global.scss",
+    "./styles/*": "./src/styles/*",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "preview:install": "npm install --prefix preview",
+    "dev": "npm run preview:install --silent && npm run dev --prefix preview",
+    "build": "npm run preview:install --silent && npm run build --prefix preview",
+    "start": "npm run start --prefix preview"
   },
   "peerDependencies": {
     "next": ">=15",

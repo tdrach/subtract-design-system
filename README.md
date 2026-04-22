@@ -2,6 +2,16 @@
 
 Apple-inspired design system. Private package — install directly from GitHub.
 
+## Local preview
+
+A Next.js preview app lives in `preview/` and consumes the design system via a `file:..` install (symlink). From the repo root:
+
+```bash
+npm run dev      # installs preview deps on first run, then starts http://localhost:3000
+npm run build    # production build of the preview
+npm run start    # runs the built preview
+```
+
 ## Setup
 
 ### 1. Install
