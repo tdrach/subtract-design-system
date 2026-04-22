@@ -1,0 +1,125 @@
+@use 'tokens' as *;
+
+// ─── SneakPeak Animation Mixins ───────────────────────────────────────────────
+// Usage: @use '../../styles/animations' as *;
+// Apply .is-loaded / .is-scrolled / .is-visible classes via JS to trigger.
+
+// Fade in from above (items enter from above their resting position)
+@mixin sp-fade-in-up($distance: 35px, $duration: $t-medium, $delay: 0s) {
+  opacity: 0;
+  transform: translateY(-$distance);
+  transition: opacity $duration $curve-1, transform $duration $curve-1;
+  transition-delay: $delay;
+
+  &.is-loaded {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Fade in from below (items enter from below their resting position)
+@mixin sp-fade-in-down($distance: 35px, $duration: $t-medium, $delay: 0s) {
+  opacity: 0;
+  transform: translateY($distance);
+  transition: opacity $duration $curve-1, transform $duration $curve-1;
+  transition-delay: $delay;
+
+  &.is-loaded,
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Fade out on scroll (upward)
+@mixin sp-fade-out-up($distance: 35px, $duration: $t-fast) {
+  &.is-scrolled {
+    opacity: 0;
+    transform: translateY(-$distance);
+    transition: opacity $duration $curve-1, transform ($duration * 0.5) $curve-1;
+  }
+}
+
+// Fade out on scroll (downward)
+@mixin sp-fade-out-down($distance: 35px, $duration: $t-fast) {
+  &.is-scrolled {
+    opacity: 0;
+    transform: translateY($distance);
+    transition: opacity $duration $curve-1, transform ($duration * 0.5) $curve-1;
+  }
+}
+
+// Staggered wave delay (apply to a parent's children)
+@mixin sp-stagger-wave($base-delay: 0s, $stagger: calc($t-fast / 2), $max-items: 11) {
+  @for $i from 1 through $max-items {
+    &:nth-child(#{$i}):not(.is-scrolled) {
+      transition-delay: $base-delay + ($stagger * ($i - 1));
+    }
+    &:nth-child(#{$i}).is-scrolled {
+      transition-delay: 0s;
+    }
+  }
+}
+
+// Fade in on scroll (opacity + translateY)
+@mixin sp-fade-in-on-scroll($distance: 20px, $duration: $t-medium) {
+  opacity: 0;
+  transform: translateY($distance);
+  transition: opacity $duration $curve-1, transform $duration $curve-1;
+  will-change: opacity;
+
+  &.is-scrolled {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+}
+
+// Standard hover transition (apply to scrolled items only)
+@mixin sp-hover-standard($duration: $t-medium * 2) {
+  &.is-scrolled {
+    transition: opacity $duration $curve-1;
+    transition-delay: 0s;
+  }
+}
+
+// Hover fade (dim siblings, keep hovered item full opacity)
+@mixin sp-hover-fade($faded-opacity: 0.3, $duration: $t-medium) {
+  &.is-scrolled {
+    &.is-hovered  { opacity: 1; }
+    &.is-faded    { transition: opacity 1s $curve-1; opacity: $faded-opacity; }
+    &:not(.is-hovered):not(.is-faded) { opacity: 1; }
+  }
+}
+
+// Scale in on load
+@mixin sp-scale-in($initial-scale: 0.98, $duration: $t-medium, $delay: 0s) {
+  opacity: 0;
+  transform: scale($initial-scale);
+  transform-origin: center;
+  transition: opacity $duration $curve-1, transform $duration $curve-1;
+  transition-delay: $delay;
+
+  &.is-loaded {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &.is-scrolled {
+    opacity: 0;
+    transform: scale($initial-scale);
+    transition: opacity 0.2s $curve-1, transform 0.1s $curve-1;
+  }
+}
+
+// Combined: fade in up + fade out up on scroll
+@mixin sp-fade-in-up-out($in-distance: 35px, $out-distance: 35px, $in-duration: $t-medium, $out-duration: $t-fast, $delay: 0s) {
+  @include sp-fade-in-up($in-distance, $in-duration, $delay);
+  @include sp-fade-out-up($out-distance, $out-duration);
+}
+
+// Combined: fade in down + fade out down on scroll
+@mixin sp-fade-in-down-out($in-distance: 35px, $out-distance: 35px, $in-duration: $t-medium, $out-duration: $t-fast, $delay: 0s) {
+  @include sp-fade-in-down($in-distance, $in-duration, $delay);
+  @include sp-fade-out-down($out-distance, $out-duration);
+}

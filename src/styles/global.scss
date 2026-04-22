@@ -1,0 +1,85 @@
+@use 'tokens' as *;
+
+// ─── CSS custom properties ────────────────────────────────────────────────────
+:root {
+  --black:      #{$black};
+  --light:      #{$light};
+  --white:      #{$white};
+  --demure:     #{$demure};
+  --ink-dark:   #{$ink-dark};
+  --ink-light:  #{$ink-light};
+  --blue:       #{$blue};
+  --error:      #{$error};
+  --nav-height: #{$nav-height};
+}
+
+// ─── Reset ────────────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: $font-text;
+  font-size: $text-base;
+  font-weight: $weight-medium;
+  color: $ink-dark;
+  background: $light;
+  line-height: 1.5;
+  letter-spacing: -0.025rem;
+  overflow-x: hidden;
+}
+
+// ─── Base elements ────────────────────────────────────────────────────────────
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-display;
+  font-weight: $weight-bold;
+  color: $ink-dark;
+  line-height: 1.1;
+  letter-spacing: -0.025rem;
+}
+
+a {
+  color: $blue;
+  text-decoration: none;
+  transition: opacity $transition-fast;
+
+  &:hover { opacity: 0.75; }
+}
+
+img, video {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+}
+
+:focus-visible {
+  outline: 2px solid $blue;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

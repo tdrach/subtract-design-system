@@ -1,0 +1,66 @@
+@use '../../styles/tokens' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: $nav-height;
+  background: rgba(245, 245, 247, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.inner {
+  max-width: $max-width-wide;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $space-16;
+}
+
+.wordmark {
+  font-family: $font-display;
+  font-size: $text-base;
+  font-weight: $weight-regular;
+  color: $ink-dark;
+  text-decoration: none;
+  letter-spacing: 0;
+  transition: opacity $transition-fast;
+
+  &:hover { opacity: 0.75; }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: $space-20;
+
+  a {
+    font-family: $font-text;
+    font-size: $text-base;
+    font-weight: $weight-regular;
+    color: rgba(0, 0, 0, 0.8);
+    text-decoration: none;
+    transition: opacity $transition-fast;
+
+    &:hover { opacity: 0.75; }
+  }
+}
+
+.rightSlot {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding: 0 $space-10;
+  }
+
+  .nav {
+    gap: $space-12;
+  }
+}
