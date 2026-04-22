@@ -1,4 +1,6 @@
 import styles from './page.module.scss'
+import Button from '@clawmachine/ds/src/components/Button'
+import Footer from '@clawmachine/ds/src/components/Footer'
 
 // ─── Color data ───────────────────────────────────────────────────────────────
 const colors = [
@@ -169,6 +171,42 @@ export default function Page() {
         </div>
       </section>
 
+      {/* ── Buttons ───────────────────────────────────────────────────────── */}
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Button</h2>
+        <div className={styles.componentRow}>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>primary / md</p>
+            <Button variant="primary">Get started</Button>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>primary / sm</p>
+            <Button variant="primary" size="sm">Get started</Button>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>gray / md</p>
+            <Button variant="gray">Learn more</Button>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>gray / sm</p>
+            <Button variant="gray" size="sm">Learn more</Button>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>disabled</p>
+            <Button variant="primary" disabled>Get started</Button>
+          </div>
+        </div>
+      </section>
+
     </main>
+
+    <Footer
+      copyright="© 2026 Subtract"
+      navLinks={[
+        { href: '/writing', label: 'Writing' },
+        { href: '/about',   label: 'About' },
+        { href: 'https://github.com', label: 'GitHub', external: true },
+      ]}
+    />
   )
 }

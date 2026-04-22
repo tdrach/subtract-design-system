@@ -1,0 +1,48 @@
+@use '../../styles/tokens' as *;
+
+.footer {
+  border-top: 1px solid $demure;
+  padding: $space-20 $space-16;
+  margin-top: auto;
+  background: $light;
+}
+
+.inner {
+  max-width: $max-width-wide;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.copy {
+  font-size: $text-micro;
+  color: $muted-dark;
+  letter-spacing: $letter-spacing-tight;
+}
+
+.nav {
+  display: flex;
+  gap: $space-16;
+
+  a {
+    font-size: $text-micro;
+    color: $muted-dark;
+    text-decoration: none;
+    transition: opacity $transition-fast;
+
+    &:hover { opacity: 0.75; }
+  }
+}
+
+@media (max-width: 640px) {
+  .footer {
+    padding: $space-16 $space-10;
+  }
+
+  .inner {
+    flex-direction: column;
+    gap: $space-8;
+    align-items: flex-start;
+  }
+}
