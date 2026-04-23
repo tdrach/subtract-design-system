@@ -301,6 +301,19 @@
   gap: $space-6;
 }
 
+.componentStack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-20;
+}
+
+.componentPreview {
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $white;
+}
+
 // ─── Transitions ─────────────────────────────────────────────────────────────
 .transitionGrid {
   display: flex;

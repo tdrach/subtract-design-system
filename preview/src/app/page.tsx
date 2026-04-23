@@ -1,9 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { Button, Footer } from '@clawmachine/ds'
 import styles from './page.module.scss'
-import Button from '@clawmachine/ds/src/components/Button'
-import Footer from '@clawmachine/ds/src/components/Footer'
 
 const colors = [
   { name: '$black',       value: '#0c0c0c',                       dark: true  },
@@ -217,6 +216,37 @@ export default function Page() {
                 <div className={styles.componentGroup}>
                   <p className={styles.tokenName}>disabled</p>
                   <Button variant="primary" disabled>Get started</Button>
+                </div>
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Footer</h2>
+              <div className={styles.componentStack}>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>with nav links</p>
+                  <div className={styles.componentPreview}>
+                    <Footer
+                      copyright="© 2026 Subtract"
+                      navLinks={[
+                        { href: '/writing', label: 'Writing' },
+                        { href: '/about',   label: 'About' },
+                        { href: 'https://github.com', label: 'GitHub', external: true },
+                      ]}
+                    />
+                  </div>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>copyright only</p>
+                  <div className={styles.componentPreview}>
+                    <Footer copyright="© 2026 Subtract" />
+                  </div>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>default (no props)</p>
+                  <div className={styles.componentPreview}>
+                    <Footer />
+                  </div>
                 </div>
               </div>
             </section>
