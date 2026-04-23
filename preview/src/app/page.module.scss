@@ -28,6 +28,44 @@
   color: $black;
 }
 
+// ─── Tab bar ─────────────────────────────────────────────────────────────────
+.tabBar {
+  display: flex;
+  gap: $space-4;
+  margin-bottom: $space-48;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $demure;
+}
+
+.tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: $space-6 $space-12;
+  font-family: $font-text;
+  font-size: $text-base;
+  font-weight: $weight-medium;
+  letter-spacing: $letter-spacing-tight;
+  color: $muted-dark;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  transition: background $t-fast $curve-1, color $t-fast $curve-1;
+
+  &:hover {
+    color: $ink-dark;
+    background: rgba(12, 12, 12, 0.04);
+  }
+}
+
+.tabActive {
+  color: $ink-dark;
+  background: $light;
+
+  &:hover {
+    background: $light;
+  }
+}
+
 // ─── Section ─────────────────────────────────────────────────────────────────
 .section {
   margin-bottom: $space-64;
@@ -87,6 +125,81 @@
 .swatchValue {
   font-size: $text-small;
   color: $muted-dark;
+}
+
+// ─── Typeface info card ──────────────────────────────────────────────────────
+.typefaceCard {
+  padding: $space-24;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  background: $white;
+}
+
+.typefaceName {
+  font-family: $font-display;
+  font-size: $text-3xl;
+  font-weight: $weight-semibold;
+  letter-spacing: $letter-spacing-hero;
+  line-height: 1;
+  color: $black;
+  margin-bottom: $space-12;
+}
+
+.typefaceDetail {
+  font-size: $text-base;
+  line-height: 1.55;
+  color: $muted-dark;
+  max-width: 60ch;
+  margin-bottom: $space-24;
+
+  strong {
+    color: $ink-dark;
+    font-weight: $weight-medium;
+  }
+
+  code {
+    font-family: $font-mono;
+    font-size: 0.9em;
+    padding: 2px 6px;
+    border-radius: $radius-micro;
+    background: $light;
+    color: $ink-dark;
+  }
+}
+
+.weightList {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+  padding-top: $space-16;
+  border-top: 1px solid $demure;
+}
+
+.weightRow {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: $space-16;
+  align-items: baseline;
+}
+
+.weightMeta {
+  font-size: $text-small;
+  font-weight: $weight-medium;
+  color: $ink-dark;
+  font-family: $font-mono;
+}
+
+.weightNumeric {
+  color: $muted-dark;
+  font-weight: $weight-regular;
+}
+
+.weightSample {
+  font-family: $font-display;
+  font-size: $text-lg;
+  color: $ink-dark;
+  letter-spacing: $letter-spacing-tight;
+  line-height: 1.2;
 }
 
 // ─── Typography ───────────────────────────────────────────────────────────────

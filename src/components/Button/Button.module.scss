@@ -10,7 +10,7 @@
   letter-spacing: $letter-spacing-tight;
   text-decoration: none;
   border: none;
-  border-radius: $radius-pill;
+  border-radius: 12px;
   cursor: pointer;
   transition: opacity $t-fast $curve-1, transform $t-fast $curve-1;
   white-space: nowrap;
