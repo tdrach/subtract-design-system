@@ -1,6 +1,6 @@
-# @clawmachine/ds
+# Subtract Design System (SDS)
 
-Apple-inspired design system. Private package — install directly from GitHub.
+Apple-inspired design system for Subtract. Private package — install directly from GitHub.
 
 ## Local preview
 
@@ -31,13 +31,13 @@ npm install github:YOUR_GITHUB_USERNAME/ds#v0.1.0
 ```js
 // next.config.js / next.config.ts
 const nextConfig = {
-  transpilePackages: ['@clawmachine/ds'],
+  transpilePackages: ['@subtract/ds'],
 }
 ```
 
 ### 3. Add fonts
 
-Copy the font files from `node_modules/@clawmachine/ds/public/fonts/` to your project's `public/fonts/` directory. Then load them in your root layout:
+Copy the font files from `node_modules/@subtract/ds/public/fonts/` to your project's `public/fonts/` directory. Then load them in your root layout:
 
 ```ts
 // src/app/layout.tsx
@@ -45,11 +45,11 @@ import localFont from 'next/font/local'
 
 const indivisible = localFont({
   src: [
-    { path: '../../public/fonts/IndivisibleWebRegular.woff2',     weight: '400', style: 'normal' },
-    { path: '../../public/fonts/IndivisibleWebMedium.woff2',      weight: '500', style: 'normal' },
-    { path: '../../public/fonts/IndivisibleWebBold.woff2',        weight: '700', style: 'normal' },
+    { path: '../../public/fonts/IndivisibleWebRegular.woff2',      weight: '400', style: 'normal' },
+    { path: '../../public/fonts/IndivisibleWebMedium.woff2',       weight: '500', style: 'normal' },
+    { path: '../../public/fonts/IndivisibleWebBold.woff2',         weight: '700', style: 'normal' },
     { path: '../../public/fonts/IndivisibleWebRegularItalic.woff2', weight: '400', style: 'italic' },
-    { path: '../../public/fonts/IndivisibleWebBoldItalic.woff2',    weight: '700', style: 'italic' },
+    { path: '../../public/fonts/IndivisibleWebBoldItalic.woff2',   weight: '700', style: 'italic' },
   ],
   variable: '--font-indivisible',
 })
@@ -60,7 +60,7 @@ const indivisible = localFont({
 In your root layout, import the global stylesheet:
 
 ```ts
-import '@clawmachine/ds/src/styles/global.scss'
+import '@subtract/ds/src/styles/global.scss'
 ```
 
 Apply the font variable to the `<html>` element:
@@ -78,7 +78,7 @@ Apply the font variable to the `<html>` element:
 In any `.module.scss` file:
 
 ```scss
-@use '@clawmachine/ds/src/styles/tokens' as *;
+@use '@subtract/ds/src/styles/tokens' as *;
 
 .myComponent {
   color: $ink-dark;
@@ -90,7 +90,7 @@ In any `.module.scss` file:
 ### Components
 
 ```tsx
-import { Header } from '@clawmachine/ds'
+import { Header } from '@subtract/ds'
 
 const navLinks = [
   { href: '/about', label: 'About' },
@@ -109,14 +109,4 @@ export default function Layout({ children }) {
     </>
   )
 }
-```
-
----
-
-## Package name
-
-Update the `name` field in `package.json` to match your GitHub username:
-
-```json
-{ "name": "@YOUR_GITHUB_USERNAME/ds" }
 ```

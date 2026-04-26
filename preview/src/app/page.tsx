@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Button, Footer } from '@clawmachine/ds'
+import { Button, Footer } from '@subtract/ds'
 import styles from './page.module.scss'
 
 const colors = [
@@ -90,8 +90,8 @@ export default function Page() {
     <>
       <main className={styles.page}>
         <div className={styles.hero}>
-          <p className={styles.heroLabel}>@clawmachine/ds</p>
-          <h1 className={styles.heroTitle}>Design System</h1>
+          <p className={styles.heroLabel}>Subtract Design System</p>
+          <h1 className={styles.heroTitle}>SDS</h1>
         </div>
 
         <nav className={styles.tabBar} role="tablist" aria-label="Design system sections">

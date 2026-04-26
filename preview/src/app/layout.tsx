@@ -1,5 +1,5 @@
 import localFont from 'next/font/local'
-import '@clawmachine/ds/styles/global.scss'
+import '@subtract/ds/styles/global.scss'
 import './layout.scss'
 
 const indivisible = localFont({
