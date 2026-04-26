@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "installCommand": "npm install && npm install --prefix preview --include=dev",
+  "buildCommand": "npm run build --prefix preview",
   "outputDirectory": "preview/.next",
-  "framework": "nextjs",
-  "installCommand": "npm install"
+  "framework": "nextjs"
 }
