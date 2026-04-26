@@ -1,0 +1,126 @@
+@use '../../styles/tokens' as *;
+
+.trigger {
+  cursor: pointer;
+  min-height: 24px;
+  outline: none;
+  width: 100%;
+}
+
+.placeholder {
+  color: $muted-light;
+  font-size: $text-micro;
+  opacity: 0.5;
+}
+
+.pills {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+}
+
+.pill {
+  border: 1px solid transparent;
+  border-radius: $radius-pill;
+  font-size: $text-nano;
+  font-weight: $weight-medium;
+  padding: 2px $space-6;
+  white-space: nowrap;
+}
+
+.addMore {
+  color: $muted-light;
+  font-size: $text-micro;
+  opacity: 0.5;
+}
+
+.content {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius-sm;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  min-width: 220px;
+  overflow: hidden;
+  z-index: 300;
+
+  &[data-state='open'] {
+    animation: fadeIn 120ms ease;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.search {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: $ink-light;
+  font-size: $text-xs;
+  outline: none;
+  padding: $space-8 $space-10;
+  width: 100%;
+
+  &::placeholder { color: $muted-light; opacity: 0.5; }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: $space-4 0;
+}
+
+.option {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: $ink-light;
+  cursor: pointer;
+  display: flex;
+  font-size: $text-xs;
+  gap: $space-8;
+  padding: $space-6 $space-10;
+  text-align: left;
+  transition: background $transition-fast;
+  width: 100%;
+
+  &:hover,
+  &.selected {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.createOption {
+  color: $muted-light;
+}
+
+.dot {
+  border-radius: $radius-circle;
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+}
+
+.optionName {
+  flex: 1;
+
+  strong { color: $ink-light; font-weight: $weight-medium; }
+}
+
+.check {
+  color: $blue;
+  font-size: $text-micro;
+}
+
+.empty {
+  color: $muted-light;
+  font-size: $text-micro;
+  padding: $space-8 $space-10;
+}

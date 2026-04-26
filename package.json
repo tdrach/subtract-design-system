@@ -19,12 +19,18 @@
     "start": "npm run start --prefix preview"
   },
   "peerDependencies": {
+    "@radix-ui/react-dialog": ">=1",
+    "@radix-ui/react-dropdown-menu": ">=2",
+    "@radix-ui/react-popover": ">=1",
     "next": ">=15",
     "react": ">=18",
     "react-dom": ">=18",
     "sass": ">=1"
   },
   "devDependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-popover": "^1.1.15",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3"
   }
