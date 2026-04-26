@@ -1,34 +1,52 @@
 'use client'
 
 import { useState } from 'react'
-import { Button, Footer } from '@subtract/ds'
+import {
+  Button,
+  Footer,
+  TextInput,
+  ChecklistItem,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogBody,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  TagSelector,
+  TagPill,
+} from '@subtract/ds'
+import type { Tag } from '@subtract/ds'
 import styles from './page.module.scss'
 
 const colors = [
-  { name: '$black',       value: '#0c0c0c',                       dark: true  },
-  { name: '$light',       value: '#f3f3f3',                       dark: false },
-  { name: '$white',       value: '#ffffff',                       dark: false },
-  { name: '$demure',      value: '#dcddd7',                       dark: false },
-  { name: '$blue',        value: '#0035ff',                       dark: true  },
-  { name: '$error',       value: '#c13535',                       dark: true  },
-  { name: '$ink-dark',    value: '#0c0c0c',                       dark: true  },
-  { name: '$ink-light',   value: '#ffffff',                       dark: false, outline: true },
-  { name: '$muted-dark',  value: 'rgba(12, 12, 12, 0.48)',        dark: true  },
-  { name: '$muted-light', value: 'rgba(255, 255, 255, 0.7)',      dark: false, outline: true },
+  { name: '$black',       value: '#0c0c0c',                  dark: true  },
+  { name: '$light',       value: '#f3f3f3',                  dark: false },
+  { name: '$white',       value: '#ffffff',                  dark: false },
+  { name: '$demure',      value: '#dcddd7',                  dark: false },
+  { name: '$blue',        value: '#0035ff',                  dark: true  },
+  { name: '$error',       value: '#c13535',                  dark: true  },
+  { name: '$ink-dark',    value: '#0c0c0c',                  dark: true  },
+  { name: '$ink-light',   value: '#ffffff',                  dark: false, outline: true },
+  { name: '$muted-dark',  value: 'rgba(12, 12, 12, 0.48)',   dark: true  },
+  { name: '$muted-light', value: 'rgba(255, 255, 255, 0.7)', dark: false, outline: true },
 ]
 
 const typeScale = [
-  { name: '$text-4xl',    size: '9rem',      label: '144px — hero title',   letterSpacing: '-0.07em' },
-  { name: '$text-3xl',    size: '3.5rem',    label: '56px — large display'  },
+  { name: '$text-4xl',    size: '9rem',      label: '144px — hero title',    letterSpacing: '-0.07em' },
+  { name: '$text-3xl',    size: '3.5rem',    label: '56px — large display'   },
   { name: '$text-2xl',    size: '2.625rem',  label: '42px — section heading' },
-  { name: '$text-xl',     size: '1.75rem',   label: '28px — SneakPeak body' },
-  { name: '$text-lg',     size: '1.5rem',    label: '24px — inbetween'      },
-  { name: '$text-normal', size: '1.2rem',    label: '19.2px — body'         },
-  { name: '$text-base',   size: '1.0625rem', label: '17px — base'           },
-  { name: '$text-xs',     size: '0.875rem',  label: '14px'                  },
-  { name: '$text-small',  size: '0.8rem',    label: '12.8px — captions'     },
-  { name: '$text-micro',  size: '0.75rem',   label: '12px'                  },
-  { name: '$text-nano',   size: '0.625rem',  label: '10px'                  },
+  { name: '$text-xl',     size: '1.75rem',   label: '28px — SneakPeak body'  },
+  { name: '$text-lg',     size: '1.5rem',    label: '24px — inbetween'       },
+  { name: '$text-normal', size: '1.2rem',    label: '19.2px — body'          },
+  { name: '$text-base',   size: '1.0625rem', label: '17px — base'            },
+  { name: '$text-xs',     size: '0.875rem',  label: '14px'                   },
+  { name: '$text-small',  size: '0.8rem',    label: '12.8px — captions'      },
+  { name: '$text-micro',  size: '0.75rem',   label: '12px'                   },
+  { name: '$text-nano',   size: '0.625rem',  label: '10px'                   },
 ]
 
 const fontWeights = [
@@ -59,20 +77,24 @@ const spacing = [
 ]
 
 const radii = [
-  { name: '$radius-micro', value: '5px'  },
-  { name: '$radius-sm',    value: '8px'  },
-  { name: '$radius-md',    value: '11px' },
-  { name: '$radius-lg',    value: '12px' },
-  { name: '$radius-pill',  value: '980px' },
-  { name: '$radius-circle',value: '50%'  },
+  { name: '$radius-micro',  value: '5px'   },
+  { name: '$radius-sm',     value: '8px'   },
+  { name: '$radius-md',     value: '11px'  },
+  { name: '$radius-lg',     value: '12px'  },
+  { name: '$radius-pill',   value: '980px' },
+  { name: '$radius-circle', value: '50%'   },
 ]
 
 const transitions = [
-  { name: '$t-fast',          value: '220ms ease (curve-1)' },
-  { name: '$t-medium',        value: '320ms ease (curve-1)' },
-  { name: '$transition-fast', value: '120ms ease' },
-  { name: '$transition-base', value: '200ms ease' },
-  { name: '$transition-slow', value: '320ms ease' },
+  { name: '$transition-fast', value: '$t-micro $ease-hover  — 120ms, hover feedback' },
+  { name: '$transition-base', value: '$t-fast $ease-move    — 220ms, standard UI'    },
+  { name: '$transition-slow', value: '$t-medium $ease-enter — 320ms, panels/dialogs' },
+]
+
+const DEMO_TAGS: Tag[] = [
+  { id: '1', name: 'Design',      color: '#e8d5ff' },
+  { id: '2', name: 'Engineering', color: '#d5eaff' },
+  { id: '3', name: 'Urgent',      color: '#ffd5d5' },
 ]
 
 type Tab = 'colors' | 'typography' | 'ui'
@@ -85,6 +107,17 @@ const tabs: { id: Tab; label: string }[] = [
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<Tab>('colors')
+
+  // ChecklistItem demo state
+  const [checked1, setChecked1] = useState(false)
+  const [checked2, setChecked2] = useState(true)
+
+  // TextInput demo state
+  const [inputVal, setInputVal] = useState('')
+
+  // TagSelector demo state
+  const [tags, setTags] = useState<Tag[]>(DEMO_TAGS)
+  const [selectedTags, setSelectedTags] = useState<string[]>(['1'])
 
   return (
     <>
@@ -194,6 +227,7 @@ export default function Page() {
 
         {activeTab === 'ui' && (
           <>
+            {/* ─── Button ──────────────────────────────────────────────────── */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Button</h2>
               <div className={styles.componentRow}>
@@ -220,6 +254,166 @@ export default function Page() {
               </div>
             </section>
 
+            {/* ─── TextInput ───────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>TextInput</h2>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup} style={{ width: 240 }}>
+                  <p className={styles.tokenName}>default</p>
+                  <TextInput
+                    placeholder="e.g. Email address"
+                    value={inputVal}
+                    onChange={(e) => setInputVal(e.target.value)}
+                  />
+                </div>
+                <div className={styles.componentGroup} style={{ width: 240 }}>
+                  <p className={styles.tokenName}>type="date"</p>
+                  <TextInput type="date" />
+                </div>
+                <div className={styles.componentGroup} style={{ width: 240 }}>
+                  <p className={styles.tokenName}>disabled</p>
+                  <TextInput placeholder="Not editable" disabled />
+                </div>
+              </div>
+            </section>
+
+            {/* ─── ChecklistItem ───────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>ChecklistItem</h2>
+              <div className={styles.componentPreviewBox}>
+                <ChecklistItem
+                  checked={checked1}
+                  onCheckedChange={setChecked1}
+                >
+                  Create 1:1 docs for all the 1:1s I&rsquo;m doing next week
+                </ChecklistItem>
+                <ChecklistItem
+                  checked={checked2}
+                  done={checked2}
+                  onCheckedChange={setChecked2}
+                >
+                  Create a draft plan for manager 1:1 Monday
+                </ChecklistItem>
+                <ChecklistItem
+                  checked={false}
+                  trailing={<span style={{ fontSize: '0.75rem', color: 'rgba(12,12,12,0.4)' }}>···</span>}
+                >
+                  With a trailing actions slot
+                </ChecklistItem>
+              </div>
+            </section>
+
+            {/* ─── Dialog ──────────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Dialog</h2>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>sm</p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="gray" size="sm">Open sm dialog</Button>
+                    </DialogTrigger>
+                    <DialogContent width="sm">
+                      <DialogHeader title="Small dialog" />
+                      <DialogBody>
+                        <p style={{ fontSize: '0.875rem', color: 'rgba(12,12,12,0.6)', lineHeight: 1.5 }}>
+                          This is the sm width variant — 400px max. Good for confirmations and short prompts.
+                        </p>
+                      </DialogBody>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>md</p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="gray" size="sm">Open md dialog</Button>
+                    </DialogTrigger>
+                    <DialogContent width="md">
+                      <DialogHeader title="Medium dialog" />
+                      <DialogBody>
+                        <p style={{ fontSize: '0.875rem', color: 'rgba(12,12,12,0.6)', lineHeight: 1.5 }}>
+                          The md variant — 540px max. Default for most edit panels and detail views.
+                        </p>
+                      </DialogBody>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>lg</p>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="gray" size="sm">Open lg dialog</Button>
+                    </DialogTrigger>
+                    <DialogContent width="lg">
+                      <DialogHeader title="Large dialog" />
+                      <DialogBody>
+                        <p style={{ fontSize: '0.875rem', color: 'rgba(12,12,12,0.6)', lineHeight: 1.5 }}>
+                          The lg variant — 720px max. For complex forms and multi-column layouts.
+                        </p>
+                      </DialogBody>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            </section>
+
+            {/* ─── DropdownMenu ────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>DropdownMenu</h2>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>default</p>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="gray" size="sm">Open menu ↓</Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem destructive>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            </section>
+
+            {/* ─── TagSelector ─────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>TagSelector</h2>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>inline pills</p>
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                    {DEMO_TAGS.map((t) => (
+                      <TagPill key={t.id} tag={t} />
+                    ))}
+                  </div>
+                </div>
+                <div className={styles.componentGroup} style={{ width: 280 }}>
+                  <p className={styles.tokenName}>selector popover</p>
+                  <TagSelector
+                    tags={tags}
+                    selected={selectedTags}
+                    onSelect={(id) => setSelectedTags((prev) => [...prev, id])}
+                    onDeselect={(id) => setSelectedTags((prev) => prev.filter((x) => x !== id))}
+                    onCreate={async (name) => {
+                      const colors = ['#d5ffd5', '#ffe8d5', '#d5f0ff', '#ffd5f0']
+                      const newTag: Tag = {
+                        id: String(Date.now()),
+                        name,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                      }
+                      setTags((prev) => [...prev, newTag])
+                      return newTag
+                    }}
+                  />
+                </div>
+              </div>
+            </section>
+
+            {/* ─── Footer ──────────────────────────────────────────────────── */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Footer</h2>
               <div className={styles.componentStack}>
@@ -242,15 +436,10 @@ export default function Page() {
                     <Footer copyright="© 2026 Subtract" />
                   </div>
                 </div>
-                <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>default (no props)</p>
-                  <div className={styles.componentPreview}>
-                    <Footer />
-                  </div>
-                </div>
               </div>
             </section>
 
+            {/* ─── Spacing ─────────────────────────────────────────────────── */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Spacing</h2>
               <div className={styles.spacingList}>
@@ -258,10 +447,7 @@ export default function Page() {
                   <div key={s.name} className={styles.spacingRow}>
                     <span className={styles.tokenName}>{s.name}</span>
                     <div className={styles.spacingBar}>
-                      <div
-                        className={styles.spacingFill}
-                        style={{ width: s.value }}
-                      />
+                      <div className={styles.spacingFill} style={{ width: s.value }} />
                     </div>
                     <span className={styles.tokenDetail}>{s.px}</span>
                   </div>
@@ -269,15 +455,13 @@ export default function Page() {
               </div>
             </section>
 
+            {/* ─── Border Radius ───────────────────────────────────────────── */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Border Radius</h2>
               <div className={styles.radiusGrid}>
                 {radii.map((r) => (
                   <div key={r.name} className={styles.radiusItem}>
-                    <div
-                      className={styles.radiusBlock}
-                      style={{ borderRadius: r.value }}
-                    />
+                    <div className={styles.radiusBlock} style={{ borderRadius: r.value }} />
                     <p className={styles.swatchName}>{r.name}</p>
                     <p className={styles.swatchValue}>{r.value}</p>
                   </div>
@@ -285,6 +469,7 @@ export default function Page() {
               </div>
             </section>
 
+            {/* ─── Transitions ─────────────────────────────────────────────── */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Transitions</h2>
               <div className={styles.transitionGrid}>

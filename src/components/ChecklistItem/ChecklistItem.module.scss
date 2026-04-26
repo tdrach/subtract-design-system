@@ -1,0 +1,66 @@
+@use '../../styles/tokens' as *;
+
+.item {
+  align-items: flex-start;
+  display: flex;
+  gap: $space-6;
+  padding: $space-5 $space-8 $space-5 $space-6;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.03);
+
+    .trailing   { opacity: 1; }
+    .dragHandle { opacity: 0.3; }
+  }
+
+  &.done .content {
+    color: $muted-dark;
+    opacity: 0.45;
+    text-decoration: line-through;
+  }
+}
+
+.dragHandle {
+  color: $muted-dark;
+  cursor: grab;
+  flex-shrink: 0;
+  font-size: $text-xs;
+  line-height: 1;
+  margin-top: 2px;
+  opacity: 0;
+  touch-action: none;
+  transition: opacity $transition-fast;
+  user-select: none;
+
+  &:active { cursor: grabbing; }
+}
+
+.check {
+  background: transparent;
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  border-radius: $radius-circle;
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 14px;
+  margin-top: 2px;
+  transition: all $transition-fast;
+  width: 14px;
+
+  &:hover { border-color: rgba(0, 0, 0, 0.4); }
+  &.checked { background: $blue; border-color: $blue; }
+}
+
+.content {
+  color: $ink-dark;
+  flex: 1;
+  font-size: $text-xs;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.trailing {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity $transition-fast;
+}

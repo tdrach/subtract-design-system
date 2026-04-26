@@ -288,6 +288,13 @@
 }
 
 // ─── Components ──────────────────────────────────────────────────────────────
+.componentPreviewBox {
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
 .componentRow {
   display: flex;
   flex-wrap: wrap;

@@ -22,3 +22,6 @@ export type { Tag } from './TagSelector'
 
 export { TextInput } from './TextInput'
 export type { TextInputProps } from './TextInput'
+
+export { ChecklistItem } from './ChecklistItem'
+export type { ChecklistItemProps } from './ChecklistItem'
