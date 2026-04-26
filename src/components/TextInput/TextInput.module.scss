@@ -1,0 +1,18 @@
+@use '../../styles/tokens' as *;
+
+.input {
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-sm;
+  color: $ink-dark;
+  font-family: $font-text;
+  font-size: $text-xs;
+  outline: none;
+  padding: $space-8 $space-10;
+  transition: border-color $transition-fast;
+  width: 100%;
+
+  &::placeholder { color: $muted-dark; opacity: 0.5; }
+  &:focus { border-color: rgba(0, 0, 0, 0.3); }
+  &:disabled { cursor: not-allowed; opacity: 0.4; }
+}

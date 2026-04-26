@@ -9,6 +9,7 @@ export interface ButtonProps {
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
   onClick?: () => void
+  className?: string
   children: React.ReactNode
 }
 
@@ -20,13 +21,15 @@ export default function Button({
   disabled,
   type = 'button',
   onClick,
+  className: extraClass,
   children,
 }: ButtonProps) {
   const className = [
     styles.button,
     styles[variant],
     styles[size],
-  ].join(' ')
+    extraClass,
+  ].filter(Boolean).join(' ')
 
   if (href) {
     return external ? (

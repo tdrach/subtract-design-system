@@ -50,6 +50,8 @@ $text-4xl:    9rem;      // 144px   — hero title
 $letter-spacing-hero: -0.07em;
 // Standard tight letter-spacing (body copy, headings)
 $letter-spacing-tight: -0.025rem;
+// Uppercase label letter-spacing (small caps, section labels)
+$letter-spacing-label: 0.08em;
 
 // ─── Spacing (8px base) ───────────────────────────────────────────────────────
 $space-1:  0.125rem;  //   2px

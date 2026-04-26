@@ -7,7 +7,7 @@
   z-index: 200;
 
   &[data-state='open'] {
-    animation: overlayIn 150ms ease;
+    animation: overlayIn $t-fast $ease-enter;
   }
 }
 
@@ -37,7 +37,7 @@
   &.lg { width: min(720px, 90vw); }
 
   &[data-state='open'] {
-    animation: contentIn 150ms ease;
+    animation: contentIn $t-medium $ease-enter;
   }
 }
 
