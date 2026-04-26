@@ -1,10 +1,10 @@
 @use '../../styles/tokens' as *;
 
 .content {
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: $white;
+  border: 1px solid $demure;
   border-radius: $radius-sm;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   min-width: 140px;
   outline: none;
   overflow: hidden;
@@ -23,7 +23,7 @@
 
 .item {
   align-items: center;
-  color: $ink-light;
+  color: $ink-dark;
   cursor: pointer;
   display: flex;
   font-size: $text-xs;
@@ -35,7 +35,7 @@
 
   &:hover,
   &[data-highlighted] {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.04);
   }
 
   &.destructive {
@@ -44,7 +44,7 @@
 }
 
 .separator {
-  background: rgba(255, 255, 255, 0.08);
+  background: $demure;
   height: 1px;
   margin: $space-4 0;
 }

@@ -8,7 +8,7 @@
 }
 
 .placeholder {
-  color: $muted-light;
+  color: $muted-dark;
   font-size: $text-micro;
   opacity: 0.5;
 }
@@ -30,16 +30,16 @@
 }
 
 .addMore {
-  color: $muted-light;
+  color: $muted-dark;
   font-size: $text-micro;
   opacity: 0.5;
 }
 
 .content {
-  background: #1a1a1a;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: $white;
+  border: 1px solid $demure;
   border-radius: $radius-sm;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   min-width: 220px;
   overflow: hidden;
   z-index: 300;
@@ -57,14 +57,14 @@
 .search {
   background: transparent;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: $ink-light;
+  border-bottom: 1px solid $demure;
+  color: $ink-dark;
   font-size: $text-xs;
   outline: none;
   padding: $space-8 $space-10;
   width: 100%;
 
-  &::placeholder { color: $muted-light; opacity: 0.5; }
+  &::placeholder { color: $muted-dark; opacity: 0.5; }
 }
 
 .list {
@@ -79,7 +79,7 @@
   align-items: center;
   background: transparent;
   border: none;
-  color: $ink-light;
+  color: $ink-dark;
   cursor: pointer;
   display: flex;
   font-size: $text-xs;
@@ -91,14 +91,14 @@
 
   &:hover,
   &.selected {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.04);
   }
 
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
 .createOption {
-  color: $muted-light;
+  color: $muted-dark;
 }
 
 .dot {
@@ -111,7 +111,7 @@
 .optionName {
   flex: 1;
 
-  strong { color: $ink-light; font-weight: $weight-medium; }
+  strong { color: $ink-dark; font-weight: $weight-medium; }
 }
 
 .check {
@@ -120,7 +120,7 @@
 }
 
 .empty {
-  color: $muted-light;
+  color: $muted-dark;
   font-size: $text-micro;
   padding: $space-8 $space-10;
 }
