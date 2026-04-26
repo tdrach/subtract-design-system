@@ -1,0 +1,16 @@
+#!/bin/sh
+# Blocks commit messages that contain references to internal tools.
+# Run `git config core.hooksPath .githooks` once to activate.
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+PATTERNS="notion\.so|notion\.site|linear\.app|loom\.com|figma\.com/file|internal\.|\.slack\.com"
+
+if echo "$COMMIT_MSG" | grep -qiE "$PATTERNS"; then
+  echo "error: commit message contains a reference to an internal tool."
+  echo "  Remove any Notion, Linear, Loom, or Slack links before committing."
+  exit 1
+fi
+
+exit 0

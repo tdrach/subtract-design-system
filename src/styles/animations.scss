@@ -1,56 +1,169 @@
 @use 'tokens' as *;
 
-// ─── SneakPeak Animation Mixins ───────────────────────────────────────────────
-// Usage: @use '../../styles/animations' as *;
-// Apply .is-loaded / .is-scrolled / .is-visible classes via JS to trigger.
+// ─── Animation Mixins ─────────────────────────────────────────────────────────
+// Principles (animations.dev):
+//   • Entering elements   → $ease-enter  (decelerate into place)
+//   • Exiting elements    → $ease-exit   (accelerate out)
+//   • Moving on-screen    → $ease-move   (symmetric, soft start/end)
+//   • Hover / color       → $ease-hover  (instant feedback)
+//   • Use transforms + opacity only — GPU-composited, no layout thrash
+//   • Always handle prefers-reduced-motion
+//
+// Trigger classes (applied via JS):
+//   .is-loaded   — on page/component mount
+//   .is-visible  — when scrolled into view (IntersectionObserver)
+//   .is-scrolled — when element has passed its visible window
+//   .is-hovered  — mouse-entered sibling group
+//   .is-faded    — dimmed sibling in hover-fade group
 
-// Fade in from above (items enter from above their resting position)
-@mixin sp-fade-in-up($distance: 35px, $duration: $t-medium, $delay: 0s) {
+
+// ─── Reduced-motion baseline ──────────────────────────────────────────────────
+// Apply this to any element that will be animated so reduced-motion users
+// get instant opacity transitions instead of movement.
+@mixin reduced-motion-safe {
+  @media (prefers-reduced-motion: reduce) {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+// ─── Entrance: Fade in from above ─────────────────────────────────────────────
+// Items enter from slightly above their resting position (hero content, headings).
+@mixin sp-fade-in-up($distance: 24px, $duration: $t-medium, $delay: 0s) {
   opacity: 0;
   transform: translateY(-$distance);
-  transition: opacity $duration $curve-1, transform $duration $curve-1;
+  transition: opacity $duration $ease-enter, transform $duration $ease-enter;
   transition-delay: $delay;
+  will-change: opacity, transform;
+  @include reduced-motion-safe;
 
   &.is-loaded {
     opacity: 1;
     transform: translateY(0);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
 }
 
-// Fade in from below (items enter from below their resting position)
-@mixin sp-fade-in-down($distance: 35px, $duration: $t-medium, $delay: 0s) {
+
+// ─── Entrance: Fade in from below ────────────────────────────────────────────
+// Items enter from slightly below (cards, list items, scroll-revealed content).
+@mixin sp-fade-in-down($distance: 24px, $duration: $t-medium, $delay: 0s) {
   opacity: 0;
   transform: translateY($distance);
-  transition: opacity $duration $curve-1, transform $duration $curve-1;
+  transition: opacity $duration $ease-enter, transform $duration $ease-enter;
   transition-delay: $delay;
+  will-change: opacity, transform;
+  @include reduced-motion-safe;
 
   &.is-loaded,
   &.is-visible {
     opacity: 1;
     transform: translateY(0);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
 }
 
-// Fade out on scroll (upward)
-@mixin sp-fade-out-up($distance: 35px, $duration: $t-fast) {
+
+// ─── Exit: Fade out upward on scroll ─────────────────────────────────────────
+// Elements exit upward as the user scrolls past them.
+// Uses $ease-exit so the element accelerates cleanly out of view.
+@mixin sp-fade-out-up($distance: 24px, $duration: $t-fast) {
   &.is-scrolled {
     opacity: 0;
     transform: translateY(-$distance);
-    transition: opacity $duration $curve-1, transform ($duration * 0.5) $curve-1;
+    transition: opacity $duration $ease-exit, transform ($duration * 0.6) $ease-exit;
+    @include reduced-motion-safe;
   }
 }
 
-// Fade out on scroll (downward)
-@mixin sp-fade-out-down($distance: 35px, $duration: $t-fast) {
+
+// ─── Exit: Fade out downward on scroll ───────────────────────────────────────
+@mixin sp-fade-out-down($distance: 24px, $duration: $t-fast) {
   &.is-scrolled {
     opacity: 0;
     transform: translateY($distance);
-    transition: opacity $duration $curve-1, transform ($duration * 0.5) $curve-1;
+    transition: opacity $duration $ease-exit, transform ($duration * 0.6) $ease-exit;
+    @include reduced-motion-safe;
   }
 }
 
-// Staggered wave delay (apply to a parent's children)
-@mixin sp-stagger-wave($base-delay: 0s, $stagger: calc($t-fast / 2), $max-items: 11) {
+
+// ─── Combined: Fade in ↑ then fade out ↑ on scroll ───────────────────────────
+@mixin sp-fade-in-up-out($in-distance: 24px, $out-distance: 24px, $in-duration: $t-medium, $out-duration: $t-fast, $delay: 0s) {
+  @include sp-fade-in-up($in-distance, $in-duration, $delay);
+  @include sp-fade-out-up($out-distance, $out-duration);
+}
+
+
+// ─── Combined: Fade in ↓ then fade out ↓ on scroll ───────────────────────────
+@mixin sp-fade-in-down-out($in-distance: 24px, $out-distance: 24px, $in-duration: $t-medium, $out-duration: $t-fast, $delay: 0s) {
+  @include sp-fade-in-down($in-distance, $in-duration, $delay);
+  @include sp-fade-out-down($out-distance, $out-duration);
+}
+
+
+// ─── Entrance: Scale in ───────────────────────────────────────────────────────
+// Subtle scale entrance for dialogs, popovers, and cards.
+// A small initial scale (0.96–0.98) reads as "popping in" without being distracting.
+@mixin sp-scale-in($initial-scale: 0.97, $duration: $t-medium, $delay: 0s) {
+  opacity: 0;
+  transform: scale($initial-scale);
+  transform-origin: center;
+  transition: opacity $duration $ease-enter, transform $duration $ease-breeze;
+  transition-delay: $delay;
+  will-change: opacity, transform;
+  @include reduced-motion-safe;
+
+  &.is-loaded {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &.is-scrolled {
+    opacity: 0;
+    transform: scale($initial-scale);
+    transition: opacity $t-fast $ease-exit, transform ($t-fast * 0.6) $ease-exit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
+}
+
+
+// ─── Scroll-triggered fade in ────────────────────────────────────────────────
+// For elements revealed as the user scrolls. Apply .is-visible via IntersectionObserver.
+@mixin sp-fade-in-on-scroll($distance: 20px, $duration: $t-medium) {
+  opacity: 0;
+  transform: translateY($distance);
+  transition: opacity $duration $ease-enter, transform $duration $ease-enter;
+  will-change: opacity, transform;
+  @include reduced-motion-safe;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
+}
+
+
+// ─── Staggered wave ───────────────────────────────────────────────────────────
+// Cascades transition-delay across siblings so they animate in sequence.
+// Apply to a parent; children should already have a transition defined.
+@mixin sp-stagger-wave($base-delay: 0s, $stagger: 60ms, $max-items: 11) {
   @for $i from 1 through $max-items {
     &:nth-child(#{$i}):not(.is-scrolled) {
       transition-delay: $base-delay + ($stagger * ($i - 1));
@@ -61,65 +174,107 @@
   }
 }
 
-// Fade in on scroll (opacity + translateY)
-@mixin sp-fade-in-on-scroll($distance: 20px, $duration: $t-medium) {
-  opacity: 0;
-  transform: translateY($distance);
-  transition: opacity $duration $curve-1, transform $duration $curve-1;
-  will-change: opacity;
 
-  &.is-scrolled {
-    opacity: 1;
-    transform: translateY(0);
+// ─── Hover: Standard transition ──────────────────────────────────────────────
+// Smooth opacity transition once an element has scrolled into view.
+@mixin sp-hover-standard($duration: $t-medium) {
+  &.is-visible {
+    transition: opacity $duration $ease-hover;
     transition-delay: 0s;
   }
 }
 
-// Standard hover transition (apply to scrolled items only)
-@mixin sp-hover-standard($duration: $t-medium * 2) {
-  &.is-scrolled {
-    transition: opacity $duration $curve-1;
-    transition-delay: 0s;
-  }
-}
 
-// Hover fade (dim siblings, keep hovered item full opacity)
-@mixin sp-hover-fade($faded-opacity: 0.3, $duration: $t-medium) {
-  &.is-scrolled {
-    &.is-hovered  { opacity: 1; }
-    &.is-faded    { transition: opacity 1s $curve-1; opacity: $faded-opacity; }
+// ─── Hover: Sibling fade ─────────────────────────────────────────────────────
+// Dims siblings while keeping the hovered item at full opacity.
+// Add .is-hovered to the hovered item, .is-faded to its siblings.
+@mixin sp-hover-fade($faded-opacity: 0.35, $duration: $t-medium) {
+  &.is-visible {
+    &.is-hovered  { opacity: 1; transition: opacity $t-micro $ease-hover; }
+    &.is-faded    { opacity: $faded-opacity; transition: opacity $duration $ease-hover; }
     &:not(.is-hovered):not(.is-faded) { opacity: 1; }
   }
 }
 
-// Scale in on load
-@mixin sp-scale-in($initial-scale: 0.98, $duration: $t-medium, $delay: 0s) {
-  opacity: 0;
-  transform: scale($initial-scale);
-  transform-origin: center;
-  transition: opacity $duration $curve-1, transform $duration $curve-1;
+
+// ─── Clip-path reveal ────────────────────────────────────────────────────────
+// Reveals an element by animating clip-path from fully hidden to fully visible.
+// Direction: 'left' | 'right' | 'top' | 'bottom'
+// Great for text reveals, image wipes, and dramatic section entrances.
+@mixin sp-clip-reveal($direction: 'left', $duration: $t-slow, $delay: 0s, $easing: $ease-crisp) {
+  @if $direction == 'left' {
+    clip-path: inset(0 100% 0 0);
+  } @else if $direction == 'right' {
+    clip-path: inset(0 0 0 100%);
+  } @else if $direction == 'top' {
+    clip-path: inset(100% 0 0 0);
+  } @else if $direction == 'bottom' {
+    clip-path: inset(0 0 100% 0);
+  }
+  transition: clip-path $duration $easing;
   transition-delay: $delay;
 
-  &.is-loaded {
+  &.is-loaded,
+  &.is-visible {
+    clip-path: inset(0 0% 0 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    clip-path: none;
+    transition: opacity 0.01ms;
+  }
+}
+
+
+// ─── Blur in ─────────────────────────────────────────────────────────────────
+// Combines opacity fade with a blur — effective for overlays, modals, image reveals.
+// blur() is GPU-composited when paired with a transform, so add translateZ(0).
+@mixin sp-blur-in($blur: 8px, $duration: $t-medium, $delay: 0s) {
+  opacity: 0;
+  filter: blur($blur);
+  transform: translateZ(0); // promote to GPU layer
+  transition: opacity $duration $ease-enter, filter $duration $ease-enter;
+  transition-delay: $delay;
+  @include reduced-motion-safe;
+
+  &.is-loaded,
+  &.is-visible {
     opacity: 1;
-    transform: scale(1);
+    filter: blur(0);
   }
 
-  &.is-scrolled {
-    opacity: 0;
-    transform: scale($initial-scale);
-    transition: opacity 0.2s $curve-1, transform 0.1s $curve-1;
+  @media (prefers-reduced-motion: reduce) {
+    filter: none;
   }
 }
 
-// Combined: fade in up + fade out up on scroll
-@mixin sp-fade-in-up-out($in-distance: 35px, $out-distance: 35px, $in-duration: $t-medium, $out-duration: $t-fast, $delay: 0s) {
-  @include sp-fade-in-up($in-distance, $in-duration, $delay);
-  @include sp-fade-out-up($out-distance, $out-duration);
-}
 
-// Combined: fade in down + fade out down on scroll
-@mixin sp-fade-in-down-out($in-distance: 35px, $out-distance: 35px, $in-duration: $t-medium, $out-duration: $t-fast, $delay: 0s) {
-  @include sp-fade-in-down($in-distance, $in-duration, $delay);
-  @include sp-fade-out-down($out-distance, $out-duration);
+// ─── Slide from edge ─────────────────────────────────────────────────────────
+// Slides an element in from a screen edge — drawers, sheets, side panels.
+// Direction: 'left' | 'right' | 'top' | 'bottom'
+@mixin sp-slide-from-edge($direction: 'right', $distance: 100%, $duration: $t-slow, $delay: 0s) {
+  @if $direction == 'right' {
+    transform: translateX($distance);
+  } @else if $direction == 'left' {
+    transform: translateX(-$distance);
+  } @else if $direction == 'bottom' {
+    transform: translateY($distance);
+  } @else if $direction == 'top' {
+    transform: translateY(-$distance);
+  }
+  transition: transform $duration $ease-enter, opacity $duration $ease-enter;
+  transition-delay: $delay;
+  opacity: 0;
+  will-change: transform, opacity;
+  @include reduced-motion-safe;
+
+  &.is-loaded,
+  &.is-visible {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+  }
 }

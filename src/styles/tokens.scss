@@ -87,12 +87,42 @@ $radius-lg:     12px;
 $radius-pill:   980px;
 $radius-circle: 50%;
 
-// ─── Transitions ──────────────────────────────────────────────────────────────
-$transition-fast: 120ms ease;
-$transition-base: 200ms ease;
-$transition-slow: 320ms ease;
+// ─── Motion ───────────────────────────────────────────────────────────────────
 
-// SneakPeak animation curve + durations
-$curve-1: cubic-bezier(0.25, 0.1, 0.25, 1);
-$t-fast:   220ms;
-$t-medium: 320ms;
+// Semantic easing — choose based on what the element is doing:
+//   entering the screen  → $ease-enter   (decelerates into place)
+//   leaving the screen   → $ease-exit    (accelerates out)
+//   moving on-screen     → $ease-move    (symmetric, soft start and end)
+//   hover / color change → $ease-hover   (fast, subtle feedback)
+$ease-enter: cubic-bezier(0, 0, 0.2, 1);        // ease-out
+$ease-exit:  cubic-bezier(0.4, 0, 1, 1);        // ease-in
+$ease-move:  cubic-bezier(0.4, 0, 0.2, 1);      // ease-in-out
+$ease-hover: cubic-bezier(0.25, 0.1, 0.25, 1);  // ease (browser default)
+
+// Named expressive curves — for moments that need character:
+$ease-breeze: cubic-bezier(0.34, 1.56, 0.64, 1);       // gentle spring overshoot
+$ease-silk:   cubic-bezier(0.25, 0.46, 0.45, 0.94);    // ultra-smooth deceleration
+$ease-swift:  cubic-bezier(0.55, 0, 0.1, 1);           // fast start, controlled finish
+$ease-nova:   cubic-bezier(0.175, 0.885, 0.32, 1.275); // energetic with slight overshoot
+$ease-crisp:  cubic-bezier(0.4, 0, 0.2, 1);            // clean, precise
+$ease-glide:  cubic-bezier(0.23, 1, 0.32, 1);          // long deceleration tail
+
+// Semantic durations — choose based on what and how much is moving:
+//   $t-micro  → color, opacity, hover feedback (invisible if skipped)
+//   $t-fast   → small elements: tooltips, chips, dropdowns
+//   $t-medium → standard UI transitions: panels, cards, dialogs
+//   $t-slow   → page-level motion, complex entrances
+//   $t-glacial → hero reveals, dramatic one-time moments
+$t-micro:   120ms;
+$t-fast:    220ms;
+$t-medium:  320ms;
+$t-slow:    480ms;
+$t-glacial: 700ms;
+
+// Shorthand transitions (semantic easing + duration combos)
+$transition-fast: $t-micro $ease-hover;
+$transition-base: $t-fast $ease-move;
+$transition-slow: $t-medium $ease-enter;
+
+// Legacy alias — kept for backwards compatibility
+$curve-1: $ease-hover;
