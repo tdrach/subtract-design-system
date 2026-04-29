@@ -2,7 +2,7 @@ import Link from 'next/link'
 import styles from './Button.module.scss'
 
 export interface ButtonProps {
-  variant?: 'primary' | 'gray'
+  variant?: 'primary' | 'secondary' | 'gray'
   size?: 'sm' | 'md'
   href?: string
   external?: boolean

@@ -283,12 +283,20 @@ export default function Page() {
                   <Button variant="primary">Get started</Button>
                 </div>
                 <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>primary / sm</p>
-                  <Button variant="primary" size="sm">Get started</Button>
+                  <p className={styles.tokenName}>secondary / md</p>
+                  <Button variant="secondary">Learn more</Button>
                 </div>
                 <div className={styles.componentGroup}>
                   <p className={styles.tokenName}>gray / md</p>
                   <Button variant="gray">Learn more</Button>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>primary / sm</p>
+                  <Button variant="primary" size="sm">Get started</Button>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>secondary / sm</p>
+                  <Button variant="secondary" size="sm">Learn more</Button>
                 </div>
                 <div className={styles.componentGroup}>
                   <p className={styles.tokenName}>gray / sm</p>

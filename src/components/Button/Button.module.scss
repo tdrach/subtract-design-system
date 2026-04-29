@@ -7,24 +7,30 @@
   gap: $space-4;
   font-family: $font-text;
   font-weight: $weight-medium;
-  letter-spacing: $letter-spacing-tight;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  border: none;
+  border: 1.5px solid transparent;
   border-radius: $radius-lg;
   cursor: pointer;
-  transition: opacity $t-fast $curve-1, transform $t-fast $curve-1;
   white-space: nowrap;
+  transition:
+    background   $t-micro $ease-hover,
+    color        $t-micro $ease-hover,
+    border-color $t-micro $ease-hover,
+    opacity      $t-micro $ease-hover,
+    transform    $t-fast  $ease-enter;
 
   &:hover {
-    opacity: 0.85;
+    opacity: 0.88;
   }
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.94);
+    opacity: 1;
   }
 
   &:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
     pointer-events: none;
   }
@@ -33,25 +39,39 @@
 // ─── Variants ─────────────────────────────────────────────────────────────────
 
 .primary {
-  background: $blue;
+  background: $black;
   color: $white;
+  border-color: $black;
+
+  &:hover { background: rgba(12, 12, 12, 0.85); border-color: transparent; }
+}
+
+.secondary {
+  background: transparent;
+  color: $ink-dark;
+  border-color: $demure;
+
+  &:hover { background: $light; border-color: rgba(0, 0, 0, 0.15); opacity: 1; }
 }
 
 .gray {
-  background: $demure;
-  color: $black;
+  background: $light;
+  color: $ink-dark;
+  border-color: transparent;
+
+  &:hover { background: $demure; opacity: 1; }
 }
 
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
 .md {
-  font-size: $text-normal;
+  font-size: $text-base;
   padding: $space-6 $space-16;
-  min-height: 44px; // touch target
+  min-height: 44px;
 }
 
 .sm {
-  font-size: $text-xs;
-  padding: $space-4 $space-10;
+  font-size: $text-small;
+  padding: $space-4 $space-12;
   min-height: 32px;
 }
