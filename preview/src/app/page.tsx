@@ -37,7 +37,7 @@ const colors = [
 
 const typeScale = [
   {
-    name: '$text-4xl',
+    name: '$text-3xl',
     size: '9rem',
     px: '144px',
     label: 'Hero title',
@@ -45,11 +45,12 @@ const typeScale = [
     lineHeight: '0.88',
     samples: [
       { weight: 400, style: 'normal', text: 'Subtract' },
+      { weight: 500, style: 'normal', text: 'Subtract' },
       { weight: 700, style: 'normal', text: 'Subtract' },
     ],
   },
   {
-    name: '$text-3xl',
+    name: '$text-2xl',
     size: '3.5rem',
     px: '56px',
     label: 'Large display',
@@ -61,7 +62,7 @@ const typeScale = [
     ],
   },
   {
-    name: '$text-2xl',
+    name: '$text-xl',
     size: '2.625rem',
     px: '42px',
     label: 'Section heading',
@@ -74,16 +75,16 @@ const typeScale = [
     ],
   },
   {
-    name: '$text-xl',
+    name: '$text-large',
     size: '1.75rem',
     px: '28px',
     label: 'Body / editorial',
     letterSpacing: '-0.02em',
     lineHeight: '1.3',
     samples: [
-      { weight: 400, style: 'normal',  text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
-      { weight: 400, style: 'italic',  text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
-      { weight: 500, style: 'normal',  text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+      { weight: 400, style: 'normal', text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+      { weight: 400, style: 'italic', text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+      { weight: 500, style: 'normal', text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
     ],
   },
   {
@@ -95,9 +96,8 @@ const typeScale = [
     lineHeight: '1.5',
     samples: [
       { weight: 400, style: 'normal', text: 'The font is set at 17px across body copy, giving text enough room to breathe without feeling oversized.' },
-      { weight: 500, style: 'normal', text: 'Get started → ' },
+      { weight: 500, style: 'normal', text: 'Get started →' },
       { weight: 500, style: 'normal', text: 'Work  Writing  About' },
-      { weight: 700, style: 'normal', text: 'Get started →' },
     ],
   },
 ]
@@ -232,7 +232,8 @@ export default function Page() {
                   <div key={t.name} className={styles.typeScaleEntry}>
                     <div className={styles.typeMeta}>
                       <span className={styles.tokenName}>{t.name}</span>
-                      <span className={styles.tokenDetail}>{t.px} — {t.label}</span>
+                      <span className={styles.tokenPx}>{t.px}</span>
+                      <span className={styles.tokenDetail}>{t.label}</span>
                     </div>
                     <div className={styles.typeSamples}>
                       {t.samples.map((s, i) => (

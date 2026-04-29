@@ -41,12 +41,12 @@ $text-xs:     0.875rem;  //  14px
 $text-base:   1.0625rem; //  17px
 $text-normal: 1.2rem;    //  19.2px — standard body (subtract.design normal)
 $text-lg:     1.5rem;    //  24px   — inbetween
-$text-xl:     1.75rem;   //  28px   — SneakPeak standard
-$text-2xl:    2.625rem;  //  42px   — section headings
-$text-3xl:    3.5rem;    //  56px   — large display
-$text-4xl:    9rem;      // 144px   — hero title
+$text-large:  1.75rem;   //  28px   — body / editorial
+$text-xl:     2.625rem;  //  42px   — section headings
+$text-2xl:    3.5rem;    //  56px   — large display
+$text-3xl:    9rem;      // 144px   — hero title
 
-// Hero title letter-spacing (used at $text-4xl)
+// Hero title letter-spacing (used at $text-3xl)
 $letter-spacing-hero: -0.07em;
 // Standard tight letter-spacing (body copy, headings)
 $letter-spacing-tight: -0.025rem;

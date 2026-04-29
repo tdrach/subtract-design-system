@@ -21,7 +21,7 @@
 }
 
 .heroTitle {
-  font-size: $text-4xl;
+  font-size: $text-3xl;
   font-weight: $weight-semibold;
   letter-spacing: $letter-spacing-hero;
   line-height: 0.9;
@@ -90,8 +90,16 @@
   white-space: nowrap;
 }
 
+.tokenPx {
+  font-size: $text-xs;
+  font-weight: $weight-medium;
+  color: $ink-dark;
+  font-family: $font-mono;
+  white-space: nowrap;
+}
+
 .tokenDetail {
-  font-size: $text-small;
+  font-size: $text-xs;
   color: $muted-dark;
   white-space: nowrap;
 }
@@ -137,7 +145,7 @@
 
 .typefaceName {
   font-family: $font-display;
-  font-size: $text-3xl;
+  font-size: $text-2xl;
   font-weight: $weight-bold;
   letter-spacing: $letter-spacing-hero;
   line-height: 1;
