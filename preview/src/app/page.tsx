@@ -58,6 +58,7 @@ const typeScale = [
     lineHeight: '0.95',
     samples: [
       { weight: 400, style: 'normal', text: 'Design that lasts' },
+      { weight: 500, style: 'normal', text: 'Design that lasts' },
       { weight: 700, style: 'normal', text: 'Design that lasts' },
     ],
   },
@@ -85,6 +86,18 @@ const typeScale = [
       { weight: 400, style: 'normal', text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
       { weight: 400, style: 'italic', text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
       { weight: 500, style: 'normal', text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+    ],
+  },
+  {
+    name: '$text-small',
+    size: '0.8rem',
+    px: '12.8px',
+    label: 'Labels, meta, captions',
+    letterSpacing: '-0.01em',
+    lineHeight: '1.4',
+    samples: [
+      { weight: 400, style: 'normal', text: 'Published April 2026  ·  4 min read' },
+      { weight: 500, style: 'normal', text: 'View all  →' },
     ],
   },
   {

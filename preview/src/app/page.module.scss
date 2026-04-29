@@ -91,7 +91,7 @@
 }
 
 .tokenPx {
-  font-size: $text-xs;
+  font-size: $text-small;
   font-weight: $weight-medium;
   color: $ink-dark;
   font-family: $font-mono;
@@ -99,7 +99,7 @@
 }
 
 .tokenDetail {
-  font-size: $text-xs;
+  font-size: $text-small;
   color: $muted-dark;
   white-space: nowrap;
 }
