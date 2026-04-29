@@ -14,7 +14,7 @@
 }
 
 .heroLabel {
-  font-size: $text-normal;
+  font-size: $text-base;
   color: $muted-dark;
   margin-bottom: $space-4;
   letter-spacing: $letter-spacing-tight;
@@ -72,7 +72,7 @@
 }
 
 .sectionTitle {
-  font-size: $text-normal;
+  font-size: $text-base;
   font-weight: $weight-medium;
   color: $muted-dark;
   letter-spacing: $letter-spacing-tight;
@@ -138,19 +138,18 @@
 .typefaceName {
   font-family: $font-display;
   font-size: $text-3xl;
-  font-weight: $weight-semibold;
+  font-weight: $weight-bold;
   letter-spacing: $letter-spacing-hero;
   line-height: 1;
   color: $black;
-  margin-bottom: $space-12;
+  margin-bottom: $space-16;
 }
 
 .typefaceDetail {
   font-size: $text-base;
-  line-height: 1.55;
+  line-height: 1.6;
   color: $muted-dark;
-  max-width: 60ch;
-  margin-bottom: $space-24;
+  max-width: 64ch;
 
   strong {
     color: $ink-dark;
@@ -167,57 +166,27 @@
   }
 }
 
-.weightList {
-  display: flex;
-  flex-direction: column;
-  gap: $space-6;
-  padding-top: $space-16;
-  border-top: 1px solid $demure;
-}
-
-.weightRow {
-  display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: $space-16;
-  align-items: baseline;
-}
-
-.weightMeta {
-  font-size: $text-small;
-  font-weight: $weight-medium;
-  color: $ink-dark;
-  font-family: $font-mono;
-}
-
-.weightNumeric {
-  color: $muted-dark;
-  font-weight: $weight-regular;
-}
-
-.weightSample {
-  font-family: $font-display;
-  font-size: $text-lg;
-  color: $ink-dark;
-  letter-spacing: $letter-spacing-tight;
-  line-height: 1.2;
-}
-
-// ─── Typography ───────────────────────────────────────────────────────────────
+// ─── Type scale ───────────────────────────────────────────────────────────────
 .typeList {
   display: flex;
   flex-direction: column;
-  gap: $space-16;
+  gap: 0;
 }
 
-.typeRow {
-  display: flex;
-  align-items: baseline;
+.typeScaleEntry {
+  display: grid;
+  grid-template-columns: 180px 1fr;
   gap: $space-16;
-  padding-bottom: $space-16;
+  padding: $space-24 0;
   border-bottom: 1px solid $demure;
 
   &:last-child {
     border-bottom: none;
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: $space-12;
   }
 }
 
@@ -225,16 +194,20 @@
   display: flex;
   flex-direction: column;
   gap: $space-2;
-  min-width: 160px;
+  padding-top: 4px;
   flex-shrink: 0;
+}
+
+.typeSamples {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
 }
 
 .typeSample {
   font-family: $font-display;
-  font-weight: $weight-semibold;
   color: $black;
-  flex: 1;
-  overflow: hidden;
+  margin: 0;
 }
 
 // ─── Spacing ─────────────────────────────────────────────────────────────────

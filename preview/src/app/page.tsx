@@ -36,25 +36,70 @@ const colors = [
 ]
 
 const typeScale = [
-  { name: '$text-4xl',    size: '9rem',      label: '144px — hero title',    letterSpacing: '-0.07em' },
-  { name: '$text-3xl',    size: '3.5rem',    label: '56px — large display'   },
-  { name: '$text-2xl',    size: '2.625rem',  label: '42px — section heading' },
-  { name: '$text-xl',     size: '1.75rem',   label: '28px — SneakPeak body'  },
-  { name: '$text-lg',     size: '1.5rem',    label: '24px — inbetween'       },
-  { name: '$text-normal', size: '1.2rem',    label: '19.2px — body'          },
-  { name: '$text-base',   size: '1.0625rem', label: '17px — base'            },
-  { name: '$text-xs',     size: '0.875rem',  label: '14px'                   },
-  { name: '$text-small',  size: '0.8rem',    label: '12.8px — captions'      },
-  { name: '$text-micro',  size: '0.75rem',   label: '12px'                   },
-  { name: '$text-nano',   size: '0.625rem',  label: '10px'                   },
-]
-
-const fontWeights = [
-  { name: 'Regular',        weight: 400, style: 'normal' },
-  { name: 'Medium',         weight: 500, style: 'normal' },
-  { name: 'Bold',           weight: 700, style: 'normal' },
-  { name: 'Regular Italic', weight: 400, style: 'italic' },
-  { name: 'Bold Italic',    weight: 700, style: 'italic' },
+  {
+    name: '$text-4xl',
+    size: '9rem',
+    px: '144px',
+    label: 'Hero title',
+    letterSpacing: '-0.07em',
+    lineHeight: '0.88',
+    samples: [
+      { weight: 400, style: 'normal', text: 'Subtract' },
+      { weight: 700, style: 'normal', text: 'Subtract' },
+    ],
+  },
+  {
+    name: '$text-3xl',
+    size: '3.5rem',
+    px: '56px',
+    label: 'Large display',
+    letterSpacing: '-0.03em',
+    lineHeight: '0.95',
+    samples: [
+      { weight: 400, style: 'normal', text: 'Design that lasts' },
+      { weight: 700, style: 'normal', text: 'Design that lasts' },
+    ],
+  },
+  {
+    name: '$text-2xl',
+    size: '2.625rem',
+    px: '42px',
+    label: 'Section heading',
+    letterSpacing: '-0.025em',
+    lineHeight: '1.05',
+    samples: [
+      { weight: 400, style: 'normal', text: 'Clarity through craft' },
+      { weight: 500, style: 'normal', text: 'Clarity through craft' },
+      { weight: 700, style: 'normal', text: 'Clarity through craft' },
+    ],
+  },
+  {
+    name: '$text-xl',
+    size: '1.75rem',
+    px: '28px',
+    label: 'Body / editorial',
+    letterSpacing: '-0.02em',
+    lineHeight: '1.3',
+    samples: [
+      { weight: 400, style: 'normal',  text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+      { weight: 400, style: 'italic',  text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+      { weight: 500, style: 'normal',  text: 'A disciplined approach to visual systems — where every decision is deliberate.' },
+    ],
+  },
+  {
+    name: '$text-base',
+    size: '1.0625rem',
+    px: '17px',
+    label: 'UI — buttons, navigation, body',
+    letterSpacing: '-0.015em',
+    lineHeight: '1.5',
+    samples: [
+      { weight: 400, style: 'normal', text: 'The font is set at 17px across body copy, giving text enough room to breathe without feeling oversized.' },
+      { weight: 500, style: 'normal', text: 'Get started → ' },
+      { weight: 500, style: 'normal', text: 'Work  Writing  About' },
+      { weight: 700, style: 'normal', text: 'Get started →' },
+    ],
+  },
 ]
 
 const spacing = [
@@ -170,32 +215,13 @@ export default function Page() {
               <div className={styles.typefaceCard}>
                 <p className={styles.typefaceName}>Indivisible</p>
                 <p className={styles.typefaceDetail}>
-                  The system uses a single typeface — <strong>Indivisible</strong> by Connary
-                  Fagen — for both display and body copy. It&rsquo;s bundled as a local font
-                  in the preview app via <code>next/font/local</code>, loaded from{' '}
-                  <code>public/fonts/</code>, and exposed through the CSS variable{' '}
+                  SDS uses a single typeface —{' '}
+                  <strong>Indivisible</strong>{' '}by Connary Fagen — across all display and body
+                  copy. It ships with the package and is exposed via the CSS variable{' '}
                   <code>--font-indivisible</code>. Both <code>$font-display</code> and{' '}
-                  <code>$font-text</code> tokens resolve to it.
+                  <code>$font-text</code> tokens resolve to it. Available in Regular (400),
+                  Medium (500), and Bold (700) — each with matching italics.
                 </p>
-                <div className={styles.weightList}>
-                  {fontWeights.map((w) => (
-                    <div key={w.name} className={styles.weightRow}>
-                      <span className={styles.weightMeta}>
-                        {w.name}
-                        <span className={styles.weightNumeric}>
-                          {' '}· {w.weight}
-                          {w.style === 'italic' ? ' italic' : ''}
-                        </span>
-                      </span>
-                      <span
-                        className={styles.weightSample}
-                        style={{ fontWeight: w.weight, fontStyle: w.style }}
-                      >
-                        The quick brown fox jumps over the lazy dog
-                      </span>
-                    </div>
-                  ))}
-                </div>
               </div>
             </section>
 
@@ -203,21 +229,28 @@ export default function Page() {
               <h2 className={styles.sectionTitle}>Type Scale</h2>
               <div className={styles.typeList}>
                 {typeScale.map((t) => (
-                  <div key={t.name} className={styles.typeRow}>
+                  <div key={t.name} className={styles.typeScaleEntry}>
                     <div className={styles.typeMeta}>
                       <span className={styles.tokenName}>{t.name}</span>
-                      <span className={styles.tokenDetail}>{t.label}</span>
+                      <span className={styles.tokenDetail}>{t.px} — {t.label}</span>
                     </div>
-                    <p
-                      className={styles.typeSample}
-                      style={{
-                        fontSize: t.size,
-                        letterSpacing: t.letterSpacing ?? '-0.025rem',
-                        lineHeight: parseFloat(t.size) > 2 ? '0.9' : '1.4',
-                      }}
-                    >
-                      Subtract
-                    </p>
+                    <div className={styles.typeSamples}>
+                      {t.samples.map((s, i) => (
+                        <p
+                          key={i}
+                          className={styles.typeSample}
+                          style={{
+                            fontSize: t.size,
+                            fontWeight: s.weight,
+                            fontStyle: s.style,
+                            letterSpacing: t.letterSpacing,
+                            lineHeight: t.lineHeight,
+                          }}
+                        >
+                          {s.text}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 ))}
               </div>
