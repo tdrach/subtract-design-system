@@ -1,15 +1,18 @@
 @use '../../styles/tokens' as *;
 
+// ─── Checkmark SVG path length: M3.94 7 L6.13 9.19 L10.5 4.81 ≈ 9.29px ─────
+$check-path-length: 9.29px;
+
 .item {
-  align-items: flex-start;
   display: flex;
+  align-items: flex-start;
   gap: $space-6;
   padding: $space-5 $space-8 $space-5 $space-6;
-  transition: background $transition-fast;
+  border-radius: $radius-sm;
+  transition: background $t-micro $ease-hover;
 
   &:hover {
     background: rgba(0, 0, 0, 0.03);
-
     .trailing   { opacity: 1; }
     .dragHandle { opacity: 0.3; }
   }
@@ -25,42 +28,109 @@
   color: $muted-dark;
   cursor: grab;
   flex-shrink: 0;
-  font-size: $text-xs;
+  font-size: $text-small;
   line-height: 1;
-  margin-top: 2px;
+  margin-top: 3px;
   opacity: 0;
   touch-action: none;
-  transition: opacity $transition-fast;
+  transition: opacity $t-micro $ease-hover;
   user-select: none;
 
   &:active { cursor: grabbing; }
 }
 
+// ─── Checkbox ─────────────────────────────────────────────────────────────────
 .check {
-  background: transparent;
-  border: 1.5px solid rgba(0, 0, 0, 0.2);
-  border-radius: $radius-circle;
-  cursor: pointer;
+  position: relative;
   flex-shrink: 0;
-  height: 14px;
-  margin-top: 2px;
-  transition: all $transition-fast;
+  margin-top: 3px;
   width: 14px;
-
-  &:hover { border-color: rgba(0, 0, 0, 0.4); }
-  &.checked { background: $blue; border-color: $blue; }
+  height: 14px;
 }
 
+// Native input — invisible, sits on top for a11y / pointer events
+.checkInput {
+  position: absolute;
+  inset: -3px; // slightly larger hit area
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+  margin: 0;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+}
+
+// Visual box — responds to input state via sibling selector
+.checkBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: $radius-circle;
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  color: $white;
+  cursor: pointer;
+  transition:
+    background   $t-micro $ease-hover,
+    border-color $t-micro $ease-hover,
+    transform    $t-fast  $ease-breeze;
+
+  // Hover — darken border while unchecked
+  .checkInput:hover ~ & {
+    border-color: rgba(0, 0, 0, 0.45);
+  }
+
+  // Checked — fill with $blue + pop scale
+  .checkInput:checked ~ & {
+    background: $blue;
+    border-color: $blue;
+    transform: scale(1.08);
+  }
+
+  // Settle back to rest size immediately after pop
+  .checkInput:checked:not(:focus-visible) ~ & {
+    transform: scale(1);
+  }
+
+  // Focus ring
+  .checkInput:focus-visible ~ & {
+    outline: 2px solid $blue;
+    outline-offset: 2px;
+  }
+}
+
+// SVG container — no pointer events, sits inside .checkBox
+.checkSvg {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+// Animated stroke — draws in when checked
+.checkPath {
+  stroke-dasharray: $check-path-length;
+  stroke-dashoffset: $check-path-length;
+  transition: stroke-dashoffset $t-fast $ease-enter;
+
+  .checkInput:checked ~ .checkBox & {
+    stroke-dashoffset: 0;
+  }
+}
+
+// ─── Content ─────────────────────────────────────────────────────────────────
 .content {
-  color: $ink-dark;
   flex: 1;
-  font-size: $text-xs;
-  line-height: 1.4;
+  font-size: $text-base;
+  line-height: 1.45;
+  color: $ink-dark;
   word-break: break-word;
 }
 
 .trailing {
   flex-shrink: 0;
   opacity: 0;
-  transition: opacity $transition-fast;
+  transition: opacity $t-micro $ease-hover;
 }
