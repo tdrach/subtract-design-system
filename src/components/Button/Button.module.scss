@@ -62,12 +62,104 @@
   &:hover { background: $demure; opacity: 1; }
 }
 
+// ─── Split button ─────────────────────────────────────────────────────────────
+// Wraps two buttons; inherits variant + size classes for consistent styling.
+
+.splitGroup {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  &.sm { border-radius: $radius-sm; }
+}
+
+.splitMain {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-4;
+  font-family: $font-text;
+  font-weight: $weight-medium;
+  letter-spacing: -0.01em;
+  border: 1.5px solid transparent;
+  border-right: none;
+  cursor: pointer;
+  white-space: nowrap;
+  background: inherit;
+  color: inherit;
+  transition:
+    background   $t-micro $ease-hover,
+    opacity      $t-micro $ease-hover,
+    transform    $t-fast  $ease-enter;
+
+  &:hover  { opacity: 0.88; }
+  &:active { transform: scale(0.95); opacity: 1; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+}
+
+.splitChevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid transparent;
+  border-left: none;
+  cursor: pointer;
+  background: inherit;
+  color: inherit;
+  transition:
+    background   $t-micro $ease-hover,
+    opacity      $t-micro $ease-hover;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 1px;
+    align-self: stretch;
+    background: currentColor;
+    opacity: 0.2;
+    margin: 6px 0;
+  }
+
+  &:hover  { opacity: 0.88; }
+  &:active { opacity: 0.7; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+}
+
+// Carry variant colours into split children
+.primary .splitMain,
+.primary .splitChevron,
+.splitGroup.primary .splitMain,
+.splitGroup.primary .splitChevron {
+  background: $black;
+  color: $white;
+}
+
+.secondary .splitMain,
+.secondary .splitChevron,
+.splitGroup.secondary .splitMain,
+.splitGroup.secondary .splitChevron {
+  background: transparent;
+  color: $ink-dark;
+  border-color: $demure;
+}
+
+.gray .splitMain,
+.gray .splitChevron,
+.splitGroup.gray .splitMain,
+.splitGroup.gray .splitChevron {
+  background: $light;
+  color: $ink-dark;
+}
+
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
 .md {
   font-size: $text-base;
   padding: $space-6 $space-16;
   min-height: 44px;
+
+  &.splitGroup .splitMain  { font-size: $text-base;  padding: $space-6 $space-12; min-height: 44px; }
+  &.splitGroup .splitChevron { padding: 0 $space-10; min-height: 44px; }
 }
 
 .sm {
@@ -75,4 +167,7 @@
   padding: $space-4 $space-10;
   min-height: 32px;
   border-radius: $radius-sm;
+
+  &.splitGroup .splitMain  { font-size: $text-small; padding: $space-4 $space-8; min-height: 32px; }
+  &.splitGroup .splitChevron { padding: 0 $space-6; min-height: 32px; }
 }

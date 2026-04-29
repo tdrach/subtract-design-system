@@ -307,6 +307,14 @@ export default function Page() {
                   <Button variant="gray" size="sm">Learn more</Button>
                 </div>
                 <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>split / md</p>
+                  <Button variant="primary" split>New</Button>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>split / sm</p>
+                  <Button variant="primary" size="sm" split>New</Button>
+                </div>
+                <div className={styles.componentGroup}>
                   <p className={styles.tokenName}>disabled</p>
                   <Button variant="primary" disabled>Get started</Button>
                 </div>

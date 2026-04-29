@@ -125,7 +125,7 @@ export function TagSelector({ tags, selected, onSelect, onDeselect, onCreate }: 
 
 export function TagPill({ tag }: { tag: Tag }) {
   return (
-    <span className={styles.pill} style={{ background: `${tag.color}22`, borderColor: `${tag.color}44`, color: tag.color }}>
+    <span className={styles.pill} style={{ background: `${tag.color}1f`, color: tag.color }}>
       {tag.name}
     </span>
   )

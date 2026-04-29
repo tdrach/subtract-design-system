@@ -9,7 +9,7 @@
 
 .placeholder {
   color: $muted-dark;
-  font-size: $text-micro;
+  font-size: $text-small;
   opacity: 0.5;
 }
 
@@ -17,41 +17,47 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: $space-4;
+  gap: $space-3;
 }
 
+// ─── Tag pill ─────────────────────────────────────────────────────────────────
+// Matches the button language: $radius-micro corners, $text-small, medium weight.
+// Background + text color are derived from tag.color inline; no border needed.
 .pill {
-  border: 1px solid transparent;
-  border-radius: $radius-pill;
-  font-size: $text-nano;
+  border-radius: $radius-micro;
+  font-size: $text-small;
   font-weight: $weight-medium;
-  padding: 2px $space-6;
+  letter-spacing: -0.01em;
+  padding: $space-2 $space-5;
   white-space: nowrap;
+  line-height: 1.4;
 }
 
 .addMore {
   color: $muted-dark;
-  font-size: $text-micro;
-  opacity: 0.5;
+  font-size: $text-small;
+  opacity: 0.45;
+  line-height: 1;
 }
 
+// ─── Popover ─────────────────────────────────────────────────────────────────
 .content {
   background: $white;
   border: 1px solid $demure;
   border-radius: $radius-sm;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   min-width: 220px;
   overflow: hidden;
   z-index: 300;
 
   &[data-state='open'] {
-    animation: fadeIn 120ms ease;
+    animation: fadeIn $t-fast $ease-enter;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-4px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
 }
 
 .search {
@@ -59,7 +65,8 @@
   border: none;
   border-bottom: 1px solid $demure;
   color: $ink-dark;
-  font-size: $text-xs;
+  font-family: $font-text;
+  font-size: $text-base;
   outline: none;
   padding: $space-8 $space-10;
   width: 100%;
@@ -82,45 +89,41 @@
   color: $ink-dark;
   cursor: pointer;
   display: flex;
-  font-size: $text-xs;
+  font-family: $font-text;
+  font-size: $text-base;
   gap: $space-8;
-  padding: $space-6 $space-10;
+  padding: $space-5 $space-10;
   text-align: left;
-  transition: background $transition-fast;
+  transition: background $t-micro $ease-hover;
   width: 100%;
 
   &:hover,
-  &.selected {
-    background: rgba(0, 0, 0, 0.04);
-  }
+  &.selected { background: rgba(0, 0, 0, 0.04); }
 
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.createOption {
-  color: $muted-dark;
-}
+.createOption { color: $muted-dark; }
 
 .dot {
   border-radius: $radius-circle;
   flex-shrink: 0;
-  height: 8px;
-  width: 8px;
+  height: 7px;
+  width: 7px;
 }
 
 .optionName {
   flex: 1;
-
   strong { color: $ink-dark; font-weight: $weight-medium; }
 }
 
 .check {
   color: $blue;
-  font-size: $text-micro;
+  font-size: $text-small;
 }
 
 .empty {
   color: $muted-dark;
-  font-size: $text-micro;
+  font-size: $text-small;
   padding: $space-8 $space-10;
 }
