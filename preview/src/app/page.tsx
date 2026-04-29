@@ -13,12 +13,12 @@ import type { Tag } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
-  House, ArrowLeft, ArrowRight, MagnifyingGlass, ChevronDown, ChevronRight,
+  House, ArrowLeft, ArrowRight, MagnifyingGlass, CaretDown, CaretRight,
   DotsThree, DotsThreeVertical, ArrowUpRight,
   Bell, Gear, User, Users, Lock, LockOpen, Eye, EyeSlash, Star, BookmarkSimple,
   File, FilePlus, Folder, FolderOpen, Image, Tag as TagIcon, Database, ListBullets,
   ChatCircle, Envelope, At, Warning, Info, CheckCircle, XCircle,
-  SmileyFace, Sparkle, Rocket, Lightning,
+  Smiley, Sparkle, Rocket, Lightning,
 } from '@phosphor-icons/react'
 import styles from './page.module.scss'
 
@@ -118,8 +118,8 @@ const iconGroups = [
     { name: 'ArrowRight',         C: ArrowRight },
     { name: 'ArrowUpRight',       C: ArrowUpRight },
     { name: 'MagnifyingGlass',    C: MagnifyingGlass },
-    { name: 'ChevronDown',        C: ChevronDown },
-    { name: 'ChevronRight',       C: ChevronRight },
+    { name: 'CaretDown',          C: CaretDown },
+    { name: 'CaretRight',         C: CaretRight },
     { name: 'DotsThree',          C: DotsThree },
     { name: 'DotsThreeVertical',  C: DotsThreeVertical },
     { name: 'Funnel',             C: Funnel },
@@ -154,6 +154,7 @@ const iconGroups = [
     { name: 'ChatCircle',         C: ChatCircle },
     { name: 'Envelope',           C: Envelope },
     { name: 'At',                 C: At },
+    { name: 'Smiley',             C: Smiley },
     { name: 'Sparkle',            C: Sparkle },
     { name: 'Lightning',          C: Lightning },
     { name: 'Rocket',             C: Rocket },
