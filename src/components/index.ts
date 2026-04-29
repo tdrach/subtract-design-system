@@ -25,3 +25,11 @@ export type { TextInputProps } from './TextInput'
 
 export { ChecklistItem } from './ChecklistItem'
 export type { ChecklistItemProps } from './ChecklistItem'
+
+export {
+  ExpandPanel,
+  ExpandPanelTrigger,
+  ExpandPanelClose,
+  ExpandPanelContent,
+  ExpandPanelBody,
+} from './ExpandPanel'

@@ -18,6 +18,10 @@ import {
   DropdownMenuSeparator,
   TagSelector,
   TagPill,
+  ExpandPanel,
+  ExpandPanelTrigger,
+  ExpandPanelContent,
+  ExpandPanelBody,
 } from '@subtract/ds'
 import type { Tag } from '@subtract/ds'
 import styles from './page.module.scss'
@@ -409,6 +413,48 @@ export default function Page() {
                       </DialogBody>
                     </DialogContent>
                   </Dialog>
+                </div>
+              </div>
+            </section>
+
+            {/* ─── ExpandPanel ─────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>ExpandPanel</h2>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>full-screen expand</p>
+                  <ExpandPanel>
+                    <ExpandPanelTrigger asChild>
+                      <Button variant="gray" size="sm">Open panel ↗</Button>
+                    </ExpandPanelTrigger>
+                    <ExpandPanelContent title="Work — Stripe">
+                      <ExpandPanelBody narrow>
+                        <p style={{ fontSize: '0.875rem', color: 'rgba(12,12,12,0.6)', lineHeight: 1.6 }}>
+                          This is the ExpandPanel — a full-screen overlay that expands a section into
+                          focus. It enters with a scale + translate animation using{' '}
+                          <code style={{ fontFamily: 'monospace', fontSize: '0.85em', background: '#f3f3f3', padding: '1px 5px', borderRadius: 4 }}>
+                            $ease-glide
+                          </code>{' '}
+                          (0.23, 1, 0.32, 1) over{' '}
+                          <code style={{ fontFamily: 'monospace', fontSize: '0.85em', background: '#f3f3f3', padding: '1px 5px', borderRadius: 4 }}>
+                            $t-slow
+                          </code>{' '}
+                          (480ms). Exits with{' '}
+                          <code style={{ fontFamily: 'monospace', fontSize: '0.85em', background: '#f3f3f3', padding: '1px 5px', borderRadius: 4 }}>
+                            $ease-exit
+                          </code>{' '}
+                          over{' '}
+                          <code style={{ fontFamily: 'monospace', fontSize: '0.85em', background: '#f3f3f3', padding: '1px 5px', borderRadius: 4 }}>
+                            $t-medium
+                          </code>{' '}
+                          (320ms). The backdrop blurs the content behind with{' '}
+                          <code style={{ fontFamily: 'monospace', fontSize: '0.85em', background: '#f3f3f3', padding: '1px 5px', borderRadius: 4 }}>
+                            backdrop-filter: blur(8px)
+                          </code>.
+                        </p>
+                      </ExpandPanelBody>
+                    </ExpandPanelContent>
+                  </ExpandPanel>
                 </div>
               </div>
             </section>
