@@ -16,6 +16,8 @@ interface Props {
   onSelect: (tagId: string) => void
   onDeselect: (tagId: string) => void
   onCreate: (name: string) => Promise<Tag>
+  /** Compact mode: inline width, placeholder hidden until hover */
+  compact?: boolean
 }
 
 const TAG_COLORS = [
@@ -23,7 +25,7 @@ const TAG_COLORS = [
   '#f97316', '#eab308', '#22c55e', '#06b6d4',
 ]
 
-export function TagSelector({ tags, selected, onSelect, onDeselect, onCreate }: Props) {
+export function TagSelector({ tags, selected, onSelect, onDeselect, onCreate, compact }: Props) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [creating, setCreating] = useState(false)
@@ -55,10 +57,12 @@ export function TagSelector({ tags, selected, onSelect, onDeselect, onCreate }: 
 
   const selectedTags = tags.filter((t) => selected.includes(t.id))
 
+  const triggerClass = [styles.trigger, compact ? styles.compact : ''].filter(Boolean).join(' ')
+
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
-        <div className={styles.trigger} role="button" tabIndex={0}>
+        <div className={triggerClass} role="button" tabIndex={0}>
           {selectedTags.length === 0 ? (
             <span className={styles.placeholder}>Add tags…</span>
           ) : (

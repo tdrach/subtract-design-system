@@ -5,6 +5,20 @@
   min-height: 24px;
   outline: none;
   width: 100%;
+
+  // ─── Compact variant — for inline use inside list items ───────────────────
+  &.compact {
+    min-height: 0;
+    width: auto;
+
+    // Placeholder only appears on hover so it doesn't clutter empty task rows
+    .placeholder {
+      opacity: 0;
+      transition: opacity $t-micro $ease-hover;
+    }
+
+    &:hover .placeholder { opacity: 0.4; }
+  }
 }
 
 .placeholder {
