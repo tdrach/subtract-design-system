@@ -151,23 +151,36 @@
   color: $ink-dark;
 }
 
+// ─── Icon-only ────────────────────────────────────────────────────────────────
+// Square button; width is set by the size class below.
+
+.iconOnly {
+  padding: 0;
+  flex-shrink: 0;
+}
+
 // ─── Sizes ────────────────────────────────────────────────────────────────────
 
 .md {
   font-size: $text-base;
-  padding: $space-6 $space-16;
   min-height: 44px;
 
-  &.splitGroup .splitMain  { font-size: $text-base;  padding: $space-6 $space-12; min-height: 44px; }
+  // Skip padding for splitGroup wrapper (it has no text) and iconOnly (it's square)
+  &:not(.splitGroup):not(.iconOnly) { padding: $space-6 $space-16; }
+  &.iconOnly { width: 44px; }
+
+  &.splitGroup .splitMain    { font-size: $text-base;  padding: $space-6 $space-12; min-height: 44px; }
   &.splitGroup .splitChevron { padding: 0 $space-10; min-height: 44px; }
 }
 
 .sm {
   font-size: $text-small;
-  padding: $space-4 $space-10;
   min-height: 32px;
   border-radius: $radius-sm;
 
-  &.splitGroup .splitMain  { font-size: $text-small; padding: $space-4 $space-8; min-height: 32px; }
+  &:not(.splitGroup):not(.iconOnly) { padding: $space-4 $space-10; }
+  &.iconOnly { width: 32px; }
+
+  &.splitGroup .splitMain    { font-size: $text-small; padding: $space-4 $space-8; min-height: 32px; }
   &.splitGroup .splitChevron { padding: 0 $space-6; min-height: 32px; }
 }

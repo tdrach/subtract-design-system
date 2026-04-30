@@ -48,10 +48,22 @@
 }
 
 .addMore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: $radius-sm;
+  background: transparent;
   color: $muted-dark;
-  font-size: $text-small;
-  opacity: 0.45;
-  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity $t-micro $ease-hover, background $t-micro $ease-hover;
+
+  &:hover { opacity: 0.8; background: rgba(0,0,0,0.06); }
 }
 
 // ─── Popover ─────────────────────────────────────────────────────────────────

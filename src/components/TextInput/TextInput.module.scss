@@ -4,12 +4,14 @@
   background: $white;
   border: 1px solid $demure;
   border-radius: $radius-sm;
+  box-sizing: border-box;
   color: $ink-dark;
   font-family: $font-text;
-  font-size: $text-xs;
+  font-size: $text-base;
+  height: 44px;
   outline: none;
-  padding: $space-8 $space-10;
-  transition: border-color $transition-fast;
+  padding: 0 $space-10;
+  transition: border-color $t-micro $ease-hover;
   width: 100%;
 
   &::placeholder { color: $muted-dark; opacity: 0.5; }

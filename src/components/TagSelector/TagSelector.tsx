@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react'
 import * as Popover from '@radix-ui/react-popover'
+import { Plus } from '@phosphor-icons/react'
 import styles from './TagSelector.module.scss'
 
 export interface Tag {
@@ -70,7 +71,9 @@ export function TagSelector({ tags, selected, onSelect, onDeselect, onCreate, co
               {selectedTags.map((t) => (
                 <TagPill key={t.id} tag={t} />
               ))}
-              <span className={styles.addMore}>+</span>
+              <button type="button" className={styles.addMore} tabIndex={-1} aria-hidden="true">
+                <Plus size={11} weight="bold" />
+              </button>
             </div>
           )}
         </div>

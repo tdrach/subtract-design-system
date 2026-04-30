@@ -1,37 +1,48 @@
+'use client'
+
+import React from 'react'
 import Link from 'next/link'
 import styles from './Button.module.scss'
 
-export interface ButtonProps {
+export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   variant?: 'primary' | 'secondary' | 'gray'
   size?: 'sm' | 'md'
   href?: string
   external?: boolean
-  disabled?: boolean
-  type?: 'button' | 'submit' | 'reset'
-  onClick?: () => void
-  onDropdownClick?: () => void
   split?: boolean
-  className?: string
-  children: React.ReactNode
+  /** Renders a square icon-only button — no label padding, width = height */
+  iconOnly?: boolean
+  /** Icon rendered before the label */
+  iconBefore?: React.ReactNode
+  /** Icon rendered after the label */
+  iconAfter?: React.ReactNode
+  onDropdownClick?: () => void
+  children?: React.ReactNode
 }
 
-export default function Button({
-  variant = 'primary',
-  size = 'md',
-  href,
-  external,
-  disabled,
-  type = 'button',
-  onClick,
-  onDropdownClick,
-  split = false,
-  className: extraClass,
-  children,
-}: ButtonProps) {
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    size = 'md',
+    href,
+    external,
+    split = false,
+    iconOnly = false,
+    iconBefore,
+    iconAfter,
+    onDropdownClick,
+    className: extraClass,
+    children,
+    type = 'button',
+    ...rest
+  },
+  ref,
+) {
   const baseClass = [
     styles.button,
     styles[variant],
     styles[size],
+    iconOnly && styles.iconOnly,
     extraClass,
   ].filter(Boolean).join(' ')
 
@@ -42,15 +53,17 @@ export default function Button({
         <button
           type={type}
           className={styles.splitMain}
-          disabled={disabled}
-          onClick={onClick}
+          disabled={rest.disabled}
+          onClick={rest.onClick}
         >
+          {iconBefore}
           {children}
+          {iconAfter}
         </button>
         <button
           type="button"
           className={styles.splitChevron}
-          disabled={disabled}
+          disabled={rest.disabled}
           onClick={onDropdownClick}
           aria-label="More options"
         >
@@ -66,16 +79,24 @@ export default function Button({
   if (href) {
     return external ? (
       <a href={href} className={baseClass} target="_blank" rel="noopener noreferrer">
-        {children}
+        {iconBefore}{children}{iconAfter}
       </a>
     ) : (
-      <Link href={href} className={baseClass}>{children}</Link>
+      <Link href={href} className={baseClass}>
+        {iconBefore}{children}{iconAfter}
+      </Link>
     )
   }
 
   return (
-    <button type={type} className={baseClass} disabled={disabled} onClick={onClick}>
+    <button ref={ref} type={type} className={baseClass} {...rest}>
+      {iconBefore}
       {children}
+      {iconAfter}
     </button>
   )
-}
+})
+
+Button.displayName = 'Button'
+
+export default Button

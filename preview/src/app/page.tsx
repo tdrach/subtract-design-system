@@ -314,12 +314,16 @@ function PageContent() {
               <div className={styles.componentRow}>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>primary / md</p><Button variant="primary">Get started</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>secondary / md</p><Button variant="secondary">Learn more</Button></div>
-                <div className={styles.componentGroup}><p className={styles.tokenName}>gray / md</p><Button variant="gray">Learn more</Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>gray / md</p><Button variant="gray">Settings</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>primary / sm</p><Button variant="primary" size="sm">Get started</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>secondary / sm</p><Button variant="secondary" size="sm">Learn more</Button></div>
-                <div className={styles.componentGroup}><p className={styles.tokenName}>gray / sm</p><Button variant="gray" size="sm">Learn more</Button></div>
-                <div className={styles.componentGroup}><p className={styles.tokenName}>split / md</p><Button variant="primary" split>New</Button></div>
-                <div className={styles.componentGroup}><p className={styles.tokenName}>split / sm</p><Button variant="primary" size="sm" split>New</Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>gray / sm</p><Button variant="gray" size="sm">Settings</Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>iconBefore</p><Button variant="secondary" size="sm" iconBefore={<Plus size={14} />}>New item</Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>iconAfter</p><Button variant="secondary" size="sm" iconAfter={<ArrowUpRight size={14} />}>Open</Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>iconOnly / md</p><Button variant="gray" iconOnly aria-label="Add"><Plus size={18} /></Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>iconOnly / sm</p><Button variant="gray" size="sm" iconOnly aria-label="Add"><Plus size={14} weight="bold" /></Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>split / md</p><Button variant="primary" split iconBefore={<Plus size={14} />}>New</Button></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>split / sm</p><Button variant="primary" size="sm" split iconBefore={<Plus size={12} />}>New</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>disabled</p><Button variant="primary" disabled>Get started</Button></div>
               </div>
             </section>
@@ -349,7 +353,7 @@ function PageContent() {
                   <div key={w} className={styles.componentGroup}>
                     <p className={styles.tokenName}>{w}</p>
                     <Dialog>
-                      <DialogTrigger asChild><Button variant="gray" size="sm">Open {w} dialog</Button></DialogTrigger>
+                      <DialogTrigger asChild><Button variant="gray" size="sm" iconAfter={<ArrowUpRight size={13} />}>Open {w} dialog</Button></DialogTrigger>
                       <DialogContent width={w}>
                         <DialogHeader title={`${w.toUpperCase()} dialog`} />
                         <DialogBody><p style={{ fontSize: '0.875rem', color: 'rgba(12,12,12,0.6)', lineHeight: 1.5 }}>Dialog variant — {w}.</p></DialogBody>
@@ -366,7 +370,7 @@ function PageContent() {
                 <div className={styles.componentGroup}>
                   <p className={styles.tokenName}>full-screen expand</p>
                   <ExpandPanel>
-                    <ExpandPanelTrigger asChild><Button variant="gray" size="sm">Open panel ↗</Button></ExpandPanelTrigger>
+                    <ExpandPanelTrigger asChild><Button variant="gray" size="sm" iconAfter={<ArrowUpRight size={14} />}>Open panel</Button></ExpandPanelTrigger>
                     <ExpandPanelContent title="Work — Stripe">
                       <ExpandPanelBody narrow>
                         <p style={{ fontSize: '0.875rem', color: 'rgba(12,12,12,0.6)', lineHeight: 1.6 }}>
@@ -385,7 +389,7 @@ function PageContent() {
                 <div className={styles.componentGroup}>
                   <p className={styles.tokenName}>default</p>
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild><Button variant="gray" size="sm">Open menu ↓</Button></DropdownMenuTrigger>
+                    <DropdownMenuTrigger asChild><Button variant="gray" size="sm" iconAfter={<CaretDown size={12} />}>Open menu</Button></DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem>Edit</DropdownMenuItem>
                       <DropdownMenuItem>Duplicate</DropdownMenuItem>
