@@ -33,3 +33,5 @@ export {
   ExpandPanelContent,
   ExpandPanelBody,
 } from './ExpandPanel'
+
+export { Sparkline } from './Sparkline'
