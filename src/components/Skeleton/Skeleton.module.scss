@@ -1,0 +1,24 @@
+@use '../../styles/tokens' as *;
+
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.skeleton {
+  animation: shimmer 1.6s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.06) 25%,
+    rgba(0, 0, 0, 0.03) 50%,
+    rgba(0, 0, 0, 0.06) 75%
+  );
+  background-size: 1200px 100%;
+  border-radius: $radius-micro;
+  display: block;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
