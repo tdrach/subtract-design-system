@@ -10,14 +10,16 @@ export interface TabBarProps {
   ariaLabel?: string
   children: React.ReactNode
   className?: string
+  style?: React.CSSProperties
 }
 
-export function TabBar({ ariaLabel = 'Navigation', children, className }: TabBarProps) {
+export function TabBar({ ariaLabel = 'Navigation', children, className, style }: TabBarProps) {
   return (
     <nav
       className={[styles.tabBar, className].filter(Boolean).join(' ')}
       role="tablist"
       aria-label={ariaLabel}
+      style={style}
     >
       {children}
     </nav>
