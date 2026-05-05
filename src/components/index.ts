@@ -35,3 +35,6 @@ export {
 } from './ExpandPanel'
 
 export { Sparkline } from './Sparkline'
+
+export { WeightChart } from './WeightChart'
+export type { WeightDataPoint, WeightChartProps } from './WeightChart'
