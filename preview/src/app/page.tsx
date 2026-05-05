@@ -96,36 +96,43 @@ const DEMO_TAGS: Tag[] = [
 
 const NEW_TAG_COLORS = ['#16a34a', '#ca8a04', '#0891b2', '#db2777', '#7c3aed', '#ea580c']
 
-// ─── Chart demo data ──────────────────────────────────────────────────────────
-// 6 months of plausible weight + body composition entries.
-// Body fat is sparse (every ~10 days) to show how the chart handles gaps.
+// ─── Chart demo data — monthly payment volume ($B) ────────────────────────────
+// 24 months of payment processing data. Primary series = total volume ($B);
+// secondary series (sparse, quarterly) = decline rate % (improving over time
+// as fraud models mature). Derived = net settled volume = volume × (1 − rate%).
 
-function makeDate(daysAgo: number) {
+function makeDate(monthsAgo: number) {
   const d = new Date()
-  d.setDate(d.getDate() - daysAgo)
+  d.setMonth(d.getMonth() - monthsAgo)
+  d.setDate(1)
   return d.toISOString().split('T')[0]
 }
 
-const WEIGHT_DATA: WeightDataPoint[] = [
-  { date: makeDate(180), weight_lbs: 228.4, body_fat: 31.2 },
-  { date: makeDate(170), weight_lbs: 226.8, body_fat: null },
-  { date: makeDate(160), weight_lbs: 225.2, body_fat: 30.8 },
-  { date: makeDate(150), weight_lbs: 224.0, body_fat: null },
-  { date: makeDate(140), weight_lbs: 222.6, body_fat: 30.1 },
-  { date: makeDate(130), weight_lbs: 221.3, body_fat: null },
-  { date: makeDate(120), weight_lbs: 220.5, body_fat: 29.6 },
-  { date: makeDate(110), weight_lbs: 219.8, body_fat: null },
-  { date: makeDate(100), weight_lbs: 218.4, body_fat: 29.0 },
-  { date: makeDate(90),  weight_lbs: 217.2, body_fat: null },
-  { date: makeDate(80),  weight_lbs: 216.0, body_fat: 28.5 },
-  { date: makeDate(70),  weight_lbs: 215.1, body_fat: null },
-  { date: makeDate(60),  weight_lbs: 213.8, body_fat: 28.1 },
-  { date: makeDate(50),  weight_lbs: 212.4, body_fat: null },
-  { date: makeDate(40),  weight_lbs: 211.6, body_fat: 27.8 },
-  { date: makeDate(30),  weight_lbs: 210.2, body_fat: null },
-  { date: makeDate(20),  weight_lbs: 209.0, body_fat: 27.4 },
-  { date: makeDate(10),  weight_lbs: 207.8, body_fat: null },
-  { date: makeDate(0),   weight_lbs: 206.5, body_fat: 27.0 },
+const CHART_DATA: WeightDataPoint[] = [
+  { date: makeDate(23), weight_lbs:  18.4, body_fat:  4.80 },
+  { date: makeDate(22), weight_lbs:  21.2, body_fat:  null  },
+  { date: makeDate(21), weight_lbs:  24.8, body_fat:  null  },
+  { date: makeDate(20), weight_lbs:  28.1, body_fat:  4.20 },
+  { date: makeDate(19), weight_lbs:  31.6, body_fat:  null  },
+  { date: makeDate(18), weight_lbs:  35.0, body_fat:  null  },
+  { date: makeDate(17), weight_lbs:  39.4, body_fat:  3.65 },
+  { date: makeDate(16), weight_lbs:  43.8, body_fat:  null  },
+  { date: makeDate(15), weight_lbs:  48.2, body_fat:  null  },
+  { date: makeDate(14), weight_lbs:  52.9, body_fat:  3.10 },
+  { date: makeDate(13), weight_lbs:  57.4, body_fat:  null  },
+  { date: makeDate(12), weight_lbs:  63.1, body_fat:  null  },
+  { date: makeDate(11), weight_lbs:  68.8, body_fat:  2.62 },
+  { date: makeDate(10), weight_lbs:  74.6, body_fat:  null  },
+  { date: makeDate(9),  weight_lbs:  81.3, body_fat:  null  },
+  { date: makeDate(8),  weight_lbs:  88.5, body_fat:  2.18 },
+  { date: makeDate(7),  weight_lbs:  96.2, body_fat:  null  },
+  { date: makeDate(6),  weight_lbs: 104.7, body_fat:  null  },
+  { date: makeDate(5),  weight_lbs: 113.8, body_fat:  1.74 },
+  { date: makeDate(4),  weight_lbs: 120.4, body_fat:  null  },
+  { date: makeDate(3),  weight_lbs: 128.1, body_fat:  null  },
+  { date: makeDate(2),  weight_lbs: 135.6, body_fat:  1.38 },
+  { date: makeDate(1),  weight_lbs: 142.9, body_fat:  null  },
+  { date: makeDate(0),  weight_lbs: 151.2, body_fat:  1.10 },
 ]
 
 // ─── Icon groups ──────────────────────────────────────────────────────────────
@@ -522,10 +529,12 @@ function PageContent() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>WeightChart</h2>
               <p className={styles.chartIntro}>
-                SVG line chart for weight / body fat / lean mass trends.
-                The ribbon visualises the weight band; dashed amber = body fat %,
-                solid green = lean mass. Body fat entries can be sparse —
-                the chart interpolates only between real readings.
+                SVG ribbon chart for a primary value with confidence band,
+                plus two optional overlay series. Demo: 24 months of payment
+                processing volume ($B) — total volume (ribbon), decline rate %
+                measured quarterly (dashed amber, sparse), and net settled
+                volume (green). Both series trend in opposite directions as
+                fraud models improve alongside growth.
               </p>
 
               <div className={styles.chartStack}>
@@ -534,12 +543,12 @@ function PageContent() {
                 <div className={styles.chartDemo}>
                   <p className={styles.tokenName}>height=200 — expanded</p>
                   <div className={styles.chartWrap}>
-                    <WeightChart data={WEIGHT_DATA} width={860} height={200} uid="preview-lg" />
+                    <WeightChart data={CHART_DATA} width={860} height={200} uid="preview-lg" />
                   </div>
                   <div className={styles.chartLegend}>
-                    <span className={styles.legendWeight}>Weight (lbs)</span>
-                    <span className={styles.legendLean}>Lean mass</span>
-                    <span className={styles.legendFat}>Body fat %</span>
+                    <span className={styles.legendWeight}>Total volume ($B)</span>
+                    <span className={styles.legendLean}>Net settled volume</span>
+                    <span className={styles.legendFat}>Decline rate %</span>
                   </div>
                 </div>
 
@@ -547,16 +556,16 @@ function PageContent() {
                 <div className={styles.chartDemo}>
                   <p className={styles.tokenName}>height=90 — card</p>
                   <div className={styles.chartWrap}>
-                    <WeightChart data={WEIGHT_DATA} width={440} height={90} uid="preview-sm" />
+                    <WeightChart data={CHART_DATA} width={440} height={90} uid="preview-sm" />
                   </div>
                 </div>
 
-                {/* Weight-only (no body composition data) */}
+                {/* Primary series only */}
                 <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>weight only (no body_fat)</p>
+                  <p className={styles.tokenName}>primary series only (no overlay)</p>
                   <div className={styles.chartWrap}>
                     <WeightChart
-                      data={WEIGHT_DATA.map(d => ({ ...d, body_fat: null }))}
+                      data={CHART_DATA.map(d => ({ ...d, body_fat: null }))}
                       width={440}
                       height={90}
                       uid="preview-wo"
