@@ -8,8 +8,9 @@ import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
   TagSelector, TagPill,
   ExpandPanel, ExpandPanelTrigger, ExpandPanelContent, ExpandPanelBody,
+  WeightChart,
 } from '@subtract/ds'
-import type { Tag } from '@subtract/ds'
+import type { Tag, WeightDataPoint } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -95,6 +96,38 @@ const DEMO_TAGS: Tag[] = [
 
 const NEW_TAG_COLORS = ['#16a34a', '#ca8a04', '#0891b2', '#db2777', '#7c3aed', '#ea580c']
 
+// ─── Chart demo data ──────────────────────────────────────────────────────────
+// 6 months of plausible weight + body composition entries.
+// Body fat is sparse (every ~10 days) to show how the chart handles gaps.
+
+function makeDate(daysAgo: number) {
+  const d = new Date()
+  d.setDate(d.getDate() - daysAgo)
+  return d.toISOString().split('T')[0]
+}
+
+const WEIGHT_DATA: WeightDataPoint[] = [
+  { date: makeDate(180), weight_lbs: 228.4, body_fat: 31.2 },
+  { date: makeDate(170), weight_lbs: 226.8, body_fat: null },
+  { date: makeDate(160), weight_lbs: 225.2, body_fat: 30.8 },
+  { date: makeDate(150), weight_lbs: 224.0, body_fat: null },
+  { date: makeDate(140), weight_lbs: 222.6, body_fat: 30.1 },
+  { date: makeDate(130), weight_lbs: 221.3, body_fat: null },
+  { date: makeDate(120), weight_lbs: 220.5, body_fat: 29.6 },
+  { date: makeDate(110), weight_lbs: 219.8, body_fat: null },
+  { date: makeDate(100), weight_lbs: 218.4, body_fat: 29.0 },
+  { date: makeDate(90),  weight_lbs: 217.2, body_fat: null },
+  { date: makeDate(80),  weight_lbs: 216.0, body_fat: 28.5 },
+  { date: makeDate(70),  weight_lbs: 215.1, body_fat: null },
+  { date: makeDate(60),  weight_lbs: 213.8, body_fat: 28.1 },
+  { date: makeDate(50),  weight_lbs: 212.4, body_fat: null },
+  { date: makeDate(40),  weight_lbs: 211.6, body_fat: 27.8 },
+  { date: makeDate(30),  weight_lbs: 210.2, body_fat: null },
+  { date: makeDate(20),  weight_lbs: 209.0, body_fat: 27.4 },
+  { date: makeDate(10),  weight_lbs: 207.8, body_fat: null },
+  { date: makeDate(0),   weight_lbs: 206.5, body_fat: 27.0 },
+]
+
 // ─── Icon groups ──────────────────────────────────────────────────────────────
 
 const iconGroups = [
@@ -165,13 +198,14 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
   { id: 'typography', label: 'Typography' },
   { id: 'icons',      label: 'Icons'      },
   { id: 'ui',         label: 'UI'         },
+  { id: 'charts',     label: 'Charts'     },
 ]
 
 // ─── Page content (needs Suspense for useSearchParams) ────────────────────────
@@ -477,6 +511,59 @@ function PageContent() {
                     <span className={styles.tokenDetail}>{t.value}</span>
                   </div>
                 ))}
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* ─── Charts ─────────────────────────────────────────────────────── */}
+        {activeTab === 'charts' && (
+          <>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>WeightChart</h2>
+              <p className={styles.chartIntro}>
+                SVG line chart for weight / body fat / lean mass trends.
+                The ribbon visualises the weight band; dashed amber = body fat %,
+                solid green = lean mass. Body fat entries can be sparse —
+                the chart interpolates only between real readings.
+              </p>
+
+              <div className={styles.chartStack}>
+
+                {/* Full-height — expanded view */}
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>height=200 — expanded</p>
+                  <div className={styles.chartWrap}>
+                    <WeightChart data={WEIGHT_DATA} width={860} height={200} uid="preview-lg" />
+                  </div>
+                  <div className={styles.chartLegend}>
+                    <span className={styles.legendWeight}>Weight (lbs)</span>
+                    <span className={styles.legendLean}>Lean mass</span>
+                    <span className={styles.legendFat}>Body fat %</span>
+                  </div>
+                </div>
+
+                {/* Compact card height */}
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>height=90 — card</p>
+                  <div className={styles.chartWrap}>
+                    <WeightChart data={WEIGHT_DATA} width={440} height={90} uid="preview-sm" />
+                  </div>
+                </div>
+
+                {/* Weight-only (no body composition data) */}
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>weight only (no body_fat)</p>
+                  <div className={styles.chartWrap}>
+                    <WeightChart
+                      data={WEIGHT_DATA.map(d => ({ ...d, body_fat: null }))}
+                      width={440}
+                      height={90}
+                      uid="preview-wo"
+                    />
+                  </div>
+                </div>
+
               </div>
             </section>
           </>
