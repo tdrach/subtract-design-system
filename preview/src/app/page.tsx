@@ -9,6 +9,7 @@ import {
   TagSelector, TagPill,
   ExpandPanel, ExpandPanelTrigger, ExpandPanelContent, ExpandPanelBody,
   WeightChart,
+  TabBar, Tab,
 } from '@subtract/ds'
 import type { Tag, WeightDataPoint } from '@subtract/ds'
 import {
@@ -240,20 +241,13 @@ function PageContent() {
           <h1 className={styles.heroTitle}>SDS</h1>
         </div>
 
-        <nav className={styles.tabBar} role="tablist" aria-label="Design system sections">
+        <TabBar ariaLabel="Design system sections" className={styles.tabBarSpacing}>
           {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === t.id}
-              className={`${styles.tab} ${activeTab === t.id ? styles.tabActive : ''}`}
-              onClick={() => setTab(t.id)}
-            >
+            <Tab key={t.id} active={activeTab === t.id} onClick={() => setTab(t.id)}>
               {t.label}
-            </button>
+            </Tab>
           ))}
-        </nav>
+        </TabBar>
 
         {/* ─── Colors ─────────────────────────────────────────────────────── */}
         {activeTab === 'colors' && (
@@ -350,6 +344,19 @@ function PageContent() {
         {/* ─── UI ─────────────────────────────────────────────────────────── */}
         {activeTab === 'ui' && (
           <>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Tabs</h2>
+              <div className={styles.componentStack}>
+                <div className={styles.componentGroup}>
+                  <TabBar ariaLabel="Example tabs">
+                    <Tab active>Overview</Tab>
+                    <Tab>Activity</Tab>
+                    <Tab>Settings</Tab>
+                  </TabBar>
+                </div>
+              </div>
+            </section>
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Button</h2>
               <div className={styles.componentRow}>

@@ -29,41 +29,9 @@
 }
 
 // ─── Tab bar ─────────────────────────────────────────────────────────────────
-.tabBar {
-  display: flex;
-  gap: $space-4;
+// The DS TabBar component handles all visual styles; this just adds page-level spacing.
+.tabBarSpacing {
   margin-bottom: $space-48;
-  padding-bottom: $space-4;
-  border-bottom: 1px solid $demure;
-}
-
-.tab {
-  appearance: none;
-  background: transparent;
-  border: none;
-  padding: $space-6 $space-12;
-  font-family: $font-text;
-  font-size: $text-base;
-  font-weight: $weight-medium;
-  letter-spacing: $letter-spacing-tight;
-  color: $muted-dark;
-  cursor: pointer;
-  border-radius: $radius-sm;
-  transition: background $t-fast $curve-1, color $t-fast $curve-1;
-
-  &:hover {
-    color: $ink-dark;
-    background: rgba(12, 12, 12, 0.04);
-  }
-}
-
-.tabActive {
-  color: $ink-dark;
-  background: $light;
-
-  &:hover {
-    background: $light;
-  }
 }
 
 // ─── Section ─────────────────────────────────────────────────────────────────
