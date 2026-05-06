@@ -348,7 +348,16 @@ function PageContent() {
               <h2 className={styles.sectionTitle}>Tabs</h2>
               <div className={styles.componentStack}>
                 <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>border (default)</p>
                   <TabBar ariaLabel="Example tabs">
+                    <Tab active>Overview</Tab>
+                    <Tab>Activity</Tab>
+                    <Tab>Settings</Tab>
+                  </TabBar>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>border={'{false}'}</p>
+                  <TabBar ariaLabel="Example tabs no border" border={false}>
                     <Tab active>Overview</Tab>
                     <Tab>Activity</Tab>
                     <Tab>Settings</Tab>

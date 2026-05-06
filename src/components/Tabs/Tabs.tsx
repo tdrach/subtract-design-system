@@ -11,12 +11,14 @@ export interface TabBarProps {
   children: React.ReactNode
   className?: string
   style?: React.CSSProperties
+  /** Show the bottom border rule. Defaults to true. */
+  border?: boolean
 }
 
-export function TabBar({ ariaLabel = 'Navigation', children, className, style }: TabBarProps) {
+export function TabBar({ ariaLabel = 'Navigation', children, className, style, border = true }: TabBarProps) {
   return (
     <nav
-      className={[styles.tabBar, className].filter(Boolean).join(' ')}
+      className={[styles.tabBar, !border && styles.tabBarNoBorder, className].filter(Boolean).join(' ')}
       role="tablist"
       aria-label={ariaLabel}
       style={style}

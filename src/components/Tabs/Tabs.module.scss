@@ -7,6 +7,11 @@
   border-bottom: 1px solid $demure;
 }
 
+.tabBarNoBorder {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
 .tab {
   appearance: none;
   background: transparent;
