@@ -25,12 +25,12 @@ $check-path-length: 9.29px;
 }
 
 .dragHandle {
+  align-items: center;
   color: $muted-dark;
   cursor: grab;
+  display: flex;
   flex-shrink: 0;
-  font-size: $text-small;
-  line-height: 1;
-  margin-top: 3px;
+  margin-top: 1px;
   opacity: 0;
   touch-action: none;
   transition: opacity $t-micro $ease-hover;

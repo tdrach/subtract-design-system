@@ -1,6 +1,7 @@
 'use client'
 
 import { ReactNode, useId } from 'react'
+import { DotsSix } from '@phosphor-icons/react'
 import styles from './ChecklistItem.module.scss'
 
 export interface ChecklistItemProps {
@@ -27,7 +28,9 @@ export function ChecklistItem({
   return (
     <div className={[styles.item, done ? styles.done : '', className].filter(Boolean).join(' ')}>
       {dragHandleProps && (
-        <div className={styles.dragHandle} {...dragHandleProps}>⠿</div>
+        <div className={styles.dragHandle} {...dragHandleProps}>
+          <DotsSix size={15} weight="bold" />
+        </div>
       )}
 
       <div className={styles.check}>
