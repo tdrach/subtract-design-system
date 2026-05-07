@@ -1,6 +1,8 @@
 'use client'
 
 import * as Radix from '@radix-ui/react-dialog'
+import { X } from '@phosphor-icons/react'
+import { Button } from '../Button/Button'
 import styles from './Dialog.module.scss'
 
 export const Dialog = Radix.Root
@@ -34,8 +36,10 @@ export function DialogHeader({
   return (
     <div className={styles.header}>
       {title && <Radix.Title className={styles.title}>{title}</Radix.Title>}
-      <Radix.Close className={styles.closeBtn} onClick={onClose} aria-label="Close">
-        ✕
+      <Radix.Close asChild onClick={onClose}>
+        <Button variant="gray" size="sm" iconOnly aria-label="Close">
+          <X size={14} weight="bold" />
+        </Button>
       </Radix.Close>
     </div>
   )

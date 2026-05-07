@@ -60,19 +60,6 @@
   font-weight: $weight-medium;
 }
 
-.closeBtn {
-  background: none;
-  border: none;
-  color: $muted-dark;
-  cursor: pointer;
-  font-size: $text-micro;
-  line-height: 1;
-  padding: $space-4;
-  transition: color $transition-fast;
-
-  &:hover { color: $ink-dark; }
-}
-
 .body {
   flex: 1;
   overflow-y: auto;
