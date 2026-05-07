@@ -2,7 +2,7 @@
 
 import * as Radix from '@radix-ui/react-dialog'
 import { X } from '@phosphor-icons/react'
-import { Button } from '../Button/Button'
+import Button from '../Button/Button'
 import styles from './Dialog.module.scss'
 
 export const Dialog = Radix.Root
