@@ -125,11 +125,11 @@ export function CalendarChart({
       aria-hidden="true"
     >
       <defs>
-        {/* Soft radial glow gradient, offset downward like the Figma spec */}
-        <radialGradient id={glowId} cx="50%" cy="35%" r="50%">
-          <stop offset="0%"   stopColor={color} stopOpacity={0.38} />
-          <stop offset="100%" stopColor={color} stopOpacity={0}    />
-        </radialGradient>
+        {/* Gaussian blur filter for the glow — feGaussianBlur gives a far
+            more natural, photorealistic softness than a radial gradient */}
+        <filter id={glowId} x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="7" result="blur" />
+        </filter>
       </defs>
 
       {/* ── Day-of-week column headers ─────────────────────────────────────── */}
@@ -149,7 +149,7 @@ export function CalendarChart({
         </text>
       ))}
 
-      {/* ── Glows — rendered behind bubbles ───────────────────────────────── */}
+      {/* ── Glows — blurred ellipses rendered behind bubbles ─────────────── */}
       {cells.map((c, i) => {
         if (!c.inMonth) return null
         const r = getRadius(c.value)
@@ -158,10 +158,12 @@ export function CalendarChart({
           <ellipse
             key={`glow-${i}`}
             cx={c.cx}
-            cy={c.cy + r * 0.6}
-            rx={r * 2.6}
-            ry={r * 2.0}
-            fill={`url(#${glowId})`}
+            cy={c.cy + r * 0.5}
+            rx={r * 2.0}
+            ry={r * 1.6}
+            fill={color}
+            opacity={0.28}
+            filter={`url(#${glowId})`}
           />
         )
       })}
