@@ -11,8 +11,9 @@ import {
   WeightChart,
   TabBar, Tab,
   CalendarChart,
+  LineChart,
 } from '@subtract/ds'
-import type { Tag, WeightDataPoint, CalendarDataPoint } from '@subtract/ds'
+import type { Tag, WeightDataPoint, CalendarDataPoint, LineSeriesData } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -173,6 +174,26 @@ const CALENDAR_DATA: CalendarDataPoint[] = [
   { date: '2026-04-28', value:  240 },
   { date: '2026-04-29', value:  200 },
   { date: '2026-04-30', value:  180 },
+]
+
+// ─── LineChart demo data ──────────────────────────────────────────────────────
+
+const LINE_X = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+const LINE_SINGLE: LineSeriesData[] = [
+  {
+    id: 'rev',
+    label: 'Revenue',
+    color: '#16a34a',
+    values: [540, 505, 420, 488, 652, 568, 496],
+  },
+]
+
+const LINE_MULTI: LineSeriesData[] = [
+  { id: 'la', label: 'Los Angeles', color: '#16a34a', values: [510, 615, 548, 628, 488, 592, 545] },
+  { id: 'ny', label: 'New York',    color: '#38bdf8', values: [400, 462, 378, 448, 492, 418, 430] },
+  { id: 'ca', label: 'Canada',      color: '#7c3aed', values: [290, 312, 278, 302, 332, 294, 300] },
+  { id: 'cn', label: 'China',       color: '#f59e0b', values: [185, 212, 172, 195, 228, 184, 198] },
 ]
 
 // ─── Icon groups ──────────────────────────────────────────────────────────────
@@ -624,6 +645,46 @@ function PageContent() {
                       width={440}
                       height={90}
                       uid="preview-wo"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>LineChart</h2>
+              <p className={styles.chartIntro}>
+                Multi-series line chart with smooth Catmull-Rom curves, 4px
+                strokes, and a 6-layer CSS drop-shadow glow per the Figma spec.
+                Area fill uses a gradient + optional dot texture (single series
+                default). Right-side callout shows the series label and last
+                value. Y-axis ticks auto-computed to nice round intervals.
+              </p>
+              <div className={styles.chartStack}>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>single series — dots + glow</p>
+                  <div className={styles.chartWrap}>
+                    <LineChart
+                      series={LINE_SINGLE}
+                      xLabels={LINE_X}
+                      width={720}
+                      height={260}
+                      uid="lc-a"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>multi-series — 4 series</p>
+                  <div className={styles.chartWrap}>
+                    <LineChart
+                      series={LINE_MULTI}
+                      xLabels={LINE_X}
+                      width={720}
+                      height={300}
+                      uid="lc-b"
                     />
                   </div>
                 </div>

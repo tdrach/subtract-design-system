@@ -47,3 +47,6 @@ export type { SkeletonProps } from './Skeleton'
 
 export { CalendarChart } from './CalendarChart'
 export type { CalendarDataPoint, CalendarChartProps } from './CalendarChart'
+
+export { LineChart } from './LineChart'
+export type { LineSeriesData, LineChartProps } from './LineChart'
