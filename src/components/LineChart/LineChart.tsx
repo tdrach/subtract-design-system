@@ -10,12 +10,13 @@ const BLACK = '#0c0c0c'              // callout values
 
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
-const Y_LABEL_W = 52   // px reserved for y-axis labels (0 when showYAxis=false)
-const RIGHT_W   = 130  // px reserved for right-side callouts
-const CIRCLE_R  = 6    // end-of-line hollow circle radius
-const DOT_PITCH = 7    // dot texture grid pitch (px)
-const DOT_R     = 0.9  // dot texture circle radius
-const X_AXIS_H  = 24   // px reserved for x-axis labels when present
+const Y_LABEL_W  = 52   // px reserved for y-axis labels (0 when showYAxis=false)
+const RIGHT_W    = 130  // px reserved for right-side callouts
+const CIRCLE_R   = 6    // end-of-line hollow circle radius
+const DOT_PITCH  = 7    // dot texture grid pitch (px)
+const DOT_R      = 0.9  // dot texture circle radius
+const X_AXIS_H   = 24   // px reserved for x-axis labels when present
+const PADDING_TOP = 10  // px headroom so the top tick label isn't clipped
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -185,10 +186,10 @@ export function LineChart({
     const yMax  = ticks[ticks.length - 1]
 
     const chartW = width  - yLabelW - RIGHT_W
-    const chartH = height - (hasXAxis ? X_AXIS_H : 0)
+    const chartH = height - (hasXAxis ? X_AXIS_H : 0) - PADDING_TOP
 
     const scaleX = (i: number) => yLabelW + (i / Math.max(nPts - 1, 1)) * chartW
-    const scaleY = (v: number) => chartH - ((v - yMin) / (yMax - yMin)) * chartH
+    const scaleY = (v: number) => PADDING_TOP + chartH - ((v - yMin) / (yMax - yMin)) * chartH
 
     const seriesGeo = series.map(s => {
       const pts  = s.values.map((v, i) => ({ x: scaleX(i), y: scaleY(v) }))
@@ -235,8 +236,8 @@ export function LineChart({
         {/* Per-series gradient area fills */}
         {seriesGeo.map(s => (
           <linearGradient key={s.id} id={`lc-fill-${uid}-${s.id}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={s.color} stopOpacity={showDots ? 0.14 : 0.12} />
-            <stop offset="100%" stopColor={s.color} stopOpacity={0.01} />
+            <stop offset="0%"   stopColor={s.color} stopOpacity={showDots ? 0.14 : series.length > 1 ? 0.07 : 0.12} />
+            <stop offset="100%" stopColor={s.color} stopOpacity={0} />
           </linearGradient>
         ))}
 
@@ -259,7 +260,7 @@ export function LineChart({
           or below the bottom grid line.
         */}
         <clipPath id={`lc-clip-${uid}`}>
-          <rect x={yLabelW} y={0} width={chartW} height={chartH} />
+          <rect x={yLabelW} y={PADDING_TOP} width={chartW} height={chartH} />
         </clipPath>
       </defs>
 
