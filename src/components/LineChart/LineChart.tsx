@@ -10,11 +10,12 @@ const BLACK = '#0c0c0c'              // callout values
 
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
-const Y_LABEL_W = 52   // px reserved for y-axis labels on the left
+const Y_LABEL_W = 52   // px reserved for y-axis labels (0 when showYAxis=false)
 const RIGHT_W   = 130  // px reserved for right-side callouts
 const CIRCLE_R  = 6    // end-of-line hollow circle radius
-const DOT_PITCH = 7    // dot pattern grid size (px)
-const DOT_R     = 0.9  // dot pattern circle radius
+const DOT_PITCH = 7    // dot texture grid pitch (px)
+const DOT_R     = 0.9  // dot texture circle radius
+const X_AXIS_H  = 24   // px reserved for x-axis labels when present
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -38,7 +39,7 @@ function smoothCurve(pts: { x: number; y: number }[]): string {
   return d.join(' ')
 }
 
-/** Closed area path: smooth line + vertical drop to baseline + close */
+/** Closed area path: smooth line → drop to baseline → close */
 function areaPath(pts: { x: number; y: number }[], baseY: number): string {
   if (pts.length < 2) return ''
   const last  = pts[pts.length - 1]
@@ -54,7 +55,7 @@ function hexRgb(hex: string): [number, number, number] {
 
 /**
  * Builds a CSS `filter` string that replicates the 6-layer Figma drop-shadow.
- * Opacity values decoded from the hex alpha in the spec (#168F3F24 → 0x24/255 ≈ 0.14).
+ * Opacity values decoded from hex alpha: #168F3F24 → 0x24/255 ≈ 0.14, etc.
  */
 function lineGlow(color: string): string {
   const [r, g, b] = hexRgb(color)
@@ -69,7 +70,10 @@ function lineGlow(color: string): string {
   ].join(' ')
 }
 
-/** Compute evenly-spaced, human-readable y-axis tick values for a given range */
+/**
+ * Compute y-axis tick values. Always ensures the last tick ≥ dataMax
+ * so smooth curves never exceed the clip boundary.
+ */
 function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[] {
   const range    = dataMax - dataMin || 1
   const rawStep  = range / (targetCount - 1)
@@ -79,10 +83,25 @@ function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[]
   const niceStep = norm <= 1 ? mag : norm <= 2 ? 2 * mag : norm <= 5 ? 5 * mag : 10 * mag
   const lo       = Math.floor(dataMin / niceStep) * niceStep
   const ticks: number[] = []
-  for (let v = lo; v <= dataMax + niceStep * 0.01; v += niceStep) {
+  for (let v = lo; v < dataMax + niceStep; v += niceStep) {
     ticks.push(Math.round(v))
   }
+  // Guard: ensure last tick always covers dataMax (floating-point safety)
+  if (ticks[ticks.length - 1] < dataMax) ticks.push(Math.round(ticks[ticks.length - 1] + niceStep))
   return ticks
+}
+
+/**
+ * Convert an array of 'YYYY-MM-DD' dates into sparse x-axis labels.
+ * Only the first occurrence of each month gets a label; the rest are empty.
+ */
+function datesToMonthLabels(dates: string[]): string[] {
+  let lastMonth = ''
+  return dates.map(d => {
+    const month = new Date(d + 'T12:00:00').toLocaleString('en', { month: 'short' })
+    if (month !== lastMonth) { lastMonth = month; return month }
+    return ''
+  })
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -93,18 +112,34 @@ export interface LineSeriesData {
   label: string
   /** One value per x-axis tick. All series must have the same length. */
   values: number[]
-  /** Hex color, e.g. "#16a34a" — used for line, glow, fill, and dot texture */
+  /** Hex color e.g. "#16a34a" — used for line, glow, fill, and dot texture */
   color: string
 }
 
 export interface LineChartProps {
   series: LineSeriesData[]
-  /** X-axis tick labels. Length should match series[*].values.length. */
+  /**
+   * ISO date strings ('YYYY-MM-DD'), one per data point.
+   * When provided, the x-axis automatically shows month labels at each
+   * month boundary. Supersedes `xLabels`.
+   */
+  dates?: string[]
+  /** Explicit x-axis tick labels (overridden by `dates` if both are set). */
   xLabels?: string[]
   /** Total SVG width in px. Defaults to 560. */
   width?: number
-  /** Chart area height in px (excluding x-axis labels). Defaults to 280. */
+  /** Chart area height in px (x-axis labels add ~24 px if present). Defaults to 280. */
   height?: number
+  /**
+   * Show y-axis grid lines and tick labels on the left.
+   * Set to false for compact / sparkline-style cards. Defaults to true.
+   */
+  showYAxis?: boolean
+  /**
+   * Format the last value shown in the right-side callout.
+   * Defaults to `v.toLocaleString()`.
+   */
+  valueFormat?: (v: number) => string
   /**
    * Overlay a dot texture on the area fill.
    * Defaults to true for a single series, false for multi-series.
@@ -121,13 +156,21 @@ export interface LineChartProps {
 
 export function LineChart({
   series,
-  xLabels,
+  dates,
+  xLabels: xLabelsProp,
   width = 560,
   height = 280,
+  showYAxis = true,
+  valueFormat,
   dots,
   uid = 'a',
 }: LineChartProps) {
-  const showDots = dots ?? series.length === 1
+  const showDots   = dots ?? series.length === 1
+  const formatVal  = valueFormat ?? ((v: number) => v.toLocaleString())
+  // Effective x-axis labels: dates → sparse month labels; else explicit labels
+  const xLabels    = dates?.length ? datesToMonthLabels(dates) : xLabelsProp
+  const hasXAxis   = !!xLabels?.length
+  const yLabelW    = showYAxis ? Y_LABEL_W : 0
 
   const computed = useMemo(() => {
     if (!series.length || !series[0].values.length) return null
@@ -141,11 +184,10 @@ export function LineChart({
     const yMin  = ticks[0]
     const yMax  = ticks[ticks.length - 1]
 
-    const X_AXIS_H = xLabels?.length ? 24 : 0
-    const chartW   = width  - Y_LABEL_W - RIGHT_W
-    const chartH   = height - X_AXIS_H
+    const chartW = width  - yLabelW - RIGHT_W
+    const chartH = height - (hasXAxis ? X_AXIS_H : 0)
 
-    const scaleX = (i: number) => Y_LABEL_W + (i / Math.max(nPts - 1, 1)) * chartW
+    const scaleX = (i: number) => yLabelW + (i / Math.max(nPts - 1, 1)) * chartW
     const scaleY = (v: number) => chartH - ((v - yMin) / (yMax - yMin)) * chartH
 
     const seriesGeo = series.map(s => {
@@ -175,7 +217,7 @@ export function LineChart({
     }))
 
     return { seriesGeo, tickGeo, xLabelGeo, chartW, chartH }
-  }, [series, xLabels, width, height])
+  }, [series, xLabels, width, height, yLabelW, hasXAxis])
 
   if (!computed) return null
 
@@ -198,7 +240,7 @@ export function LineChart({
           </linearGradient>
         ))}
 
-        {/* Dot texture patterns — only for single-series or when dots=true */}
+        {/* Dot texture patterns */}
         {showDots && seriesGeo.map(s => (
           <pattern
             key={s.id}
@@ -206,29 +248,31 @@ export function LineChart({
             x="0" y="0" width={DOT_PITCH} height={DOT_PITCH}
             patternUnits="userSpaceOnUse"
           >
-            <circle
-              cx={DOT_PITCH / 2} cy={DOT_PITCH / 2} r={DOT_R}
-              fill={s.color} opacity={0.20}
-            />
+            <circle cx={DOT_PITCH / 2} cy={DOT_PITCH / 2} r={DOT_R} fill={s.color} opacity={0.20} />
           </pattern>
         ))}
 
-        {/* Clip to chart drawing area only */}
+        {/*
+          Clip strictly to the chart drawing area.
+          Wrapping lines in a <g clipPath> means the drop-shadow filter
+          is also clipped, so glows can't bleed above the top grid line
+          or below the bottom grid line.
+        */}
         <clipPath id={`lc-clip-${uid}`}>
-          <rect x={Y_LABEL_W} y={0} width={chartW} height={chartH} />
+          <rect x={yLabelW} y={0} width={chartW} height={chartH} />
         </clipPath>
       </defs>
 
       {/* ── Y-axis: grid lines + labels ───────────────────────────────────── */}
-      {tickGeo.map(({ v, y, label }) => (
+      {showYAxis && tickGeo.map(({ v, y, label }) => (
         <g key={v}>
           <line
-            x1={Y_LABEL_W} y1={y}
-            x2={Y_LABEL_W + chartW} y2={y}
+            x1={yLabelW} y1={y}
+            x2={yLabelW + chartW} y2={y}
             stroke={GRID} strokeWidth={1}
           />
           <text
-            x={Y_LABEL_W - 8} y={y + 4}
+            x={yLabelW - 8} y={y + 4}
             textAnchor="end"
             fontSize={11} fill={MUTED} fontFamily="inherit"
           >
@@ -241,28 +285,31 @@ export function LineChart({
       {[...seriesGeo].reverse().map(s => (
         <g key={`fill-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
           <path d={s.fillPath} fill={`url(#lc-fill-${uid}-${s.id})`} />
-          {showDots && (
-            <path d={s.fillPath} fill={`url(#lc-dots-${uid}-${s.id})`} />
-          )}
+          {showDots && <path d={s.fillPath} fill={`url(#lc-dots-${uid}-${s.id})`} />}
         </g>
       ))}
 
-      {/* ── Lines + glow — rendered back-to-front ─────────────────────────── */}
+      {/*
+        ── Lines + glow — each wrapped in its own clip group ─────────────────
+        Applying clipPath to the <g> means the CSS drop-shadow filter rendered
+        on the inner <path> is clipped by the group boundary, preventing glows
+        from escaping above yMax or below yMin.
+      */}
       {[...seriesGeo].reverse().map(s => (
-        <path
-          key={`line-${s.id}`}
-          d={s.linePath}
-          stroke={s.color}
-          strokeWidth={4}
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          clipPath={`url(#lc-clip-${uid})`}
-          style={{ filter: lineGlow(s.color) }}
-        />
+        <g key={`line-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
+          <path
+            d={s.linePath}
+            stroke={s.color}
+            strokeWidth={3}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ filter: lineGlow(s.color) }}
+          />
+        </g>
       ))}
 
-      {/* ── End-point hollow circles ──────────────────────────────────────── */}
+      {/* ── End-point hollow circles (outside clip — intentionally) ───────── */}
       {seriesGeo.map(s => (
         <circle
           key={`dot-${s.id}`}
@@ -275,12 +322,11 @@ export function LineChart({
         />
       ))}
 
-      {/* ── Right-side callouts: label + value ────────────────────────────── */}
+      {/* ── Right-side callouts: series label + last value ────────────────── */}
       {seriesGeo.map(s => {
         const x = s.endX + CIRCLE_R + 10
         return (
           <g key={`callout-${s.id}`}>
-            {/* Series label — small uppercase */}
             <text
               x={x} y={s.endY - 8}
               fontSize={10} fontWeight={600} letterSpacing="0.06em"
@@ -288,29 +334,30 @@ export function LineChart({
             >
               {s.label.toUpperCase()}
             </text>
-            {/* Last value — large */}
             <text
               x={x} y={s.endY + 18}
               fontSize={22} fontWeight={700} letterSpacing="-0.03em"
               fill={BLACK} fontFamily="inherit"
             >
-              {s.lastVal.toLocaleString()}
+              {formatVal(s.lastVal)}
             </text>
           </g>
         )
       })}
 
-      {/* ── X-axis labels ─────────────────────────────────────────────────── */}
-      {xLabelGeo?.map(({ label, x, y }) => (
-        <text
-          key={label}
-          x={x} y={y}
-          textAnchor="middle"
-          fontSize={12} fill={MUTED} fontFamily="inherit"
-        >
-          {label}
-        </text>
-      ))}
+      {/* ── X-axis labels — empty strings (from date gaps) are skipped ─────── */}
+      {xLabelGeo?.map(({ label, x, y }, i) =>
+        label ? (
+          <text
+            key={i}
+            x={x} y={y}
+            textAnchor="middle"
+            fontSize={12} fill={MUTED} fontFamily="inherit"
+          >
+            {label}
+          </text>
+        ) : null
+      )}
     </svg>
   )
 }

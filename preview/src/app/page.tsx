@@ -8,12 +8,11 @@ import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
   TagSelector, TagPill,
   ExpandPanel, ExpandPanelTrigger, ExpandPanelContent, ExpandPanelBody,
-  WeightChart,
   TabBar, Tab,
   CalendarChart,
   LineChart,
 } from '@subtract/ds'
-import type { Tag, WeightDataPoint, CalendarDataPoint, LineSeriesData } from '@subtract/ds'
+import type { Tag, CalendarDataPoint, LineSeriesData } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -98,45 +97,6 @@ const DEMO_TAGS: Tag[] = [
 ]
 
 const NEW_TAG_COLORS = ['#16a34a', '#ca8a04', '#0891b2', '#db2777', '#7c3aed', '#ea580c']
-
-// ─── Chart demo data — monthly payment volume ($B) ────────────────────────────
-// 24 months of payment processing data. Primary series = total volume ($B);
-// secondary series (sparse, quarterly) = decline rate % (improving over time
-// as fraud models mature). Derived = net settled volume = volume × (1 − rate%).
-
-function makeDate(monthsAgo: number) {
-  const d = new Date()
-  d.setMonth(d.getMonth() - monthsAgo)
-  d.setDate(1)
-  return d.toISOString().split('T')[0]
-}
-
-const CHART_DATA: WeightDataPoint[] = [
-  { date: makeDate(23), weight_lbs:  18.4, body_fat:  4.80 },
-  { date: makeDate(22), weight_lbs:  21.2, body_fat:  null  },
-  { date: makeDate(21), weight_lbs:  24.8, body_fat:  null  },
-  { date: makeDate(20), weight_lbs:  28.1, body_fat:  4.20 },
-  { date: makeDate(19), weight_lbs:  31.6, body_fat:  null  },
-  { date: makeDate(18), weight_lbs:  35.0, body_fat:  null  },
-  { date: makeDate(17), weight_lbs:  39.4, body_fat:  3.65 },
-  { date: makeDate(16), weight_lbs:  43.8, body_fat:  null  },
-  { date: makeDate(15), weight_lbs:  48.2, body_fat:  null  },
-  { date: makeDate(14), weight_lbs:  52.9, body_fat:  3.10 },
-  { date: makeDate(13), weight_lbs:  57.4, body_fat:  null  },
-  { date: makeDate(12), weight_lbs:  63.1, body_fat:  null  },
-  { date: makeDate(11), weight_lbs:  68.8, body_fat:  2.62 },
-  { date: makeDate(10), weight_lbs:  74.6, body_fat:  null  },
-  { date: makeDate(9),  weight_lbs:  81.3, body_fat:  null  },
-  { date: makeDate(8),  weight_lbs:  88.5, body_fat:  2.18 },
-  { date: makeDate(7),  weight_lbs:  96.2, body_fat:  null  },
-  { date: makeDate(6),  weight_lbs: 104.7, body_fat:  null  },
-  { date: makeDate(5),  weight_lbs: 113.8, body_fat:  1.74 },
-  { date: makeDate(4),  weight_lbs: 120.4, body_fat:  null  },
-  { date: makeDate(3),  weight_lbs: 128.1, body_fat:  null  },
-  { date: makeDate(2),  weight_lbs: 135.6, body_fat:  1.38 },
-  { date: makeDate(1),  weight_lbs: 142.9, body_fat:  null  },
-  { date: makeDate(0),  weight_lbs: 151.2, body_fat:  1.10 },
-]
 
 // ─── Calendar chart demo data — April 2026 daily sign-ups ────────────────────
 // Varied distribution so all four bubble sizes (r5/9/15/24) are represented.
@@ -603,63 +563,16 @@ function PageContent() {
         {activeTab === 'charts' && (
           <>
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>WeightChart</h2>
-              <p className={styles.chartIntro}>
-                SVG ribbon chart for a primary value with confidence band,
-                plus two optional overlay series. Demo: 24 months of payment
-                processing volume ($B) — total volume (ribbon), decline rate %
-                measured quarterly (dashed amber, sparse), and net settled
-                volume (green). Both series trend in opposite directions as
-                fraud models improve alongside growth.
-              </p>
-
-              <div className={styles.chartStack}>
-
-                {/* Full-height — expanded view */}
-                <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>height=200 — expanded</p>
-                  <div className={styles.chartWrap}>
-                    <WeightChart data={CHART_DATA} width={860} height={200} uid="preview-lg" />
-                  </div>
-                  <div className={styles.chartLegend}>
-                    <span className={styles.legendWeight}>Total volume ($B)</span>
-                    <span className={styles.legendLean}>Net settled volume</span>
-                    <span className={styles.legendFat}>Decline rate %</span>
-                  </div>
-                </div>
-
-                {/* Compact card height */}
-                <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>height=90 — card</p>
-                  <div className={styles.chartWrap}>
-                    <WeightChart data={CHART_DATA} width={440} height={90} uid="preview-sm" />
-                  </div>
-                </div>
-
-                {/* Primary series only */}
-                <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>primary series only (no overlay)</p>
-                  <div className={styles.chartWrap}>
-                    <WeightChart
-                      data={CHART_DATA.map(d => ({ ...d, body_fat: null }))}
-                      width={440}
-                      height={90}
-                      uid="preview-wo"
-                    />
-                  </div>
-                </div>
-
-              </div>
-            </section>
-
-            <section className={styles.section}>
               <h2 className={styles.sectionTitle}>LineChart</h2>
               <p className={styles.chartIntro}>
-                Multi-series line chart with smooth Catmull-Rom curves, 4px
+                Multi-series line chart with smooth Catmull-Rom curves, 3px
                 strokes, and a 6-layer CSS drop-shadow glow per the Figma spec.
                 Area fill uses a gradient + optional dot texture (single series
                 default). Right-side callout shows the series label and last
-                value. Y-axis ticks auto-computed to nice round intervals.
+                value formatted via <code>valueFormat</code>. Pass{' '}
+                <code>dates</code> for automatic month labels on the x-axis.
+                Y-axis always clips; pass <code>showYAxis=false</code> for
+                compact card usage.
               </p>
               <div className={styles.chartStack}>
 
@@ -685,6 +598,26 @@ function PageContent() {
                       width={720}
                       height={300}
                       uid="lc-b"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>dates prop — auto month labels, showYAxis=false</p>
+                  <div className={styles.chartWrap}>
+                    <LineChart
+                      series={[{
+                        id: 'daily',
+                        label: 'Sign-ups',
+                        color: '#16a34a',
+                        values: CALENDAR_DATA.map(d => d.value),
+                      }]}
+                      dates={CALENDAR_DATA.map(d => d.date)}
+                      showYAxis={false}
+                      valueFormat={(v) => String(v)}
+                      width={520}
+                      height={160}
+                      uid="lc-c"
                     />
                   </div>
                 </div>

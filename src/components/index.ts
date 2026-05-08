@@ -36,8 +36,6 @@ export {
 
 export { Sparkline } from './Sparkline'
 
-export { WeightChart } from './WeightChart'
-export type { WeightDataPoint, WeightChartProps } from './WeightChart'
 
 export { TabBar, Tab } from './Tabs'
 export type { TabBarProps, TabProps } from './Tabs'
