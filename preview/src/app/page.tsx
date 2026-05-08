@@ -10,8 +10,9 @@ import {
   ExpandPanel, ExpandPanelTrigger, ExpandPanelContent, ExpandPanelBody,
   WeightChart,
   TabBar, Tab,
+  CalendarChart,
 } from '@subtract/ds'
-import type { Tag, WeightDataPoint } from '@subtract/ds'
+import type { Tag, WeightDataPoint, CalendarDataPoint } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -134,6 +135,44 @@ const CHART_DATA: WeightDataPoint[] = [
   { date: makeDate(2),  weight_lbs: 135.6, body_fat:  1.38 },
   { date: makeDate(1),  weight_lbs: 142.9, body_fat:  null  },
   { date: makeDate(0),  weight_lbs: 151.2, body_fat:  1.10 },
+]
+
+// ─── Calendar chart demo data — April 2026 daily sign-ups ────────────────────
+// Varied distribution so all four bubble sizes (r5/9/15/24) are represented.
+// Max is Apr 15 (1 200); normalised thresholds: ≥900 → r24, ≥600 → r15,
+// ≥300 → r9, >0 → r5.
+
+const CALENDAR_DATA: CalendarDataPoint[] = [
+  { date: '2026-04-01', value:  950 },
+  { date: '2026-04-02', value:  650 },
+  { date: '2026-04-03', value:  620 },
+  { date: '2026-04-04', value:  320 },
+  { date: '2026-04-05', value:  260 },
+  { date: '2026-04-06', value:  710 },
+  { date: '2026-04-07', value: 1100 },
+  { date: '2026-04-08', value:  590 },
+  { date: '2026-04-09', value:  310 },
+  { date: '2026-04-10', value: 1050 },
+  { date: '2026-04-11', value:  280 },
+  { date: '2026-04-12', value:  270 },
+  { date: '2026-04-13', value:  140 },
+  { date: '2026-04-14', value:  110 },
+  { date: '2026-04-15', value: 1200 },
+  { date: '2026-04-16', value:  680 },
+  { date: '2026-04-17', value:  980 },
+  { date: '2026-04-18', value:  330 },
+  { date: '2026-04-19', value:  340 },
+  { date: '2026-04-20', value:  350 },
+  { date: '2026-04-21', value: 1010 },
+  { date: '2026-04-22', value:  320 },
+  { date: '2026-04-23', value:  310 },
+  { date: '2026-04-24', value:  260 },
+  { date: '2026-04-25', value:  170 },
+  { date: '2026-04-26', value: 1150 },
+  { date: '2026-04-27', value:  960 },
+  { date: '2026-04-28', value:  240 },
+  { date: '2026-04-29', value:  200 },
+  { date: '2026-04-30', value:  180 },
 ]
 
 // ─── Icon groups ──────────────────────────────────────────────────────────────
@@ -585,6 +624,47 @@ function PageContent() {
                       width={440}
                       height={90}
                       uid="preview-wo"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>CalendarChart</h2>
+              <p className={styles.chartIntro}>
+                Calendar bubble chart where each day is represented by one of
+                four discrete bubble sizes (r5 / r9 / r15 / r24) scaled to the
+                month&rsquo;s peak value. Larger bubbles carry a soft radial
+                glow; days outside the displayed month are shown as faint date
+                numbers. Demo: April 2026 daily sign-ups.
+              </p>
+              <div className={styles.chartStack}>
+
+                {/* Default width */}
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>width=360 — default</p>
+                  <div className={styles.calendarWrap}>
+                    <CalendarChart
+                      data={CALENDAR_DATA}
+                      month={new Date(2026, 3)}
+                      width={360}
+                      uid="cal-a"
+                    />
+                  </div>
+                </div>
+
+                {/* Wider, with alt color */}
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>width=480, color=&ldquo;$blue&rdquo;</p>
+                  <div className={styles.calendarWrap}>
+                    <CalendarChart
+                      data={CALENDAR_DATA}
+                      month={new Date(2026, 3)}
+                      color="#0035ff"
+                      width={480}
+                      uid="cal-b"
                     />
                   </div>
                 </div>

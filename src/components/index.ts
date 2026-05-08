@@ -44,3 +44,6 @@ export type { TabBarProps, TabProps } from './Tabs'
 
 export { Skeleton } from './Skeleton'
 export type { SkeletonProps } from './Skeleton'
+
+export { CalendarChart } from './CalendarChart'
+export type { CalendarDataPoint, CalendarChartProps } from './CalendarChart'

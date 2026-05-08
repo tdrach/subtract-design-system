@@ -412,6 +412,18 @@
   svg { max-width: 100%; }
 }
 
+// CalendarChart demo — no horizontal padding, glow overflows containment
+.calendarWrap {
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  padding: $space-20 0;
+  overflow: visible;
+  display: inline-block;
+
+  svg { display: block; }
+}
+
 .chartLegend {
   display: flex;
   gap: $space-16;
