@@ -10,8 +10,9 @@ const ORANGE   = '#FF6200'              // default bubble color
 
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const
 
-// Four discrete radii matching the Figma spec (px)
-const RADII = [5, 9, 15, 24] as const
+// Four discrete radii — full and compact variants
+const RADII         = [5, 9, 15, 24] as const
+const RADII_COMPACT = [3, 6, 10, 16] as const
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -29,6 +30,11 @@ export interface CalendarChartProps {
   /** Total SVG width in px. Defaults to 360. */
   width?: number
   /**
+   * Compact / sparkline mode: hides day-of-week headers, tighter cell
+   * height, and smaller bubble radii. Use for card previews.
+   */
+  compact?: boolean
+  /**
    * Unique suffix appended to SVG gradient IDs.
    * Required when rendering more than one CalendarChart on the same page.
    */
@@ -42,6 +48,7 @@ export function CalendarChart({
   month,
   color = ORANGE,
   width = 360,
+  compact = false,
   uid = 'a',
 }: CalendarChartProps) {
   const ref  = month ?? new Date()
@@ -65,13 +72,14 @@ export function CalendarChart({
       if (v > 0) monthVals.push(v)
     }
     const maxVal = Math.max(...monthVals, 1)
+    const radii  = compact ? RADII_COMPACT : RADII
 
     function getRadius(value: number): number {
       const n = value / maxVal
-      if (n >= 0.75) return RADII[3]
-      if (n >= 0.50) return RADII[2]
-      if (n >= 0.25) return RADII[1]
-      if (n >  0)    return RADII[0]
+      if (n >= 0.75) return radii[3]
+      if (n >= 0.50) return radii[2]
+      if (n >= 0.25) return radii[1]
+      if (n >  0)    return radii[0]
       return 0
     }
 
@@ -79,8 +87,8 @@ export function CalendarChart({
     const totalSlots = firstDow + daysInMonth
     const rows       = Math.ceil(totalSlots / 7)
     const CELL_W     = width / 7
-    const CELL_H     = Math.max(CELL_W, 48)
-    const HDR_H      = 28
+    const CELL_H     = compact ? Math.max(CELL_W, 28) : Math.max(CELL_W, 48)
+    const HDR_H      = compact ? 0 : 28
 
     type Cell = {
       cx: number; cy: number; day: number; inMonth: boolean; value: number
@@ -132,8 +140,8 @@ export function CalendarChart({
         </filter>
       </defs>
 
-      {/* ── Day-of-week column headers ─────────────────────────────────────── */}
-      {DAYS.map((d, i) => (
+      {/* ── Day-of-week column headers (hidden in compact mode) ───────────── */}
+      {!compact && DAYS.map((d, i) => (
         <text
           key={d}
           x={i * (width / 7) + (width / 7) / 2}
@@ -171,6 +179,7 @@ export function CalendarChart({
       {/* ── Bubbles and out-of-month date numbers ─────────────────────────── */}
       {cells.map((c, i) => {
         if (!c.inMonth) {
+          if (compact) return null
           return (
             <text
               key={`oom-${i}`}
