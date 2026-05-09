@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useCallback } from 'react'
-import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
@@ -59,6 +59,11 @@ export interface CalendarChartProps {
    * Required when rendering more than one CalendarChart on the same page.
    */
   uid?: string
+  /**
+   * Called when an in-month day cell is clicked. Receives 'YYYY-MM-DD'.
+   * When provided, cells show a pointer cursor.
+   */
+  onDayClick?: (date: string) => void
 }
 
 type TooltipData = {
@@ -78,6 +83,7 @@ export function CalendarChart({
   compact = false,
   valueFormat,
   uid = 'a',
+  onDayClick,
 }: CalendarChartProps) {
   const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
   const ref  = month ?? new Date()
@@ -88,6 +94,8 @@ export function CalendarChart({
 
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
     useTooltip<TooltipData>()
+
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
 
   // ── Computed layout ────────────────────────────────────────────────────────
 
@@ -183,7 +191,7 @@ export function CalendarChart({
   }
 
   return (
-    <div style={{ position: 'relative', width, display: 'inline-block' }}>
+    <div ref={containerRef} style={{ position: 'relative', width, display: 'inline-block' }}>
       <svg
         width={width}
         height={svgH}
@@ -268,16 +276,17 @@ export function CalendarChart({
                   }
                 />
               )}
-              {/* Hit area — full cell, captures hover even on empty days */}
+              {/* Hit area — full cell, captures hover + click */}
               <rect
                 x={c.cx - CELL_W / 2}
                 y={c.cy - CELL_H / 2}
                 width={CELL_W}
                 height={CELL_H}
                 fill="transparent"
-                style={{ cursor: c.value > 0 ? 'default' : 'default' }}
+                style={{ cursor: onDayClick ? 'pointer' : 'default' }}
                 onMouseMove={(e) => handleCellEnter(e, c)}
                 onMouseLeave={hideTooltip}
+                onClick={() => c.dateStr && onDayClick?.(c.dateStr)}
               />
             </g>
           )
@@ -286,7 +295,7 @@ export function CalendarChart({
 
       {/* ── Tooltip ────────────────────────────────────────────────────────── */}
       {tooltipOpen && tooltipData && (
-        <TooltipWithBounds
+        <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
           style={TOOLTIP_STYLES}
@@ -297,7 +306,7 @@ export function CalendarChart({
           <div style={{ fontWeight: 700, fontSize: 15 }}>
             {formatVal(tooltipData.value)}
           </div>
-        </TooltipWithBounds>
+        </TooltipInPortal>
       )}
     </div>
   )
