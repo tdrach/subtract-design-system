@@ -449,12 +449,12 @@
 
 .legendWeight {
   @extend %legendDot;
-  &::before { background: #0035ff; opacity: 0.6; }
+  &::before { background: #11A0FF; opacity: 0.6; }
 }
 
 .legendLean {
   @extend %legendDot;
-  &::before { background: #16a34a; opacity: 0.6; }
+  &::before { background: #06D021; opacity: 0.6; }
 }
 
 .legendFat {

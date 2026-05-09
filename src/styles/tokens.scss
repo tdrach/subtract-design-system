@@ -16,8 +16,10 @@ $muted-dark:  rgba(12, 12, 12, 0.48);   // secondary text on light
 $muted-light: rgba(255, 255, 255, 0.7); // secondary text on dark
 
 // Interactive
-$blue:  #0035ff;  // primary CTA, links, focus rings
-$error: #c13535;  // error states
+$blue:    #11A0FF;  // primary CTA, links, focus rings
+$error:   #FF2111;  // error states
+$green:   #06D021;  // success, positive states
+$warning: #FFA811;  // warning states
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 // Indivisible by Connary Fagen — loaded via next/font/local in the consuming app.

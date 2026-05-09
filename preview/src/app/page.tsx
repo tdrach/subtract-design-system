@@ -32,8 +32,10 @@ const colors = [
   { name: '$light',       value: '#f3f3f3',                  dark: false },
   { name: '$white',       value: '#ffffff',                  dark: false },
   { name: '$demure',      value: '#dcddd7',                  dark: false },
-  { name: '$blue',        value: '#0035ff',                  dark: true  },
-  { name: '$error',       value: '#c13535',                  dark: true  },
+  { name: '$blue',        value: '#11A0FF',                  dark: true  },
+  { name: '$error',       value: '#FF2111',                  dark: true  },
+  { name: '$green',       value: '#06D021',                  dark: true  },
+  { name: '$warning',     value: '#FFA811',                  dark: false },
   { name: '$ink-dark',    value: '#0c0c0c',                  dark: true  },
   { name: '$ink-light',   value: '#ffffff',                  dark: false, outline: true },
   { name: '$muted-dark',  value: 'rgba(12, 12, 12, 0.48)',   dark: true  },
@@ -144,13 +146,13 @@ const LINE_SINGLE: LineSeriesData[] = [
   {
     id: 'rev',
     label: 'Revenue',
-    color: '#16a34a',
+    color: '#06D021',
     values: [540, 505, 420, 488, 652, 568, 496],
   },
 ]
 
 const LINE_MULTI: LineSeriesData[] = [
-  { id: 'la', label: 'Los Angeles', color: '#16a34a', values: [510, 615, 548, 628, 488, 592, 545] },
+  { id: 'la', label: 'Los Angeles', color: '#06D021', values: [510, 615, 548, 628, 488, 592, 545] },
   { id: 'ny', label: 'New York',    color: '#38bdf8', values: [400, 462, 378, 448, 492, 418, 430] },
   { id: 'ca', label: 'Canada',      color: '#7c3aed', values: [290, 312, 278, 302, 332, 294, 300] },
   { id: 'cn', label: 'China',       color: '#f59e0b', values: [185, 212, 172, 195, 228, 184, 198] },
@@ -609,7 +611,7 @@ function PageContent() {
                       series={[{
                         id: 'daily',
                         label: 'Sign-ups',
-                        color: '#16a34a',
+                        color: '#06D021',
                         values: CALENDAR_DATA.map(d => d.value),
                       }]}
                       dates={CALENDAR_DATA.map(d => d.date)}
@@ -656,7 +658,7 @@ function PageContent() {
                     <CalendarChart
                       data={CALENDAR_DATA}
                       month={new Date(2026, 3)}
-                      color="#0035ff"
+                      color="#11A0FF"
                       width={480}
                       uid="cal-b"
                     />
