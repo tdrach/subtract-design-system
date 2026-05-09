@@ -1,6 +1,14 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
+import { scaleLinear } from '@visx/scale'
+import { LinePath, AreaClosed } from '@visx/shape'
+import { curveCatmullRom } from '@visx/curve'
+import { GridRows } from '@visx/grid'
+import { LinearGradient } from '@visx/gradient'
+import { PatternCircles } from '@visx/pattern'
+import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
 
@@ -10,43 +18,29 @@ const BLACK = '#0c0c0c'              // callout values
 
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
-const Y_LABEL_W  = 52   // px reserved for y-axis labels (0 when showYAxis=false)
-const RIGHT_W    = 130  // px reserved for right-side callouts
-const CIRCLE_R   = 6    // end-of-line hollow circle radius
-const DOT_PITCH  = 7    // dot texture grid pitch (px)
-const DOT_R      = 0.9  // dot texture circle radius
-const X_AXIS_H   = 24   // px reserved for x-axis labels when present
-const PADDING_TOP = 10  // px headroom so the top tick label isn't clipped
+const Y_LABEL_W   = 52    // px reserved for y-axis labels (0 when showYAxis=false)
+const RIGHT_W     = 130   // px reserved for right-side callouts
+const CIRCLE_R    = 6     // end-of-line hollow circle radius
+const DOT_PITCH   = 7     // dot texture grid pitch (px)
+const DOT_R       = 0.9   // dot texture circle radius
+const X_AXIS_H    = 24    // px reserved for x-axis labels when present
+const PADDING_TOP = 10    // px headroom so the top tick label isn't clipped
+
+// ─── Tooltip styles ───────────────────────────────────────────────────────────
+
+const TOOLTIP_STYLES: React.CSSProperties = {
+  ...defaultStyles,
+  background: '#0c0c0c',
+  color: '#fff',
+  padding: '8px 12px',
+  borderRadius: 8,
+  fontSize: 13,
+  fontFamily: 'inherit',
+  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+  lineHeight: 1,
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function f(n: number) { return n.toFixed(2) }
-
-/** Catmull-Rom → cubic Bézier smooth path */
-function smoothCurve(pts: { x: number; y: number }[]): string {
-  if (pts.length < 2) return ''
-  const d: string[] = [`M ${f(pts[0].x)},${f(pts[0].y)}`]
-  for (let i = 0; i < pts.length - 1; i++) {
-    const p0 = pts[Math.max(0, i - 1)]
-    const p1 = pts[i]
-    const p2 = pts[i + 1]
-    const p3 = pts[Math.min(pts.length - 1, i + 2)]
-    const cp1x = p1.x + (p2.x - p0.x) / 6
-    const cp1y = p1.y + (p2.y - p0.y) / 6
-    const cp2x = p2.x - (p3.x - p1.x) / 6
-    const cp2y = p2.y - (p3.y - p1.y) / 6
-    d.push(`C ${f(cp1x)},${f(cp1y)} ${f(cp2x)},${f(cp2y)} ${f(p2.x)},${f(p2.y)}`)
-  }
-  return d.join(' ')
-}
-
-/** Closed area path: smooth line → drop to baseline → close */
-function areaPath(pts: { x: number; y: number }[], baseY: number): string {
-  if (pts.length < 2) return ''
-  const last  = pts[pts.length - 1]
-  const first = pts[0]
-  return `${smoothCurve(pts)} L ${f(last.x)},${f(baseY)} L ${f(first.x)},${f(baseY)} Z`
-}
 
 /** Parse #rrggbb → [r, g, b] */
 function hexRgb(hex: string): [number, number, number] {
@@ -56,7 +50,6 @@ function hexRgb(hex: string): [number, number, number] {
 
 /**
  * Builds a CSS `filter` string that replicates the 6-layer Figma drop-shadow.
- * Opacity values decoded from hex alpha: #168F3F24 → 0x24/255 ≈ 0.14, etc.
  */
 function lineGlow(color: string): string {
   const [r, g, b] = hexRgb(color)
@@ -72,8 +65,7 @@ function lineGlow(color: string): string {
 }
 
 /**
- * Compute y-axis tick values. Always ensures the last tick ≥ dataMax
- * so smooth curves never exceed the clip boundary.
+ * Compute y-axis tick values. Guarantees last tick ≥ dataMax.
  */
 function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[] {
   const range    = dataMax - dataMin || 1
@@ -87,14 +79,12 @@ function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[]
   for (let v = lo; v < dataMax + niceStep; v += niceStep) {
     ticks.push(Math.round(v))
   }
-  // Guard: ensure last tick always covers dataMax (floating-point safety)
   if (ticks[ticks.length - 1] < dataMax) ticks.push(Math.round(ticks[ticks.length - 1] + niceStep))
   return ticks
 }
 
 /**
- * Convert an array of 'YYYY-MM-DD' dates into sparse x-axis labels.
- * Only the first occurrence of each month gets a label; the rest are empty.
+ * Convert 'YYYY-MM-DD' dates into sparse month labels for the x-axis.
  */
 function datesToMonthLabels(dates: string[]): string[] {
   let lastMonth = ''
@@ -102,6 +92,13 @@ function datesToMonthLabels(dates: string[]): string[] {
     const month = new Date(d + 'T12:00:00').toLocaleString('en', { month: 'short' })
     if (month !== lastMonth) { lastMonth = month; return month }
     return ''
+  })
+}
+
+/** Format a date string for the tooltip */
+function formatTooltipDate(dateStr: string): string {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en', {
+    month: 'short', day: 'numeric', year: 'numeric',
   })
 }
 
@@ -121,8 +118,7 @@ export interface LineChartProps {
   series: LineSeriesData[]
   /**
    * ISO date strings ('YYYY-MM-DD'), one per data point.
-   * When provided, the x-axis automatically shows month labels at each
-   * month boundary. Supersedes `xLabels`.
+   * When provided, the x-axis shows month labels and the tooltip shows the date.
    */
   dates?: string[]
   /** Explicit x-axis tick labels (overridden by `dates` if both are set). */
@@ -137,7 +133,7 @@ export interface LineChartProps {
    */
   showYAxis?: boolean
   /**
-   * Format the last value shown in the right-side callout.
+   * Format values shown in the tooltip and the right-side callout.
    * Defaults to `v.toLocaleString()`.
    */
   valueFormat?: (v: number) => string
@@ -166,12 +162,18 @@ export function LineChart({
   dots,
   uid = 'a',
 }: LineChartProps) {
-  const showDots   = dots ?? series.length === 1
-  const formatVal  = valueFormat ?? ((v: number) => v.toLocaleString())
-  // Effective x-axis labels: dates → sparse month labels; else explicit labels
-  const xLabels    = dates?.length ? datesToMonthLabels(dates) : xLabelsProp
-  const hasXAxis   = !!xLabels?.length
-  const yLabelW    = showYAxis ? Y_LABEL_W : 0
+  const showDots  = dots ?? series.length === 1
+  const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
+  const xLabels   = dates?.length ? datesToMonthLabels(dates) : xLabelsProp
+  const hasXAxis  = !!xLabels?.length
+  const yLabelW   = showYAxis ? Y_LABEL_W : 0
+
+  // ── Tooltip ────────────────────────────────────────────────────────────────
+
+  const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
+    useTooltip<number>()
+
+  // ── Computed layout ────────────────────────────────────────────────────────
 
   const computed = useMemo(() => {
     if (!series.length || !series[0].values.length) return null
@@ -188,177 +190,277 @@ export function LineChart({
     const chartW = width  - yLabelW - RIGHT_W
     const chartH = height - (hasXAxis ? X_AXIS_H : 0) - PADDING_TOP
 
-    const scaleX = (i: number) => yLabelW + (i / Math.max(nPts - 1, 1)) * chartW
-    const scaleY = (v: number) => PADDING_TOP + chartH - ((v - yMin) / (yMax - yMin)) * chartH
+    const xScale = scaleLinear({ domain: [0, Math.max(nPts - 1, 1)], range: [yLabelW, yLabelW + chartW] })
+    const yScale = scaleLinear({ domain: [yMin, yMax], range: [PADDING_TOP + chartH, PADDING_TOP] })
 
-    const seriesGeo = series.map(s => {
-      const pts  = s.values.map((v, i) => ({ x: scaleX(i), y: scaleY(v) }))
-      const last = pts[pts.length - 1]
+    // End-point callout geometry
+    const callouts = series.map(s => {
+      const lastVal = s.values[s.values.length - 1]
       return {
         ...s,
-        pts,
-        linePath: smoothCurve(pts),
-        fillPath: areaPath(pts, chartH),
-        endX: last.x,
-        endY: last.y,
-        lastVal: s.values[s.values.length - 1],
+        endX: xScale(nPts - 1),
+        endY: yScale(lastVal),
+        lastVal,
       }
     })
 
-    const tickGeo = ticks.map(v => ({
-      v,
-      y: scaleY(v),
-      label: v.toLocaleString(),
-    }))
-
+    // X-axis label positions
     const xLabelGeo = xLabels?.map((label, i) => ({
       label,
-      x: scaleX(i),
-      y: chartH + X_AXIS_H - 4,
+      x: xScale(i),
+      y: PADDING_TOP + chartH + X_AXIS_H - 4,
     }))
 
-    return { seriesGeo, tickGeo, xLabelGeo, chartW, chartH }
+    return { nPts, ticks, yMin, yMax, chartW, chartH, xScale, yScale, callouts, xLabelGeo }
   }, [series, xLabels, width, height, yLabelW, hasXAxis])
+
+  // ── Mouse interaction ─────────────────────────────────────────────────────
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<SVGRectElement>) => {
+    if (!computed) return
+    const { nPts, xScale, chartW } = computed
+    const point = localPoint(e.currentTarget.ownerSVGElement!, e)
+    if (!point) return
+
+    const clampedX = Math.max(yLabelW, Math.min(yLabelW + chartW, point.x))
+    const fraction = (clampedX - yLabelW) / chartW
+    const index    = Math.max(0, Math.min(nPts - 1, Math.round(fraction * (nPts - 1))))
+    const snapX    = xScale(index)
+
+    showTooltip({ tooltipData: index, tooltipLeft: snapX, tooltipTop: point.y })
+  }, [computed, yLabelW, showTooltip])
 
   if (!computed) return null
 
-  const { seriesGeo, tickGeo, xLabelGeo, chartW, chartH } = computed
+  const { nPts, ticks, chartW, chartH, xScale, yScale, callouts, xLabelGeo } = computed
+  const glowFilterId = `lc-glow-${uid}`
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      style={{ display: 'block', overflow: 'visible' }}
-      aria-hidden="true"
-    >
-      <defs>
-        {/* Per-series gradient area fills */}
-        {seriesGeo.map(s => (
-          <linearGradient key={s.id} id={`lc-fill-${uid}-${s.id}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={s.color} stopOpacity={showDots ? 0.14 : series.length > 1 ? 0.07 : 0.12} />
-            <stop offset="100%" stopColor={s.color} stopOpacity={0} />
-          </linearGradient>
-        ))}
+    <div style={{ position: 'relative', width, height: 'fit-content' }}>
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 ${width} ${height}`}
+        style={{ display: 'block', overflow: 'visible' }}
+        aria-hidden="true"
+      >
+        <defs>
+          {/* Per-series gradient area fills */}
+          {series.map(s => (
+            <LinearGradient
+              key={s.id}
+              id={`lc-fill-${uid}-${s.id}`}
+              from={s.color}
+              to={s.color}
+              fromOpacity={showDots ? 0.14 : series.length > 1 ? 0.07 : 0.12}
+              toOpacity={0}
+              vertical
+            />
+          ))}
 
-        {/* Dot texture patterns */}
-        {showDots && seriesGeo.map(s => (
-          <pattern
-            key={s.id}
-            id={`lc-dots-${uid}-${s.id}`}
-            x="0" y="0" width={DOT_PITCH} height={DOT_PITCH}
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx={DOT_PITCH / 2} cy={DOT_PITCH / 2} r={DOT_R} fill={s.color} opacity={0.20} />
-          </pattern>
-        ))}
+          {/* Dot texture patterns */}
+          {showDots && series.map(s => (
+            <PatternCircles
+              key={s.id}
+              id={`lc-dots-${uid}-${s.id}`}
+              width={DOT_PITCH}
+              height={DOT_PITCH}
+              radius={DOT_R}
+              fill={s.color}
+              complement
+            />
+          ))}
 
-        {/*
-          Clip strictly to the chart drawing area.
-          Wrapping lines in a <g clipPath> means the drop-shadow filter
-          is also clipped, so glows can't bleed above the top grid line
-          or below the bottom grid line.
-        */}
-        <clipPath id={`lc-clip-${uid}`}>
-          <rect x={yLabelW} y={PADDING_TOP} width={chartW} height={chartH} />
-        </clipPath>
-      </defs>
+          {/* Clip to chart drawing area — keeps glow filter inside bounds */}
+          <clipPath id={`lc-clip-${uid}`}>
+            <rect x={yLabelW} y={PADDING_TOP} width={chartW} height={chartH} />
+          </clipPath>
+        </defs>
 
-      {/* ── Y-axis: grid lines + labels ───────────────────────────────────── */}
-      {showYAxis && tickGeo.map(({ v, y, label }) => (
-        <g key={v}>
-          <line
-            x1={yLabelW} y1={y}
-            x2={yLabelW + chartW} y2={y}
-            stroke={GRID} strokeWidth={1}
+        {/* ── Y-axis: grid lines + labels ─────────────────────────────────── */}
+        {showYAxis && (
+          <GridRows
+            scale={yScale}
+            width={chartW}
+            left={yLabelW}
+            stroke={GRID}
+            strokeWidth={1}
+            tickValues={ticks}
           />
+        )}
+        {showYAxis && ticks.map(v => (
           <text
-            x={yLabelW - 8} y={y + 4}
+            key={v}
+            x={yLabelW - 8}
+            y={yScale(v) + 4}
             textAnchor="end"
-            fontSize={11} fill={MUTED} fontFamily="inherit"
+            fontSize={11}
+            fill={MUTED}
+            fontFamily="inherit"
           >
-            {label} -
+            {v.toLocaleString()} -
           </text>
-        </g>
-      ))}
+        ))}
 
-      {/* ── Area fills — rendered back-to-front ───────────────────────────── */}
-      {[...seriesGeo].reverse().map(s => (
-        <g key={`fill-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
-          <path d={s.fillPath} fill={`url(#lc-fill-${uid}-${s.id})`} />
-          {showDots && <path d={s.fillPath} fill={`url(#lc-dots-${uid}-${s.id})`} />}
-        </g>
-      ))}
-
-      {/*
-        ── Lines + glow — each wrapped in its own clip group ─────────────────
-        Applying clipPath to the <g> means the CSS drop-shadow filter rendered
-        on the inner <path> is clipped by the group boundary, preventing glows
-        from escaping above yMax or below yMin.
-      */}
-      {[...seriesGeo].reverse().map(s => (
-        <g key={`line-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
-          <path
-            d={s.linePath}
-            stroke={s.color}
-            strokeWidth={3}
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ filter: lineGlow(s.color) }}
-          />
-        </g>
-      ))}
-
-      {/* ── End-point hollow circles (outside clip — intentionally) ───────── */}
-      {seriesGeo.map(s => (
-        <circle
-          key={`dot-${s.id}`}
-          cx={s.endX}
-          cy={s.endY}
-          r={CIRCLE_R}
-          fill="white"
-          stroke={s.color}
-          strokeWidth={2.5}
-        />
-      ))}
-
-      {/* ── Right-side callouts: series label + last value ────────────────── */}
-      {seriesGeo.map(s => {
-        const x = s.endX + CIRCLE_R + 10
-        return (
-          <g key={`callout-${s.id}`}>
-            <text
-              x={x} y={s.endY - 8}
-              fontSize={10} fontWeight={600} letterSpacing="0.06em"
-              fill={MUTED} fontFamily="inherit"
-            >
-              {s.label.toUpperCase()}
-            </text>
-            <text
-              x={x} y={s.endY + 18}
-              fontSize={22} fontWeight={700} letterSpacing="-0.03em"
-              fill={BLACK} fontFamily="inherit"
-            >
-              {formatVal(s.lastVal)}
-            </text>
+        {/* ── Area fills — rendered back-to-front ──────────────────────────── */}
+        {[...series].reverse().map(s => (
+          <g key={`fill-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
+            <AreaClosed
+              data={s.values}
+              x={(_, i) => xScale(i)}
+              y={v => yScale(v)}
+              yScale={yScale}
+              curve={curveCatmullRom}
+              fill={`url(#lc-fill-${uid}-${s.id})`}
+            />
+            {showDots && (
+              <AreaClosed
+                data={s.values}
+                x={(_, i) => xScale(i)}
+                y={v => yScale(v)}
+                yScale={yScale}
+                curve={curveCatmullRom}
+                fill={`url(#lc-dots-${uid}-${s.id})`}
+              />
+            )}
           </g>
-        )
-      })}
+        ))}
 
-      {/* ── X-axis labels — empty strings (from date gaps) are skipped ─────── */}
-      {xLabelGeo?.map(({ label, x, y }, i) =>
-        label ? (
-          <text
-            key={i}
-            x={x} y={y}
-            textAnchor="middle"
-            fontSize={12} fill={MUTED} fontFamily="inherit"
-          >
-            {label}
-          </text>
-        ) : null
+        {/* ── Lines + glow — each in its own clip group ────────────────────── */}
+        {[...series].reverse().map(s => (
+          <g key={`line-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
+            <LinePath
+              data={s.values}
+              x={(_, i) => xScale(i)}
+              y={v => yScale(v)}
+              curve={curveCatmullRom}
+              stroke={s.color}
+              strokeWidth={3}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ filter: lineGlow(s.color) }}
+            />
+          </g>
+        ))}
+
+        {/* ── Crosshair ────────────────────────────────────────────────────── */}
+        {tooltipOpen && tooltipLeft !== undefined && (
+          <line
+            x1={tooltipLeft}
+            x2={tooltipLeft}
+            y1={PADDING_TOP}
+            y2={PADDING_TOP + chartH}
+            stroke={MUTED}
+            strokeWidth={1}
+            strokeDasharray="3 3"
+            pointerEvents="none"
+          />
+        )}
+
+        {/* ── Hover dots on each series ─────────────────────────────────────── */}
+        {tooltipOpen && tooltipData !== undefined && series.map(s => (
+          <circle
+            key={`hover-${s.id}`}
+            cx={xScale(tooltipData)}
+            cy={yScale(s.values[tooltipData])}
+            r={4}
+            fill={s.color}
+            stroke="white"
+            strokeWidth={2}
+            pointerEvents="none"
+          />
+        ))}
+
+        {/* ── End-point hollow circles (outside clip — intentionally) ──────── */}
+        {callouts.map(s => (
+          <circle
+            key={`dot-${s.id}`}
+            cx={s.endX}
+            cy={s.endY}
+            r={CIRCLE_R}
+            fill="white"
+            stroke={s.color}
+            strokeWidth={2.5}
+          />
+        ))}
+
+        {/* ── Right-side callouts: series label + last value ───────────────── */}
+        {callouts.map(s => {
+          const x = s.endX + CIRCLE_R + 10
+          return (
+            <g key={`callout-${s.id}`}>
+              <text
+                x={x} y={s.endY - 8}
+                fontSize={10} fontWeight={600} letterSpacing="0.06em"
+                fill={MUTED} fontFamily="inherit"
+              >
+                {s.label.toUpperCase()}
+              </text>
+              <text
+                x={x} y={s.endY + 18}
+                fontSize={22} fontWeight={700} letterSpacing="-0.03em"
+                fill={BLACK} fontFamily="inherit"
+              >
+                {formatVal(s.lastVal)}
+              </text>
+            </g>
+          )
+        })}
+
+        {/* ── X-axis labels ────────────────────────────────────────────────── */}
+        {xLabelGeo?.map(({ label, x, y }, i) =>
+          label ? (
+            <text
+              key={i}
+              x={x} y={y}
+              textAnchor="middle"
+              fontSize={12} fill={MUTED} fontFamily="inherit"
+            >
+              {label}
+            </text>
+          ) : null
+        )}
+
+        {/* ── Mouse overlay — must be last so it's on top ──────────────────── */}
+        <rect
+          x={yLabelW}
+          y={PADDING_TOP}
+          width={chartW}
+          height={chartH}
+          fill="transparent"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={hideTooltip}
+        />
+      </svg>
+
+      {/* ── Tooltip ──────────────────────────────────────────────────────────── */}
+      {tooltipOpen && tooltipData !== undefined && (
+        <TooltipWithBounds
+          left={tooltipLeft}
+          top={tooltipTop}
+          style={TOOLTIP_STYLES}
+        >
+          {dates?.[tooltipData] && (
+            <div style={{ fontSize: 11, opacity: 0.5, marginBottom: 8, letterSpacing: '0.02em' }}>
+              {formatTooltipDate(dates[tooltipData])}
+            </div>
+          )}
+          {series.map(s => (
+            <div
+              key={s.id}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}
+            >
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: s.color, flexShrink: 0 }} />
+              <span style={{ opacity: 0.55, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                {s.label}
+              </span>
+              <span style={{ fontWeight: 700, fontSize: 13, marginLeft: 'auto', paddingLeft: 16 }}>
+                {formatVal(s.values[tooltipData])}
+              </span>
+            </div>
+          ))}
+        </TooltipWithBounds>
       )}
-    </svg>
+    </div>
   )
 }

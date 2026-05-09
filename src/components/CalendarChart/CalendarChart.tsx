@@ -1,6 +1,8 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
+import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
 
@@ -13,6 +15,20 @@ const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const
 // Four discrete radii — full and compact variants
 const RADII         = [5, 9, 15, 24] as const
 const RADII_COMPACT = [3, 6, 10, 16] as const
+
+// ─── Tooltip styles ───────────────────────────────────────────────────────────
+
+const TOOLTIP_STYLES: React.CSSProperties = {
+  ...defaultStyles,
+  background: '#0c0c0c',
+  color: '#fff',
+  padding: '8px 12px',
+  borderRadius: 8,
+  fontSize: 13,
+  fontFamily: 'inherit',
+  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+  lineHeight: 1.4,
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -35,10 +51,21 @@ export interface CalendarChartProps {
    */
   compact?: boolean
   /**
-   * Unique suffix appended to SVG gradient IDs.
+   * Format the tooltip value. Defaults to `v.toLocaleString()`.
+   */
+  valueFormat?: (v: number) => string
+  /**
+   * Unique suffix appended to SVG filter IDs.
    * Required when rendering more than one CalendarChart on the same page.
    */
   uid?: string
+}
+
+type TooltipData = {
+  date: string
+  value: number
+  cx: number
+  cy: number
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -49,18 +76,25 @@ export function CalendarChart({
   color = ORANGE,
   width = 360,
   compact = false,
+  valueFormat,
   uid = 'a',
 }: CalendarChartProps) {
+  const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
   const ref  = month ?? new Date()
   const year = ref.getFullYear()
   const mon  = ref.getMonth()
 
+  // ── Tooltip ────────────────────────────────────────────────────────────────
+
+  const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
+    useTooltip<TooltipData>()
+
+  // ── Computed layout ────────────────────────────────────────────────────────
+
   const computed = useMemo(() => {
-    // Date → value lookup
     const lookup = new Map(data.map(d => [d.date, d.value]))
 
-    // Calendar bounds
-    const firstDow      = new Date(year, mon, 1).getDay()       // 0 = Sun
+    const firstDow      = new Date(year, mon, 1).getDay()
     const daysInMonth   = new Date(year, mon + 1, 0).getDate()
     const daysInPrevMon = new Date(year, mon, 0).getDate()
 
@@ -83,7 +117,6 @@ export function CalendarChart({
       return 0
     }
 
-    // Grid geometry
     const totalSlots = firstDow + daysInMonth
     const rows       = Math.ceil(totalSlots / 7)
     const CELL_W     = width / 7
@@ -92,6 +125,7 @@ export function CalendarChart({
 
     type Cell = {
       cx: number; cy: number; day: number; inMonth: boolean; value: number
+      dateStr: string | null
     }
 
     const cells: Cell[] = []
@@ -102,113 +136,169 @@ export function CalendarChart({
       const cy  = HDR_H + row * CELL_H + CELL_H / 2
 
       if (slot < firstDow) {
-        // Previous month overflow
         const day = daysInPrevMon - firstDow + slot + 1
-        cells.push({ cx, cy, day, inMonth: false, value: 0 })
+        cells.push({ cx, cy, day, inMonth: false, value: 0, dateStr: null })
       } else if (slot < firstDow + daysInMonth) {
         const day     = slot - firstDow + 1
         const dateStr = `${year}-${String(mon + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
         const value   = lookup.get(dateStr) ?? 0
-        cells.push({ cx, cy, day, inMonth: true, value })
+        cells.push({ cx, cy, day, inMonth: true, value, dateStr })
       } else {
-        // Next month overflow
         const day = slot - firstDow - daysInMonth + 1
-        cells.push({ cx, cy, day, inMonth: false, value: 0 })
+        cells.push({ cx, cy, day, inMonth: false, value: 0, dateStr: null })
       }
     }
 
-    const svgH = HDR_H + rows * CELL_H
-    return { cells, getRadius, svgH }
-  }, [data, year, mon, width])
+    const svgH   = HDR_H + rows * CELL_H
+    const CELL_W_out = CELL_W
+    const CELL_H_out = CELL_H
+    return { cells, getRadius, svgH, CELL_W: CELL_W_out, CELL_H: CELL_H_out }
+  }, [data, year, mon, width, compact])
 
-  const { cells, getRadius, svgH } = computed
+  const { cells, getRadius, svgH, CELL_W, CELL_H } = computed
   const glowId = `cc-glow-${uid}`
 
+  // ── Mouse interaction ─────────────────────────────────────────────────────
+
+  const handleCellEnter = useCallback((
+    e: React.MouseEvent<SVGRectElement>,
+    cell: { dateStr: string | null; value: number; cx: number; cy: number }
+  ) => {
+    if (!cell.dateStr || cell.value === 0) return
+    const point = localPoint(e.currentTarget.ownerSVGElement!, e)
+    if (!point) return
+    showTooltip({
+      tooltipData: { date: cell.dateStr, value: cell.value, cx: cell.cx, cy: cell.cy },
+      tooltipLeft: point.x,
+      tooltipTop:  point.y,
+    })
+  }, [showTooltip])
+
+  // ── Tooltip date label ────────────────────────────────────────────────────
+
+  function tooltipDateLabel(dateStr: string) {
+    return new Date(dateStr + 'T12:00:00').toLocaleDateString('en', {
+      weekday: 'short', month: 'short', day: 'numeric',
+    })
+  }
+
   return (
-    <svg
-      width={width}
-      height={svgH}
-      viewBox={`0 0 ${width} ${svgH}`}
-      style={{ display: 'block', overflow: 'visible' }}
-      aria-hidden="true"
-    >
-      <defs>
-        {/* Gaussian blur filter for the glow — feGaussianBlur gives a far
-            more natural, photorealistic softness than a radial gradient */}
-        <filter id={glowId} x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="7" result="blur" />
-        </filter>
-      </defs>
+    <div style={{ position: 'relative', width, display: 'inline-block' }}>
+      <svg
+        width={width}
+        height={svgH}
+        viewBox={`0 0 ${width} ${svgH}`}
+        style={{ display: 'block', overflow: 'visible' }}
+        aria-hidden="true"
+      >
+        <defs>
+          <filter id={glowId} x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="7" result="blur" />
+          </filter>
+        </defs>
 
-      {/* ── Day-of-week column headers (hidden in compact mode) ───────────── */}
-      {!compact && DAYS.map((d, i) => (
-        <text
-          key={d}
-          x={i * (width / 7) + (width / 7) / 2}
-          y={18}
-          textAnchor="middle"
-          fontSize={10}
-          fontWeight={600}
-          letterSpacing="0.06em"
-          fill={MUTED}
-          fontFamily="inherit"
-        >
-          {d}
-        </text>
-      ))}
+        {/* ── Day-of-week column headers (hidden in compact mode) ─────────── */}
+        {!compact && DAYS.map((d, i) => (
+          <text
+            key={d}
+            x={i * (width / 7) + (width / 7) / 2}
+            y={18}
+            textAnchor="middle"
+            fontSize={10}
+            fontWeight={600}
+            letterSpacing="0.06em"
+            fill={MUTED}
+            fontFamily="inherit"
+          >
+            {d}
+          </text>
+        ))}
 
-      {/* ── Glows — blurred ellipses rendered behind bubbles ─────────────── */}
-      {cells.map((c, i) => {
-        if (!c.inMonth) return null
-        const r = getRadius(c.value)
-        if (r < 9) return null
-        return (
-          <ellipse
-            key={`glow-${i}`}
-            cx={c.cx}
-            cy={c.cy + r * 0.5}
-            rx={r * 2.0}
-            ry={r * 1.6}
-            fill={color}
-            opacity={0.28}
-            filter={`url(#${glowId})`}
-          />
-        )
-      })}
-
-      {/* ── Bubbles and out-of-month date numbers ─────────────────────────── */}
-      {cells.map((c, i) => {
-        if (!c.inMonth) {
-          if (compact) return null
+        {/* ── Glows — blurred ellipses rendered behind bubbles ────────────── */}
+        {cells.map((c, i) => {
+          if (!c.inMonth) return null
+          const r = getRadius(c.value)
+          if (r < 9) return null
           return (
-            <text
-              key={`oom-${i}`}
-              x={c.cx}
-              y={c.cy + 5}
-              textAnchor="middle"
-              fontSize={14}
-              fontWeight={400}
-              fill={MUTED_SM}
-              fontFamily="inherit"
-            >
-              {c.day}
-            </text>
+            <ellipse
+              key={`glow-${i}`}
+              cx={c.cx}
+              cy={c.cy + r * 0.5}
+              rx={r * 2.0}
+              ry={r * 1.6}
+              fill={color}
+              opacity={0.28}
+              filter={`url(#${glowId})`}
+            />
           )
-        }
+        })}
 
-        const r = getRadius(c.value)
-        if (r === 0) return null
+        {/* ── Bubbles and out-of-month date numbers ───────────────────────── */}
+        {cells.map((c, i) => {
+          if (!c.inMonth) {
+            if (compact) return null
+            return (
+              <text
+                key={`oom-${i}`}
+                x={c.cx}
+                y={c.cy + 5}
+                textAnchor="middle"
+                fontSize={14}
+                fontWeight={400}
+                fill={MUTED_SM}
+                fontFamily="inherit"
+              >
+                {c.day}
+              </text>
+            )
+          }
 
-        return (
-          <circle
-            key={`bubble-${i}`}
-            cx={c.cx}
-            cy={c.cy}
-            r={r}
-            fill={color}
-          />
-        )
-      })}
-    </svg>
+          const r = getRadius(c.value)
+          return (
+            <g key={`cell-${i}`}>
+              {r > 0 && (
+                <circle
+                  cx={c.cx}
+                  cy={c.cy}
+                  r={r}
+                  fill={color}
+                  style={tooltipOpen && tooltipData?.date === c.dateStr
+                    ? { opacity: 0.7 }
+                    : undefined
+                  }
+                />
+              )}
+              {/* Hit area — full cell, captures hover even on empty days */}
+              <rect
+                x={c.cx - CELL_W / 2}
+                y={c.cy - CELL_H / 2}
+                width={CELL_W}
+                height={CELL_H}
+                fill="transparent"
+                style={{ cursor: c.value > 0 ? 'default' : 'default' }}
+                onMouseMove={(e) => handleCellEnter(e, c)}
+                onMouseLeave={hideTooltip}
+              />
+            </g>
+          )
+        })}
+      </svg>
+
+      {/* ── Tooltip ────────────────────────────────────────────────────────── */}
+      {tooltipOpen && tooltipData && (
+        <TooltipWithBounds
+          left={tooltipLeft}
+          top={tooltipTop}
+          style={TOOLTIP_STYLES}
+        >
+          <div style={{ fontSize: 11, opacity: 0.5, marginBottom: 6, letterSpacing: '0.02em' }}>
+            {tooltipDateLabel(tooltipData.date)}
+          </div>
+          <div style={{ fontWeight: 700, fontSize: 15 }}>
+            {formatVal(tooltipData.value)}
+          </div>
+        </TooltipWithBounds>
+      )}
+    </div>
   )
 }
