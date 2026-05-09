@@ -48,3 +48,12 @@ export type { CalendarDataPoint, CalendarChartProps } from './CalendarChart'
 
 export { LineChart } from './LineChart'
 export type { LineSeriesData, LineChartProps } from './LineChart'
+
+export { SegmentBar } from './SegmentBar'
+export type { SegmentBarSegment, SegmentBarProps } from './SegmentBar'
+
+export { GanttChart } from './GanttChart'
+export type { GanttTask, GanttChartProps } from './GanttChart'
+
+export { FunnelChart } from './FunnelChart'
+export type { FunnelStage, FunnelChartProps } from './FunnelChart'

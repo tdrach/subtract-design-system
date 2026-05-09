@@ -1,0 +1,150 @@
+'use client'
+
+import { useCallback } from 'react'
+import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { localPoint } from '@visx/event'
+
+// ─── Tooltip styles ───────────────────────────────────────────────────────────
+
+const TOOLTIP_STYLES: React.CSSProperties = {
+  ...defaultStyles,
+  background: '#0c0c0c',
+  color: '#fff',
+  padding: '8px 12px',
+  borderRadius: 8,
+  fontSize: 13,
+  fontFamily: 'inherit',
+  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+  lineHeight: 1,
+}
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface SegmentBarSegment {
+  id: string
+  label: string
+  value: number
+  color: string
+}
+
+export interface SegmentBarProps {
+  segments: SegmentBarSegment[]
+  /** Total bar width in px. Defaults to 560. */
+  width?: number
+  /** Bar height in px. Defaults to 24. */
+  height?: number
+  /** Gap between segments in px. Defaults to 2. */
+  gap?: number
+  /** Overall border radius in px. Defaults to 6. */
+  radius?: number
+  /** Format the value shown in the tooltip. Defaults to toLocaleString. */
+  valueFormat?: (v: number) => string
+  /** Unique suffix for SVG IDs. */
+  uid?: string
+}
+
+type Computed = SegmentBarSegment & { x: number; w: number; pct: number }
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export function SegmentBar({
+  segments,
+  width = 560,
+  height = 24,
+  gap = 2,
+  radius = 6,
+  valueFormat,
+  uid = 'a',
+}: SegmentBarProps) {
+  const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
+  const total     = segments.reduce((s, seg) => s + seg.value, 0)
+
+  const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
+    useTooltip<Computed>()
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<SVGRectElement>, seg: Computed) => {
+    const point = localPoint(e.currentTarget.ownerSVGElement!, e)
+    showTooltip({ tooltipData: seg, tooltipLeft: point?.x, tooltipTop: point?.y })
+  }, [showTooltip])
+
+  // Compute each segment's x offset and width
+  const totalGap = gap * Math.max(segments.length - 1, 0)
+  const usableW  = width - totalGap
+  let cursor = 0
+  const computed: Computed[] = segments.map(seg => {
+    const w   = (seg.value / total) * usableW
+    const out = { ...seg, x: cursor, w, pct: Math.round((seg.value / total) * 100) }
+    cursor += w + gap
+    return out
+  })
+
+  return (
+    <div style={{ position: 'relative', width, display: 'inline-block' }}>
+      <svg
+        width={width}
+        height={height}
+        style={{ display: 'block' }}
+        aria-hidden="true"
+      >
+        <defs>
+          {/* Single rounded-corner clip for the whole bar */}
+          <clipPath id={`sb-clip-${uid}`}>
+            <rect x={0} y={0} width={width} height={height} rx={radius} ry={radius} />
+          </clipPath>
+          {/* Mask to punch out gaps between segments */}
+          {gap > 0 && (
+            <mask id={`sb-mask-${uid}`}>
+              <rect x={0} y={0} width={width} height={height} fill="white" />
+              {computed.slice(0, -1).map(seg => (
+                <rect
+                  key={`mask-gap-${seg.id}`}
+                  x={seg.x + seg.w}
+                  y={0}
+                  width={gap}
+                  height={height}
+                  fill="black"
+                />
+              ))}
+            </mask>
+          )}
+        </defs>
+
+        <g
+          clipPath={`url(#sb-clip-${uid})`}
+          mask={gap > 0 ? `url(#sb-mask-${uid})` : undefined}
+        >
+          {computed.map(seg => (
+            <rect
+              key={seg.id}
+              x={seg.x}
+              y={0}
+              width={seg.w}
+              height={height}
+              fill={seg.color}
+              onMouseMove={e => handleMouseMove(e, seg)}
+              onMouseLeave={hideTooltip}
+              style={{ cursor: 'default' }}
+            />
+          ))}
+        </g>
+      </svg>
+
+      {tooltipOpen && tooltipData && (
+        <TooltipWithBounds
+          left={tooltipLeft}
+          top={tooltipTop}
+          style={TOOLTIP_STYLES}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: tooltipData.color, flexShrink: 0 }} />
+            <span style={{ opacity: 0.55, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              {tooltipData.label}
+            </span>
+          </div>
+          <div style={{ fontWeight: 700, fontSize: 15 }}>{formatVal(tooltipData.value)}</div>
+          <div style={{ fontSize: 11, opacity: 0.5, marginTop: 3 }}>{tooltipData.pct}%</div>
+        </TooltipWithBounds>
+      )}
+    </div>
+  )
+}

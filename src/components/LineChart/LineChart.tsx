@@ -19,12 +19,13 @@ const BLACK = '#0c0c0c'              // callout values
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
 const Y_LABEL_W   = 52    // px reserved for y-axis labels (0 when showYAxis=false)
-const RIGHT_W     = 130   // px reserved for right-side callouts
+const RIGHT_W     = 130   // px reserved for right-side callouts (0 in sparkline)
 const CIRCLE_R    = 6     // end-of-line hollow circle radius
 const DOT_PITCH   = 7     // dot texture grid pitch (px)
 const DOT_R       = 0.9   // dot texture circle radius
 const X_AXIS_H    = 24    // px reserved for x-axis labels when present
 const PADDING_TOP = 10    // px headroom so the top tick label isn't clipped
+const TICK_DASH   = 4     // px width of sparkline edge tick marks
 
 // ─── Tooltip styles ───────────────────────────────────────────────────────────
 
@@ -147,6 +148,12 @@ export interface LineChartProps {
    * Required when rendering more than one LineChart on the same page.
    */
   uid?: string
+  /**
+   * Sparkline mode: removes all labels and callouts, renders only the line,
+   * area fill, and subtle tick marks at the left and right edges.
+   * Tooltip still works on hover.
+   */
+  sparkline?: boolean
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -161,12 +168,14 @@ export function LineChart({
   valueFormat,
   dots,
   uid = 'a',
+  sparkline = false,
 }: LineChartProps) {
   const showDots  = dots ?? series.length === 1
   const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
-  const xLabels   = dates?.length ? datesToMonthLabels(dates) : xLabelsProp
+  const xLabels   = (!sparkline && dates?.length) ? datesToMonthLabels(dates) : (!sparkline ? xLabelsProp : undefined)
   const hasXAxis  = !!xLabels?.length
-  const yLabelW   = showYAxis ? Y_LABEL_W : 0
+  const yLabelW   = (showYAxis && !sparkline) ? Y_LABEL_W : 0
+  const rightW    = sparkline ? 0 : RIGHT_W
 
   // ── Tooltip ────────────────────────────────────────────────────────────────
 
@@ -187,7 +196,7 @@ export function LineChart({
     const yMin  = ticks[0]
     const yMax  = ticks[ticks.length - 1]
 
-    const chartW = width  - yLabelW - RIGHT_W
+    const chartW = width  - yLabelW - rightW
     const chartH = height - (hasXAxis ? X_AXIS_H : 0) - PADDING_TOP
 
     const xScale = scaleLinear({ domain: [0, Math.max(nPts - 1, 1)], range: [yLabelW, yLabelW + chartW] })
@@ -212,7 +221,7 @@ export function LineChart({
     }))
 
     return { nPts, ticks, yMin, yMax, chartW, chartH, xScale, yScale, callouts, xLabelGeo }
-  }, [series, xLabels, width, height, yLabelW, hasXAxis])
+  }, [series, xLabels, width, height, yLabelW, rightW, hasXAxis])
 
   // ── Mouse interaction ─────────────────────────────────────────────────────
 
@@ -278,7 +287,7 @@ export function LineChart({
         </defs>
 
         {/* ── Y-axis: grid lines + labels ─────────────────────────────────── */}
-        {showYAxis && (
+        {showYAxis && !sparkline && (
           <GridRows
             scale={yScale}
             width={chartW}
@@ -288,7 +297,7 @@ export function LineChart({
             tickValues={ticks}
           />
         )}
-        {showYAxis && ticks.map(v => (
+        {showYAxis && !sparkline && ticks.map(v => (
           <text
             key={v}
             x={yLabelW - 8}
@@ -301,6 +310,17 @@ export function LineChart({
             {v.toLocaleString()} -
           </text>
         ))}
+
+        {/* ── Sparkline edge tick marks ─────────────────────────────────────── */}
+        {sparkline && ticks.map(v => {
+          const y = yScale(v)
+          return (
+            <g key={v}>
+              <line x1={0}           y1={y} x2={TICK_DASH}        y2={y} stroke={GRID} strokeWidth={1} />
+              <line x1={width - TICK_DASH} y1={y} x2={width} y2={y} stroke={GRID} strokeWidth={1} />
+            </g>
+          )
+        })}
 
         {/* ── Area fills — rendered back-to-front ──────────────────────────── */}
         {[...series].reverse().map(s => (
@@ -371,8 +391,8 @@ export function LineChart({
           />
         ))}
 
-        {/* ── End-point hollow circles (outside clip — intentionally) ──────── */}
-        {callouts.map(s => (
+        {/* ── End-point hollow circles + right-side callouts ───────────────── */}
+        {!sparkline && callouts.map(s => (
           <circle
             key={`dot-${s.id}`}
             cx={s.endX}
@@ -383,9 +403,7 @@ export function LineChart({
             strokeWidth={2.5}
           />
         ))}
-
-        {/* ── Right-side callouts: series label + last value ───────────────── */}
-        {callouts.map(s => {
+        {!sparkline && callouts.map(s => {
           const x = s.endX + CIRCLE_R + 10
           return (
             <g key={`callout-${s.id}`}>
@@ -408,7 +426,7 @@ export function LineChart({
         })}
 
         {/* ── X-axis labels ────────────────────────────────────────────────── */}
-        {xLabelGeo?.map(({ label, x, y }, i) =>
+        {!sparkline && xLabelGeo?.map(({ label, x, y }, i) =>
           label ? (
             <text
               key={i}

@@ -11,8 +11,11 @@ import {
   TabBar, Tab,
   CalendarChart,
   LineChart,
+  SegmentBar,
+  GanttChart,
+  FunnelChart,
 } from '@subtract/ds'
-import type { Tag, CalendarDataPoint, LineSeriesData } from '@subtract/ds'
+import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -156,6 +159,33 @@ const LINE_MULTI: LineSeriesData[] = [
   { id: 'ny', label: 'New York',    color: '#38bdf8', values: [400, 462, 378, 448, 492, 418, 430] },
   { id: 'ca', label: 'Canada',      color: '#7c3aed', values: [290, 312, 278, 302, 332, 294, 300] },
   { id: 'cn', label: 'China',       color: '#f59e0b', values: [185, 212, 172, 195, 228, 184, 198] },
+]
+
+// ─── SegmentBar demo data ─────────────────────────────────────────────────────
+
+const SEGMENTS: SegmentBarSegment[] = [
+  { id: 'direct',   label: 'Direct',   value: 42, color: '#11A0FF' },
+  { id: 'organic',  label: 'Organic',  value: 28, color: '#06D021' },
+  { id: 'referral', label: 'Referral', value: 18, color: '#FFA811' },
+  { id: 'social',   label: 'Social',   value: 12, color: '#7c3aed' },
+]
+
+// ─── GanttChart demo data ─────────────────────────────────────────────────────
+
+const GANTT_TASKS: GanttTask[] = [
+  { id: 'discovery', label: 'Discovery',   start: 0,  end: 14, color: '#11A0FF' },
+  { id: 'design',    label: 'Design',      start: 10, end: 28, color: '#7c3aed' },
+  { id: 'dev',       label: 'Development', start: 24, end: 56, color: '#06D021' },
+  { id: 'qa',        label: 'QA & Review', start: 50, end: 64, color: '#FFA811' },
+  { id: 'launch',    label: 'Launch',      start: 62, end: 70, color: '#FF2111' },
+]
+
+// ─── FunnelChart demo data ────────────────────────────────────────────────────
+
+const FUNNEL_STAGES: FunnelStage[] = [
+  { label: 'Visitors',  value: 21980, bands: [60, 25, 10, 5] },
+  { label: 'Leads',     value: 50201, bands: [50, 28, 14, 8] },
+  { label: 'Customers', value: 82229, bands: [45, 30, 17, 8] },
 ]
 
 // ─── Icon groups ──────────────────────────────────────────────────────────────
@@ -661,6 +691,139 @@ function PageContent() {
                       color="#11A0FF"
                       width={480}
                       uid="cal-b"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* ─── SegmentBar ──────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>SegmentBar</h2>
+              <div className={styles.chartGrid}>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>default — 4 segments with gap</p>
+                  <div className={styles.chartWrap}>
+                    <SegmentBar segments={SEGMENTS} width={520} uid="sb-a" />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>height=12, gap=1, radius=4 — compact pill</p>
+                  <div className={styles.chartWrap}>
+                    <SegmentBar segments={SEGMENTS} width={520} height={12} gap={1} radius={4} uid="sb-b" />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>gap=0 — flush segments</p>
+                  <div className={styles.chartWrap}>
+                    <SegmentBar segments={SEGMENTS} width={520} gap={0} uid="sb-c" />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* ─── GanttChart ──────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>GanttChart</h2>
+              <div className={styles.chartGrid}>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>default — labels + axis</p>
+                  <div className={styles.chartWrap}>
+                    <GanttChart
+                      tasks={GANTT_TASKS}
+                      width={520}
+                      valueFormat={v => `Day ${v}`}
+                      uid="gc-a"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>sparkline=true</p>
+                  <div className={styles.chartWrap}>
+                    <GanttChart
+                      tasks={GANTT_TASKS}
+                      width={520}
+                      height={80}
+                      sparkline
+                      uid="gc-b"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* ─── LineChart sparkline ─────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>LineChart — sparkline</h2>
+              <div className={styles.chartGrid}>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>sparkline=true, single series</p>
+                  <div className={styles.chartWrap}>
+                    <LineChart
+                      series={LINE_SINGLE}
+                      sparkline
+                      width={520}
+                      height={80}
+                      uid="lc-sp-a"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>sparkline=true, multi-series</p>
+                  <div className={styles.chartWrap}>
+                    <LineChart
+                      series={LINE_MULTI}
+                      sparkline
+                      width={520}
+                      height={80}
+                      uid="lc-sp-b"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* ─── FunnelChart ─────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>FunnelChart</h2>
+              <div className={styles.chartGrid}>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>purple — 3 stages, 4 bands</p>
+                  <div className={styles.chartWrap}>
+                    <FunnelChart
+                      stages={FUNNEL_STAGES}
+                      color="#7c3aed"
+                      width={520}
+                      height={240}
+                      valueFormat={v => v.toLocaleString()}
+                      uid="fc-a"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>blue — 3 stages, layerCount=5</p>
+                  <div className={styles.chartWrap}>
+                    <FunnelChart
+                      stages={FUNNEL_STAGES}
+                      color="#11A0FF"
+                      layerCount={5}
+                      width={520}
+                      height={240}
+                      valueFormat={v => v.toLocaleString()}
+                      uid="fc-b"
                     />
                   </div>
                 </div>
