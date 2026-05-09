@@ -14,8 +14,9 @@ import {
   SegmentBar,
   GanttChart,
   FunnelChart,
+  BubbleMatrix,
 } from '@subtract/ds'
-import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment } from '@subtract/ds'
+import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell } from '@subtract/ds'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -183,9 +184,56 @@ const GANTT_TASKS: GanttTask[] = [
 // ─── FunnelChart demo data ────────────────────────────────────────────────────
 
 const FUNNEL_STAGES: FunnelStage[] = [
-  { label: 'Visitors',  value: 21980, bands: [60, 25, 10, 5] },
-  { label: 'Leads',     value: 50201, bands: [50, 28, 14, 8] },
-  { label: 'Customers', value: 82229, bands: [45, 30, 17, 8] },
+  { label: 'Awareness',   value: 82000, bands: [50, 28, 14, 8] },
+  { label: 'Visitors',    value: 21980, bands: [48, 30, 15, 7] },
+  { label: 'Leads',       value: 9400,  bands: [45, 30, 16, 9] },
+  { label: 'Customers',   value: 3200,  bands: [42, 32, 17, 9] },
+]
+
+// ─── BubbleMatrix demo data ───────────────────────────────────────────────────
+
+const BM_ROWS: BubbleMatrixRow[] = [
+  { id: 'design',   label: 'Design'      },
+  { id: 'eng',      label: 'Engineering' },
+  { id: 'product',  label: 'Product'     },
+  { id: 'growth',   label: 'Growth'      },
+  { id: 'data',     label: 'Data'        },
+]
+
+const BM_COLS: BubbleMatrixCol[] = [
+  { id: 'mon', label: 'Mon' },
+  { id: 'tue', label: 'Tue' },
+  { id: 'wed', label: 'Wed' },
+  { id: 'thu', label: 'Thu' },
+  { id: 'fri', label: 'Fri' },
+]
+
+const BM_DATA: BubbleMatrixCell[] = [
+  { rowId: 'design',  colId: 'mon', value: 42  },
+  { rowId: 'design',  colId: 'tue', value: 80  },
+  { rowId: 'design',  colId: 'wed', value: 35  },
+  { rowId: 'design',  colId: 'thu', value: 65  },
+  { rowId: 'design',  colId: 'fri', value: 90  },
+  { rowId: 'eng',     colId: 'mon', value: 120 },
+  { rowId: 'eng',     colId: 'tue', value: 95  },
+  { rowId: 'eng',     colId: 'wed', value: 140 },
+  { rowId: 'eng',     colId: 'thu', value: 110 },
+  { rowId: 'eng',     colId: 'fri', value: 70  },
+  { rowId: 'product', colId: 'mon', value: 55  },
+  { rowId: 'product', colId: 'tue', value: 30  },
+  { rowId: 'product', colId: 'wed', value: 75  },
+  { rowId: 'product', colId: 'thu', value: 90  },
+  { rowId: 'product', colId: 'fri', value: 45  },
+  { rowId: 'growth',  colId: 'mon', value: 20  },
+  { rowId: 'growth',  colId: 'tue', value: 60  },
+  { rowId: 'growth',  colId: 'wed', value: 50  },
+  { rowId: 'growth',  colId: 'thu', value: 30  },
+  { rowId: 'growth',  colId: 'fri', value: 100 },
+  { rowId: 'data',    colId: 'mon', value: 85  },
+  { rowId: 'data',    colId: 'tue', value: 45  },
+  { rowId: 'data',    colId: 'wed', value: 60  },
+  { rowId: 'data',    colId: 'thu', value: 140 },
+  { rowId: 'data',    colId: 'fri', value: 35  },
 ]
 
 // ─── Icon groups ──────────────────────────────────────────────────────────────
@@ -800,7 +848,7 @@ function PageContent() {
               <div className={styles.chartGrid}>
 
                 <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>purple — 3 stages, 4 bands</p>
+                  <p className={styles.tokenName}>purple — 4 stages, 4 bands</p>
                   <div className={styles.chartWrap}>
                     <FunnelChart
                       stages={FUNNEL_STAGES}
@@ -814,7 +862,7 @@ function PageContent() {
                 </div>
 
                 <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>blue — 3 stages, layerCount=5</p>
+                  <p className={styles.tokenName}>blue — 4 stages, layerCount=5</p>
                   <div className={styles.chartWrap}>
                     <FunnelChart
                       stages={FUNNEL_STAGES}
@@ -824,6 +872,44 @@ function PageContent() {
                       height={240}
                       valueFormat={v => v.toLocaleString()}
                       uid="fc-b"
+                    />
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            {/* ─── BubbleMatrix ────────────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>BubbleMatrix</h2>
+              <div className={styles.chartGrid}>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>default — 5 rows × 5 cols</p>
+                  <div className={styles.chartWrap}>
+                    <BubbleMatrix
+                      rows={BM_ROWS}
+                      cols={BM_COLS}
+                      data={BM_DATA}
+                      width={400}
+                      uid="bm-a"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.chartDemo}>
+                  <p className={styles.tokenName}>green — no labels or headers</p>
+                  <div className={styles.chartWrap}>
+                    <BubbleMatrix
+                      rows={BM_ROWS}
+                      cols={BM_COLS}
+                      data={BM_DATA}
+                      color="#06D021"
+                      width={280}
+                      labelWidth={0}
+                      showLabels={false}
+                      showHeaders={false}
+                      uid="bm-b"
                     />
                   </div>
                 </div>

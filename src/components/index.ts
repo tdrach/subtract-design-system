@@ -57,3 +57,6 @@ export type { GanttTask, GanttChartProps } from './GanttChart'
 
 export { FunnelChart } from './FunnelChart'
 export type { FunnelStage, FunnelChartProps } from './FunnelChart'
+
+export { BubbleMatrix } from './BubbleMatrix'
+export type { BubbleMatrixCell, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixProps } from './BubbleMatrix'

@@ -2,7 +2,7 @@
 
 import { useMemo, useCallback } from 'react'
 import { scaleLinear } from '@visx/scale'
-import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
@@ -131,6 +131,8 @@ export function FunnelChart({
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
     useTooltip<FunnelStage & { index: number }>()
 
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
+
   const computed = useMemo(() => {
     if (stages.length < 2) return null
 
@@ -142,7 +144,6 @@ export function FunnelChart({
 
     // Resolve band colors: outermost (index 0) → lightest, innermost → darkest
     const bandColors = colorsProp ?? Array.from({ length: nBands }, (_, i) => {
-      // Alpha from 0.18 (outermost) to 1.0 (innermost), reversed display order
       const alpha = 0.18 + (i / (nBands - 1)) * 0.82
       return hexToRgba(color, alpha)
     })
@@ -150,16 +151,24 @@ export function FunnelChart({
     const centerY  = height / 2
     const maxHalfH = height / 2 - 8  // vertical padding
 
+    // Scale stage values → halfHeight at each stage
+    const maxValue = Math.max(...stages.map(s => s.value), 1)
+
+    // We add a synthetic origin point at x=0, left of stage 0, with a very
+    // narrow opening (~3% of maxHalfH) so the funnel starts as a thin slit.
+    const ORIGIN_FRAC = 0.03
+
+    // xScale maps stage indices onto x positions.
+    // Leave left margin for origin slit, right margin for last badge pill.
+    const originX = 0
     const xScale = scaleLinear({
       domain: [0, stages.length - 1],
-      range:  [0, width],
+      range:  [width * 0.10, width * 0.88],
     })
 
     // At each stage, compute normalized cumulative proportions for each band
-    // cumProps[stageIdx][bandIdx] = cumulative height fraction from center outward
     const cumProps = stages.map(stage => {
-      const raw = stage.bands ?? Array(nBands).fill(1)
-      // Pad / trim to nBands
+      const raw   = stage.bands ?? Array(nBands).fill(1)
       const bands = Array.from({ length: nBands }, (_, b) => raw[b] ?? 1)
       const total = bands.reduce((s, v) => s + v, 0)
       let running = 0
@@ -169,21 +178,23 @@ export function FunnelChart({
       })
     })
 
-    // Build band geometry: for each band (outermost to innermost),
-    // compute top and bottom boundary points at each stage x position.
-    //
-    // Band[b] occupies from cumProps[s][b-1] to cumProps[s][b] (from center outward).
-    // We render from b=nBands-1 (outermost) down to b=0 (innermost), so each
-    // inner band sits on top visually.
+    // For each band b, build points: origin → stage0 → stage1 → … → stageN-1
+    // Each stage's total halfHeight = (stage.value / maxValue) * maxHalfH
+    // The origin gets a fixed thin slit = ORIGIN_FRAC * maxHalfH
     const bands = Array.from({ length: nBands }, (_, b) => {
-      const topPts = stages.map((_, si) => ({
-        x: xScale(si),
-        y: centerY - cumProps[si][b] * maxHalfH,
-      }))
-      const botPts = stages.map((_, si) => ({
-        x: xScale(si),
-        y: centerY + cumProps[si][b] * maxHalfH,
-      }))
+      // Origin point (narrow slit)
+      const originTop = { x: originX, y: centerY - ORIGIN_FRAC * maxHalfH }
+      const originBot = { x: originX, y: centerY + ORIGIN_FRAC * maxHalfH }
+
+      const topPts = [originTop, ...stages.map((stage, si) => {
+        const stageHalfH = (stage.value / maxValue) * maxHalfH
+        return { x: xScale(si), y: centerY - cumProps[si][b] * stageHalfH }
+      })]
+      const botPts = [originBot, ...stages.map((stage, si) => {
+        const stageHalfH = (stage.value / maxValue) * maxHalfH
+        return { x: xScale(si), y: centerY + cumProps[si][b] * stageHalfH }
+      })]
+
       return {
         topPts,
         botPts,
@@ -214,7 +225,7 @@ export function FunnelChart({
   const { drawOrder, xScale, centerY } = computed
 
   return (
-    <div style={{ position: 'relative', width, display: 'inline-block' }}>
+    <div ref={containerRef} style={{ position: 'relative', width, display: 'inline-block' }}>
       <svg
         width={width}
         height={height}
@@ -294,7 +305,7 @@ export function FunnelChart({
 
       {/* ── Tooltip ──────────────────────────────────────────────────────── */}
       {tooltipOpen && tooltipData && (
-        <TooltipWithBounds
+        <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
           style={TOOLTIP_STYLES}
@@ -307,7 +318,7 @@ export function FunnelChart({
           <div style={{ fontWeight: 700, fontSize: 15 }}>
             {formatVal(tooltipData.value)}
           </div>
-        </TooltipWithBounds>
+        </TooltipInPortal>
       )}
     </div>
   )

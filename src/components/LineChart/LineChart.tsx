@@ -7,7 +7,7 @@ import { curveCatmullRom } from '@visx/curve'
 import { GridRows } from '@visx/grid'
 import { LinearGradient } from '@visx/gradient'
 import { PatternCircles } from '@visx/pattern'
-import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
@@ -182,6 +182,8 @@ export function LineChart({
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
     useTooltip<number>()
 
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
+
   // ── Computed layout ────────────────────────────────────────────────────────
 
   const computed = useMemo(() => {
@@ -245,7 +247,7 @@ export function LineChart({
   const glowFilterId = `lc-glow-${uid}`
 
   return (
-    <div style={{ position: 'relative', width, height: 'fit-content' }}>
+    <div ref={containerRef} style={{ position: 'relative', width, height: 'fit-content' }}>
       <svg
         width={width}
         height={height}
@@ -311,16 +313,17 @@ export function LineChart({
           </text>
         ))}
 
-        {/* ── Sparkline edge tick marks ─────────────────────────────────────── */}
-        {sparkline && ticks.map(v => {
-          const y = yScale(v)
-          return (
-            <g key={v}>
-              <line x1={0}           y1={y} x2={TICK_DASH}        y2={y} stroke={GRID} strokeWidth={1} />
-              <line x1={width - TICK_DASH} y1={y} x2={width} y2={y} stroke={GRID} strokeWidth={1} />
-            </g>
-          )
-        })}
+        {/* ── Sparkline: full-width horizontal grid lines ───────────────────── */}
+        {sparkline && (
+          <GridRows
+            scale={yScale}
+            width={width}
+            left={0}
+            stroke={GRID}
+            strokeWidth={1}
+            tickValues={ticks}
+          />
+        )}
 
         {/* ── Area fills — rendered back-to-front ──────────────────────────── */}
         {[...series].reverse().map(s => (
@@ -453,7 +456,7 @@ export function LineChart({
 
       {/* ── Tooltip ──────────────────────────────────────────────────────────── */}
       {tooltipOpen && tooltipData !== undefined && (
-        <TooltipWithBounds
+        <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
           style={TOOLTIP_STYLES}
@@ -477,7 +480,7 @@ export function LineChart({
               </span>
             </div>
           ))}
-        </TooltipWithBounds>
+        </TooltipInPortal>
       )}
     </div>
   )
