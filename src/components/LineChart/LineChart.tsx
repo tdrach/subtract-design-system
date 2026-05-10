@@ -85,15 +85,17 @@ function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[]
 }
 
 /**
- * Convert 'YYYY-MM-DD' dates into sparse month labels for the x-axis.
+ * Generate month boundary labels positioned at their actual date index.
+ * Returns [{label, index}] — one entry per month change.
  */
-function datesToMonthLabels(dates: string[]): string[] {
+function monthBoundaries(dates: string[]): { label: string; index: number }[] {
+  const out: { label: string; index: number }[] = []
   let lastMonth = ''
-  return dates.map(d => {
+  dates.forEach((d, i) => {
     const month = new Date(d + 'T12:00:00').toLocaleString('en', { month: 'short' })
-    if (month !== lastMonth) { lastMonth = month; return month }
-    return ''
+    if (month !== lastMonth) { lastMonth = month; out.push({ label: month, index: i }) }
   })
+  return out
 }
 
 /** Format a date string for the tooltip */
@@ -172,8 +174,7 @@ export function LineChart({
 }: LineChartProps) {
   const showDots  = dots ?? series.length === 1
   const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
-  const xLabels   = (!sparkline && dates?.length) ? datesToMonthLabels(dates) : (!sparkline ? xLabelsProp : undefined)
-  const hasXAxis  = !!xLabels?.length
+  const hasXAxis  = !sparkline && !!(dates?.length || xLabelsProp?.length)
   const yLabelW   = (showYAxis && !sparkline) ? Y_LABEL_W : 0
   const rightW    = sparkline ? 0 : RIGHT_W
 
@@ -201,49 +202,73 @@ export function LineChart({
     const chartW = width  - yLabelW - rightW
     const chartH = height - (hasXAxis ? X_AXIS_H : 0) - PADDING_TOP
 
-    const xScale = scaleLinear({ domain: [0, Math.max(nPts - 1, 1)], range: [yLabelW, yLabelW + chartW] })
+    // ── Time-based x positioning ─────────────────────────────────────────────
+    // When `dates` are provided, data points are placed proportionally to their
+    // actual timestamp so the x-axis reflects real elapsed time, not data density.
+    const timeMs = (dates?.length === nPts && nPts > 1)
+      ? dates.map(d => new Date(d + 'T12:00:00').getTime())
+      : null
+    const tMin = timeMs ? timeMs[0] : 0
+    const tMax = timeMs ? timeMs[timeMs.length - 1] : 0
+    const tRange = timeMs ? (tMax - tMin || 1) : 1
+
+    const xByIndex = (i: number): number => {
+      if (timeMs) return yLabelW + ((timeMs[i] - tMin) / tRange) * chartW
+      return yLabelW + (i / Math.max(nPts - 1, 1)) * chartW
+    }
+
     const yScale = scaleLinear({ domain: [yMin, yMax], range: [PADDING_TOP + chartH, PADDING_TOP] })
 
     // End-point callout geometry
     const callouts = series.map(s => {
       const lastVal = s.values[s.values.length - 1]
-      return {
-        ...s,
-        endX: xScale(nPts - 1),
-        endY: yScale(lastVal),
-        lastVal,
-      }
+      return { ...s, endX: xByIndex(nPts - 1), endY: yScale(lastVal), lastVal }
     })
 
-    // X-axis label positions
-    const xLabelGeo = xLabels?.map((label, i) => ({
-      label,
-      x: xScale(i),
-      y: PADDING_TOP + chartH + X_AXIS_H - 4,
-    }))
+    // X-axis label positions — month boundaries at their real time positions
+    const labelY = PADDING_TOP + chartH + X_AXIS_H - 4
+    const xLabelGeo = timeMs && !sparkline
+      ? monthBoundaries(dates!).map(({ label, index }) => ({
+          label, x: xByIndex(index), y: labelY,
+        }))
+      : xLabelsProp && !sparkline
+        ? xLabelsProp.map((label, i) => ({ label, x: xByIndex(i), y: labelY }))
+        : undefined
 
-    return { nPts, ticks, yMin, yMax, chartW, chartH, xScale, yScale, callouts, xLabelGeo }
-  }, [series, xLabels, width, height, yLabelW, rightW, hasXAxis])
+    return { nPts, ticks, yMin, yMax, chartW, chartH, xByIndex, timeMs, tMin, tRange, yScale, callouts, xLabelGeo }
+  }, [series, dates, xLabelsProp, width, height, yLabelW, rightW, hasXAxis, sparkline])
 
   // ── Mouse interaction ─────────────────────────────────────────────────────
 
   const handleMouseMove = useCallback((e: React.MouseEvent<SVGRectElement>) => {
     if (!computed) return
-    const { nPts, xScale, chartW } = computed
+    const { nPts, xByIndex, timeMs, tMin, tRange, chartW } = computed
     const point = localPoint(e.currentTarget.ownerSVGElement!, e)
     if (!point) return
 
     const clampedX = Math.max(yLabelW, Math.min(yLabelW + chartW, point.x))
-    const fraction = (clampedX - yLabelW) / chartW
-    const index    = Math.max(0, Math.min(nPts - 1, Math.round(fraction * (nPts - 1))))
-    const snapX    = xScale(index)
+    let index: number
 
-    showTooltip({ tooltipData: index, tooltipLeft: snapX, tooltipTop: point.y })
+    if (timeMs) {
+      // Map mouse x → timestamp → nearest data point
+      const t = tMin + ((clampedX - yLabelW) / chartW) * tRange
+      let best = 0, bestDist = Infinity
+      for (let i = 0; i < nPts; i++) {
+        const d = Math.abs(timeMs[i] - t)
+        if (d < bestDist) { bestDist = d; best = i }
+      }
+      index = best
+    } else {
+      const fraction = (clampedX - yLabelW) / chartW
+      index = Math.max(0, Math.min(nPts - 1, Math.round(fraction * (nPts - 1))))
+    }
+
+    showTooltip({ tooltipData: index, tooltipLeft: xByIndex(index), tooltipTop: point.y })
   }, [computed, yLabelW, showTooltip])
 
   if (!computed) return null
 
-  const { nPts, ticks, chartW, chartH, xScale, yScale, callouts, xLabelGeo } = computed
+  const { nPts, ticks, chartW, chartH, xByIndex, yScale, callouts, xLabelGeo } = computed
   const glowFilterId = `lc-glow-${uid}`
 
   return (
@@ -330,7 +355,7 @@ export function LineChart({
           <g key={`fill-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
             <AreaClosed
               data={s.values}
-              x={(_, i) => xScale(i)}
+              x={(_, i) => xByIndex(i)}
               y={v => yScale(v)}
               yScale={yScale}
               curve={curveCatmullRom}
@@ -339,7 +364,7 @@ export function LineChart({
             {showDots && (
               <AreaClosed
                 data={s.values}
-                x={(_, i) => xScale(i)}
+                x={(_, i) => xByIndex(i)}
                 y={v => yScale(v)}
                 yScale={yScale}
                 curve={curveCatmullRom}
@@ -354,7 +379,7 @@ export function LineChart({
           <g key={`line-${s.id}`} clipPath={`url(#lc-clip-${uid})`}>
             <LinePath
               data={s.values}
-              x={(_, i) => xScale(i)}
+              x={(_, i) => xByIndex(i)}
               y={v => yScale(v)}
               curve={curveCatmullRom}
               stroke={s.color}
@@ -384,7 +409,7 @@ export function LineChart({
         {tooltipOpen && tooltipData !== undefined && series.map(s => (
           <circle
             key={`hover-${s.id}`}
-            cx={xScale(tooltipData)}
+            cx={xByIndex(tooltipData)}
             cy={yScale(s.values[tooltipData])}
             r={4}
             fill={s.color}
