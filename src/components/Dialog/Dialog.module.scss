@@ -4,7 +4,7 @@
   background: rgba(0, 0, 0, 0.3);
   inset: 0;
   position: fixed;
-  z-index: 200;
+  z-index: 400;
 
   &[data-state='open'] {
     animation: overlayIn $t-fast $ease-enter;
@@ -30,7 +30,7 @@
   position: fixed;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 201;
+  z-index: 401;
 
   &.sm { width: min(400px, 90vw); }
   &.md { width: min(540px, 90vw); }
