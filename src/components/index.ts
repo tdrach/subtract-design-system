@@ -23,6 +23,9 @@ export type { Tag } from './TagSelector'
 export { TextInput } from './TextInput'
 export type { TextInputProps } from './TextInput'
 
+export { Slider } from './Slider'
+export type { SliderProps } from './Slider'
+
 export { ChecklistItem } from './ChecklistItem'
 export type { ChecklistItemProps } from './ChecklistItem'
 

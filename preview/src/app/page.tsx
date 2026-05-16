@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import {
-  Button, Footer, TextInput, ChecklistItem,
+  Button, Footer, TextInput, ChecklistItem, Slider,
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody,
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
   TagSelector, TagPill,
@@ -329,6 +329,8 @@ function PageContent() {
   const [inputVal, setInputVal]     = useState('')
   const [tags, setTags]             = useState<Tag[]>(DEMO_TAGS)
   const [selectedTags, setSelectedTags] = useState<string[]>(['1'])
+  const [sliderA, setSliderA]       = useState([40])
+  const [sliderB, setSliderB]       = useState([20, 70])
 
   function setTab(tab: Tab) {
     router.push(`?tab=${tab}`, { scroll: false })
@@ -495,6 +497,48 @@ function PageContent() {
                 <TextInput placeholder="e.g. Email address" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
                 <TextInput type="date" />
                 <TextInput placeholder="Not editable" disabled />
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Slider</h2>
+              <div className={styles.componentStack}>
+
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>single value — md</p>
+                  <div style={{ width: 320 }}>
+                    <Slider value={sliderA} onValueChange={setSliderA} aria-label="Volume" />
+                  </div>
+                  <p className={styles.tokenDetail}>{sliderA[0]}</p>
+                </div>
+
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>range — md</p>
+                  <div style={{ width: 320 }}>
+                    <Slider value={sliderB} onValueChange={setSliderB} aria-label="Range" />
+                  </div>
+                  <p className={styles.tokenDetail}>{sliderB[0]} – {sliderB[1]}</p>
+                </div>
+
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>sm — step=10</p>
+                  <div style={{ width: 320 }}>
+                    <Slider defaultValue={[30]} step={10} size="sm" aria-label="Step" />
+                  </div>
+                </div>
+
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>disabled</p>
+                  <div style={{ width: 320 }}>
+                    <Slider defaultValue={[55]} disabled aria-label="Disabled" />
+                  </div>
+                </div>
+
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>vertical — md</p>
+                  <Slider defaultValue={[65]} orientation="vertical" verticalHeight={120} aria-label="Vertical" />
+                </div>
+
               </div>
             </section>
 
