@@ -1,34 +1,24 @@
 'use client'
 
 import { useMemo, useCallback } from 'react'
-import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
+import { chartTextCaption } from '../../styles/chartTokens'
+import {
+  chartTooltipStyles,
+  ChartTooltipHeader,
+  ChartTooltipRow,
+} from '../ChartTooltip'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
 
-const MUTED    = 'rgba(12,12,12,0.32)'  // $muted-dark — column headers
-const MUTED_SM = 'rgba(12,12,12,0.18)'  // out-of-month date numbers
-const ORANGE   = '#FF6200'              // default bubble color
+const ORANGE = '#FF6200' // default bubble color
 
-const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
 
 // Four discrete radii — full and compact variants
 const RADII         = [5, 9, 15, 24] as const
 const RADII_COMPACT = [3, 6, 10, 16] as const
-
-// ─── Tooltip styles ───────────────────────────────────────────────────────────
-
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1.4,
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -212,11 +202,7 @@ export function CalendarChart({
             x={i * (width / 7) + (width / 7) / 2}
             y={18}
             textAnchor="middle"
-            fontSize={10}
-            fontWeight={600}
-            letterSpacing="0.06em"
-            fill={MUTED}
-            fontFamily="inherit"
+            {...chartTextCaption}
           >
             {d}
           </text>
@@ -251,10 +237,7 @@ export function CalendarChart({
                 x={c.cx}
                 y={c.cy + 5}
                 textAnchor="middle"
-                fontSize={14}
-                fontWeight={400}
-                fill={MUTED_SM}
-                fontFamily="inherit"
+                {...chartTextCaption}
               >
                 {c.day}
               </text>
@@ -298,14 +281,10 @@ export function CalendarChart({
         <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
-          style={TOOLTIP_STYLES}
+          style={chartTooltipStyles}
         >
-          <div style={{ fontSize: 11, opacity: 0.5, marginBottom: 6, letterSpacing: '0.02em' }}>
-            {tooltipDateLabel(tooltipData.date)}
-          </div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>
-            {formatVal(tooltipData.value)}
-          </div>
+          <ChartTooltipHeader>{tooltipDateLabel(tooltipData.date)}</ChartTooltipHeader>
+          <ChartTooltipRow color={color} value={formatVal(tooltipData.value)} />
         </TooltipInPortal>
       )}
     </div>

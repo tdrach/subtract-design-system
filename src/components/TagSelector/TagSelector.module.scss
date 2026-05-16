@@ -22,7 +22,7 @@
 }
 
 .placeholder {
-  color: $muted-dark;
+  color: $muted;
   font-size: $text-small;
   opacity: 0.5;
 }
@@ -56,7 +56,7 @@
   border: none;
   border-radius: $radius-sm;
   background: transparent;
-  color: $muted-dark;
+  color: $muted;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
@@ -97,7 +97,7 @@
   padding: $space-8 $space-10;
   width: 100%;
 
-  &::placeholder { color: $muted-dark; opacity: 0.5; }
+  &::placeholder { color: $muted; opacity: 0.5; }
 }
 
 .list {
@@ -129,7 +129,7 @@
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 
-.createOption { color: $muted-dark; }
+.createOption { color: $muted; }
 
 .dot {
   border-radius: $radius-circle;
@@ -149,7 +149,7 @@
 }
 
 .empty {
-  color: $muted-dark;
+  color: $muted;
   font-size: $text-small;
   padding: $space-8 $space-10;
 }

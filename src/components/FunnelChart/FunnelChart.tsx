@@ -2,7 +2,12 @@
 
 import { useMemo, useCallback } from 'react'
 import { scaleLinear } from '@visx/scale'
-import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
+import {
+  chartTooltipStyles,
+  ChartTooltipHeader,
+  ChartTooltipRow,
+} from '../ChartTooltip'
 import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
@@ -16,19 +21,6 @@ const BADGE_H      = 34   // pill badge height
 const BADGE_PAD_X  = 16   // horizontal padding inside badge
 const BADGE_MIN_W  = 72   // minimum badge width
 
-// ─── Tooltip styles ───────────────────────────────────────────────────────────
-
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1.4,
-}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -308,16 +300,12 @@ export function FunnelChart({
         <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
-          style={TOOLTIP_STYLES}
+          style={chartTooltipStyles}
         >
           {tooltipData.label && (
-            <div style={{ opacity: 0.5, fontSize: 11, letterSpacing: '0.02em', marginBottom: 5 }}>
-              {tooltipData.label}
-            </div>
+            <ChartTooltipHeader>{tooltipData.label}</ChartTooltipHeader>
           )}
-          <div style={{ fontWeight: 700, fontSize: 15 }}>
-            {formatVal(tooltipData.value)}
-          </div>
+          <ChartTooltipRow color={color} value={formatVal(tooltipData.value)} />
         </TooltipInPortal>
       )}
     </div>

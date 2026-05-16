@@ -1,22 +1,13 @@
 'use client'
 
 import { useCallback } from 'react'
-import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
-
-// ─── Tooltip styles ───────────────────────────────────────────────────────────
-
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1,
-}
+import {
+  chartTooltipStyles,
+  ChartTooltipDetail,
+  ChartTooltipRow,
+} from '../ChartTooltip'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -62,6 +53,8 @@ export function SegmentBar({
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
     useTooltip<Computed>()
 
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
+
   const handleMouseMove = useCallback((e: React.MouseEvent<SVGRectElement>, seg: Computed) => {
     const point = localPoint(e.currentTarget.ownerSVGElement!, e)
     showTooltip({ tooltipData: seg, tooltipLeft: point?.x, tooltipTop: point?.y })
@@ -79,7 +72,7 @@ export function SegmentBar({
   })
 
   return (
-    <div style={{ position: 'relative', width, display: 'inline-block' }}>
+    <div ref={containerRef} style={{ position: 'relative', width, display: 'inline-block' }}>
       <svg
         width={width}
         height={height}
@@ -130,20 +123,18 @@ export function SegmentBar({
       </svg>
 
       {tooltipOpen && tooltipData && (
-        <TooltipWithBounds
+        <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
-          style={TOOLTIP_STYLES}
+          style={chartTooltipStyles}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: tooltipData.color, flexShrink: 0 }} />
-            <span style={{ opacity: 0.55, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-              {tooltipData.label}
-            </span>
-          </div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>{formatVal(tooltipData.value)}</div>
-          <div style={{ fontSize: 11, opacity: 0.5, marginTop: 3 }}>{tooltipData.pct}%</div>
-        </TooltipWithBounds>
+          <ChartTooltipRow
+            color={tooltipData.color}
+            label={tooltipData.label}
+            value={formatVal(tooltipData.value)}
+          />
+          <ChartTooltipDetail>{tooltipData.pct}%</ChartTooltipDetail>
+        </TooltipInPortal>
       )}
     </div>
   )

@@ -17,6 +17,7 @@ import {
   BubbleMatrix,
 } from '@subtract/ds'
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell } from '@subtract/ds'
+import { ChartTooltipPreview } from './ChartTooltipPreview'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
   ShareFat, Link, ArrowCounterClockwise, Funnel,
@@ -42,7 +43,7 @@ const colors = [
   { name: '$warning',     value: '#FFA811',                  dark: false },
   { name: '$ink-dark',    value: '#0c0c0c',                  dark: true  },
   { name: '$ink-light',   value: '#ffffff',                  dark: false, outline: true },
-  { name: '$muted-dark',  value: 'rgba(12, 12, 12, 0.48)',   dark: true  },
+  { name: '$muted',       value: '#0c0c0c7a',                  dark: true  },
   { name: '$muted-light', value: 'rgba(255, 255, 255, 0.7)', dark: false, outline: true },
 ]
 
@@ -642,6 +643,8 @@ function PageContent() {
         {/* ─── Charts ─────────────────────────────────────────────────────── */}
         {activeTab === 'charts' && (
           <>
+            <ChartTooltipPreview />
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>LineChart</h2>
               <p className={styles.chartIntro}>
@@ -662,7 +665,6 @@ function PageContent() {
                     <LineChart
                       series={LINE_SINGLE}
                       xLabels={LINE_X}
-                      width={720}
                       height={260}
                       uid="lc-a"
                     />
@@ -675,7 +677,6 @@ function PageContent() {
                     <LineChart
                       series={LINE_MULTI}
                       xLabels={LINE_X}
-                      width={720}
                       height={300}
                       uid="lc-b"
                     />
@@ -695,7 +696,6 @@ function PageContent() {
                       dates={CALENDAR_DATA.map(d => d.date)}
                       showYAxis={false}
                       valueFormat={(v) => String(v)}
-                      width={520}
                       height={160}
                       uid="lc-c"
                     />

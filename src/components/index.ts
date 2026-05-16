@@ -49,6 +49,14 @@ export type { CalendarDataPoint, CalendarChartProps } from './CalendarChart'
 export { LineChart } from './LineChart'
 export type { LineSeriesData, LineChartProps } from './LineChart'
 
+export {
+  chartTooltipStyles,
+  ChartTooltipHeader,
+  ChartTooltipBody,
+  ChartTooltipRow,
+  ChartTooltipDetail,
+} from './ChartTooltip'
+
 export { SegmentBar } from './SegmentBar'
 export type { SegmentBarSegment, SegmentBarProps } from './SegmentBar'
 

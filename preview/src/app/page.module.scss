@@ -15,7 +15,7 @@
 
 .heroLabel {
   font-size: $text-base;
-  color: $muted-dark;
+  color: $muted;
   margin-bottom: $space-4;
   letter-spacing: $letter-spacing-tight;
 }
@@ -42,7 +42,7 @@
 .sectionTitle {
   font-size: $text-base;
   font-weight: $weight-medium;
-  color: $muted-dark;
+  color: $muted;
   letter-spacing: $letter-spacing-tight;
   margin-bottom: $space-20;
   padding-bottom: $space-10;
@@ -68,7 +68,7 @@
 
 .tokenDetail {
   font-size: $text-small;
-  color: $muted-dark;
+  color: $muted;
   white-space: nowrap;
 }
 
@@ -100,7 +100,7 @@
 
 .swatchValue {
   font-size: $text-small;
-  color: $muted-dark;
+  color: $muted;
 }
 
 // ─── Typeface info card ──────────────────────────────────────────────────────
@@ -124,7 +124,7 @@
 .typefaceDetail {
   font-size: $text-base;
   line-height: 1.6;
-  color: $muted-dark;
+  color: $muted;
   max-width: 64ch;
 
   strong {
@@ -295,7 +295,7 @@
 
 .iconIntro {
   font-size: $text-base;
-  color: $muted-dark;
+  color: $muted;
   line-height: 1.6;
   margin-bottom: $space-20;
   max-width: 60ch;
@@ -352,7 +352,7 @@
 .iconName {
   font-size: 11px;
   font-family: $font-mono;
-  color: $muted-dark;
+  color: $muted;
   text-align: center;
   word-break: break-all;
 }
@@ -382,9 +382,29 @@
 
 // ─── Charts ───────────────────────────────────────────────────────────────────
 
+.tooltipPreviewGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-24;
+  margin-bottom: $space-32;
+}
+
+.tooltipPreviewItem {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+}
+
+.tooltipPreviewSurface {
+  background: $light;
+  padding: $space-24;
+  border-radius: $radius-lg;
+  display: inline-flex;
+}
+
 .chartIntro {
   font-size: $text-base;
-  color: $muted-dark;
+  color: $muted;
   line-height: 1.6;
   max-width: 60ch;
   margin-bottom: $space-32;
@@ -394,22 +414,26 @@
   display: flex;
   flex-direction: column;
   gap: $space-32;
+  min-width: 0;
 }
 
 .chartDemo {
   display: flex;
   flex-direction: column;
   gap: $space-8;
+  min-width: 0;
+  width: 100%;
 }
 
 .chartWrap {
+  width: 100%;
+  min-width: 0;
   background: $white;
   border: 1px solid $demure;
   border-radius: $radius-lg;
-  padding: $space-16 $space-8 $space-6;
+  padding: $space-16;
   overflow: hidden;
-
-  svg { max-width: 100%; }
+  box-sizing: border-box;
 }
 
 // CalendarChart demo — no horizontal padding, glow overflows containment
@@ -435,7 +459,7 @@
   align-items: center;
   gap: $space-3;
   font-size: $text-small;
-  color: $muted-dark;
+  color: $muted;
 
   &::before {
     content: '';
@@ -459,7 +483,7 @@
 
 .legendFat {
   @extend %legendDot;
-  color: $muted-dark;
+  color: $muted;
   &::before {
     background: repeating-linear-gradient(
       to right,

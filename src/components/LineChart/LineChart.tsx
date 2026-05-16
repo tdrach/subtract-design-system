@@ -1,45 +1,40 @@
 'use client'
 
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useState, useRef, useLayoutEffect } from 'react'
 import { scaleLinear } from '@visx/scale'
 import { LinePath, AreaClosed } from '@visx/shape'
 import { curveCatmullRom } from '@visx/curve'
 import { GridRows } from '@visx/grid'
 import { LinearGradient } from '@visx/gradient'
 import { PatternCircles } from '@visx/pattern'
-import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
+import {
+  chartTooltipStyles,
+  ChartTooltipBody,
+  ChartTooltipHeader,
+  ChartTooltipRow,
+} from '../ChartTooltip'
 import { localPoint } from '@visx/event'
+import { chartColor, chartTextCaption, chartTextValue } from '../../styles/chartTokens'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
 
-const MUTED = 'rgba(12,12,12,0.28)'  // axis labels, callout series labels
-const GRID  = 'rgba(12,12,12,0.07)'  // horizontal grid lines
-const BLACK = '#0c0c0c'              // callout values
+const AXIS_MUTED = chartColor.axis
+const GRID       = chartColor.grid
 
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
-const Y_LABEL_W   = 52    // px reserved for y-axis labels (0 when showYAxis=false)
-const RIGHT_W     = 130   // px reserved for right-side callouts (0 in sparkline)
-const CIRCLE_R    = 6     // end-of-line hollow circle radius
+const Y_LABEL_W         = 52    // px reserved for y-axis labels (0 when showYAxis=false)
+const CALLOUT_MAX_W     = 88    // max width for callout label + value column
+const CALLOUT_DOT_GAP   = 10    // space between end dot and callout column
+const CALLOUT_RIGHT_PAD = 24    // $space-12 — inset from SVG edge so callout text doesn't clip
+const CIRCLE_R    = 4     // end-of-line hollow circle radius (8×8 px)
 const DOT_PITCH   = 7     // dot texture grid pitch (px)
 const DOT_R       = 0.9   // dot texture circle radius
-const X_AXIS_H    = 24    // px reserved for x-axis labels when present
-const PADDING_TOP = 10    // px headroom so the top tick label isn't clipped
+const X_AXIS_H        = 24    // px reserved for x-axis labels when present
+const X_LABEL_EDGE    = 28    // px from plot edge — switch textAnchor so labels aren't clipped
+const PADDING_TOP     = 10    // px headroom so the top tick label isn't clipped
 const TICK_DASH   = 4     // px width of sparkline edge tick marks
-
-// ─── Tooltip styles ───────────────────────────────────────────────────────────
-
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1,
-}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -98,6 +93,17 @@ function monthBoundaries(dates: string[]): { label: string; index: number }[] {
   return out
 }
 
+/** Pick textAnchor so x-axis labels aren't clipped at the plot edges. */
+function xLabelTextAnchor(
+  x: number,
+  plotLeft: number,
+  plotRight: number,
+): 'start' | 'middle' | 'end' {
+  if (x - plotLeft < X_LABEL_EDGE) return 'start'
+  if (plotRight - x < X_LABEL_EDGE) return 'end'
+  return 'middle'
+}
+
 /** Format a date string for the tooltip */
 function formatTooltipDate(dateStr: string): string {
   return new Date(dateStr + 'T12:00:00').toLocaleDateString('en', {
@@ -109,7 +115,7 @@ function formatTooltipDate(dateStr: string): string {
 
 export interface LineSeriesData {
   id: string
-  /** Displayed as small uppercase text in the right-side callout */
+  /** Displayed in the right-side callout */
   label: string
   /** One value per x-axis tick. All series must have the same length. */
   values: number[]
@@ -126,7 +132,10 @@ export interface LineChartProps {
   dates?: string[]
   /** Explicit x-axis tick labels (overridden by `dates` if both are set). */
   xLabels?: string[]
-  /** Total SVG width in px. Defaults to 560. */
+  /**
+   * Optional max width in px. When omitted, the chart fills its container width.
+   * Pass a number to cap width in compact layouts (cards, grids).
+   */
   width?: number
   /** Chart area height in px (x-axis labels add ~24 px if present). Defaults to 280. */
   height?: number
@@ -164,7 +173,7 @@ export function LineChart({
   series,
   dates,
   xLabels: xLabelsProp,
-  width = 560,
+  width: maxWidth,
   height = 280,
   showYAxis = true,
   valueFormat,
@@ -176,7 +185,9 @@ export function LineChart({
   const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
   const hasXAxis  = !sparkline && !!(dates?.length || xLabelsProp?.length)
   const yLabelW   = (showYAxis && !sparkline) ? Y_LABEL_W : 0
-  const rightW    = sparkline ? 0 : RIGHT_W
+  const rightW    = sparkline
+    ? 0
+    : CALLOUT_MAX_W + CIRCLE_R + CALLOUT_DOT_GAP + CALLOUT_RIGHT_PAD
 
   // ── Tooltip ────────────────────────────────────────────────────────────────
 
@@ -185,10 +196,38 @@ export function LineChart({
 
   const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
 
+  // ── Responsive width (fills container up to maxWidth) ──────────────────────
+
+  const [layoutWidth, setLayoutWidth] = useState(maxWidth ?? 0)
+  const measureRef = useRef<HTMLDivElement | null>(null)
+
+  const setContainerNode = useCallback((node: HTMLDivElement | null) => {
+    measureRef.current = node
+    containerRef(node)
+  }, [containerRef])
+
+  useLayoutEffect(() => {
+    const el = measureRef.current
+    if (!el) return
+
+    const update = () => {
+      const w = Math.floor(el.getBoundingClientRect().width)
+      if (w > 0) setLayoutWidth(w)
+    }
+
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [maxWidth])
+
   // ── Computed layout ────────────────────────────────────────────────────────
 
   const computed = useMemo(() => {
     if (!series.length || !series[0].values.length) return null
+
+    // Use measured width when available; fallback until the container ref mounts.
+    const w = layoutWidth > 0 ? layoutWidth : (maxWidth ?? 560)
 
     const nPts    = series[0].values.length
     const allVals = series.flatMap(s => s.values)
@@ -199,7 +238,7 @@ export function LineChart({
     const yMin  = ticks[0]
     const yMax  = ticks[ticks.length - 1]
 
-    const chartW = width  - yLabelW - rightW
+    const chartW = w - yLabelW - rightW
     const chartH = height - (hasXAxis ? X_AXIS_H : 0) - PADDING_TOP
 
     // ── Time-based x positioning ─────────────────────────────────────────────
@@ -235,8 +274,8 @@ export function LineChart({
         ? xLabelsProp.map((label, i) => ({ label, x: xByIndex(i), y: labelY }))
         : undefined
 
-    return { nPts, ticks, yMin, yMax, chartW, chartH, xByIndex, timeMs, tMin, tRange, yScale, callouts, xLabelGeo }
-  }, [series, dates, xLabelsProp, width, height, yLabelW, rightW, hasXAxis, sparkline])
+    return { nPts, ticks, yMin, yMax, chartW, chartH, xByIndex, timeMs, tMin, tRange, yScale, callouts, xLabelGeo, svgWidth: w }
+  }, [series, dates, xLabelsProp, layoutWidth, maxWidth, height, yLabelW, rightW, hasXAxis, sparkline])
 
   // ── Mouse interaction ─────────────────────────────────────────────────────
 
@@ -268,16 +307,24 @@ export function LineChart({
 
   if (!computed) return null
 
-  const { nPts, ticks, chartW, chartH, xByIndex, yScale, callouts, xLabelGeo } = computed
+  const { nPts, ticks, chartW, chartH, xByIndex, yScale, callouts, xLabelGeo, svgWidth } = computed
   const glowFilterId = `lc-glow-${uid}`
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width, height: 'fit-content' }}>
+    <div
+      ref={setContainerNode}
+      style={{
+        position: 'relative',
+        width: '100%',
+        ...(maxWidth != null ? { maxWidth } : {}),
+        height: 'fit-content',
+      }}
+    >
       <svg
-        width={width}
+        width="100%"
         height={height}
-        viewBox={`0 0 ${width} ${height}`}
-        style={{ display: 'block', overflow: 'visible' }}
+        viewBox={`0 0 ${svgWidth} ${height}`}
+        style={{ display: 'block' }}
         aria-hidden="true"
       >
         <defs>
@@ -311,6 +358,16 @@ export function LineChart({
           <clipPath id={`lc-clip-${uid}`}>
             <rect x={yLabelW} y={PADDING_TOP} width={chartW} height={chartH} />
           </clipPath>
+          {!sparkline && (
+            <clipPath id={`lc-callout-clip-${uid}`}>
+              <rect
+                x={svgWidth - CALLOUT_RIGHT_PAD - CALLOUT_MAX_W}
+                y={0}
+                width={CALLOUT_MAX_W}
+                height={height}
+              />
+            </clipPath>
+          )}
         </defs>
 
         {/* ── Y-axis: grid lines + labels ─────────────────────────────────── */}
@@ -330,11 +387,9 @@ export function LineChart({
             x={yLabelW - 8}
             y={yScale(v) + 4}
             textAnchor="end"
-            fontSize={11}
-            fill={MUTED}
-            fontFamily="inherit"
+            {...chartTextCaption}
           >
-            {v.toLocaleString()} -
+            {v.toLocaleString()}
           </text>
         ))}
 
@@ -342,7 +397,7 @@ export function LineChart({
         {sparkline && (
           <GridRows
             scale={yScale}
-            width={width}
+            width={svgWidth}
             left={0}
             stroke={GRID}
             strokeWidth={1}
@@ -383,7 +438,7 @@ export function LineChart({
               y={v => yScale(v)}
               curve={curveCatmullRom}
               stroke={s.color}
-              strokeWidth={3}
+              strokeWidth={2}
               strokeLinecap="round"
               strokeLinejoin="round"
               style={{ filter: lineGlow(s.color) }}
@@ -398,7 +453,7 @@ export function LineChart({
             x2={tooltipLeft}
             y1={PADDING_TOP}
             y2={PADDING_TOP + chartH}
-            stroke={MUTED}
+            stroke={AXIS_MUTED}
             strokeWidth={1}
             strokeDasharray="3 3"
             pointerEvents="none"
@@ -428,25 +483,17 @@ export function LineChart({
             r={CIRCLE_R}
             fill="white"
             stroke={s.color}
-            strokeWidth={2.5}
+            strokeWidth={2}
           />
         ))}
         {!sparkline && callouts.map(s => {
-          const x = s.endX + CIRCLE_R + 10
+          const textX = svgWidth - CALLOUT_RIGHT_PAD
           return (
-            <g key={`callout-${s.id}`}>
-              <text
-                x={x} y={s.endY - 8}
-                fontSize={10} fontWeight={600} letterSpacing="0.06em"
-                fill={MUTED} fontFamily="inherit"
-              >
-                {s.label.toUpperCase()}
+            <g key={`callout-${s.id}`} clipPath={`url(#lc-callout-clip-${uid})`}>
+              <text x={textX} y={s.endY - 8} textAnchor="end" {...chartTextCaption}>
+                {s.label}
               </text>
-              <text
-                x={x} y={s.endY + 18}
-                fontSize={22} fontWeight={700} letterSpacing="-0.03em"
-                fill={BLACK} fontFamily="inherit"
-              >
+              <text x={textX} y={s.endY + 18} textAnchor="end" {...chartTextValue}>
                 {formatVal(s.lastVal)}
               </text>
             </g>
@@ -454,18 +501,21 @@ export function LineChart({
         })}
 
         {/* ── X-axis labels ────────────────────────────────────────────────── */}
-        {!sparkline && xLabelGeo?.map(({ label, x, y }, i) =>
-          label ? (
+        {!sparkline && xLabelGeo?.map(({ label, x, y }, i) => {
+          if (!label) return null
+          const plotRight = yLabelW + chartW
+          return (
             <text
               key={i}
-              x={x} y={y}
-              textAnchor="middle"
-              fontSize={12} fill={MUTED} fontFamily="inherit"
+              x={x}
+              y={y}
+              textAnchor={xLabelTextAnchor(x, yLabelW, plotRight)}
+              {...chartTextCaption}
             >
               {label}
             </text>
-          ) : null
-        )}
+          )
+        })}
 
         {/* ── Mouse overlay — must be last so it's on top ──────────────────── */}
         <rect
@@ -484,27 +534,21 @@ export function LineChart({
         <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
-          style={TOOLTIP_STYLES}
+          style={chartTooltipStyles}
         >
           {dates?.[tooltipData] && (
-            <div style={{ fontSize: 11, opacity: 0.5, marginBottom: 8, letterSpacing: '0.02em' }}>
-              {formatTooltipDate(dates[tooltipData])}
-            </div>
+            <ChartTooltipHeader>{formatTooltipDate(dates[tooltipData])}</ChartTooltipHeader>
           )}
-          {series.map(s => (
-            <div
-              key={s.id}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}
-            >
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: s.color, flexShrink: 0 }} />
-              <span style={{ opacity: 0.55, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                {s.label}
-              </span>
-              <span style={{ fontWeight: 700, fontSize: 13, marginLeft: 'auto', paddingLeft: 16 }}>
-                {formatVal(s.values[tooltipData])}
-              </span>
-            </div>
-          ))}
+          <ChartTooltipBody>
+            {series.map(s => (
+              <ChartTooltipRow
+                key={s.id}
+                color={s.color}
+                label={s.label}
+                value={formatVal(s.values[tooltipData])}
+              />
+            ))}
+          </ChartTooltipBody>
         </TooltipInPortal>
       )}
     </div>

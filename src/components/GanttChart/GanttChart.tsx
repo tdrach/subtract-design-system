@@ -2,8 +2,13 @@
 
 import { useMemo, useCallback } from 'react'
 import { scaleLinear } from '@visx/scale'
-import { useTooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
+import {
+  chartTooltipStyles,
+  ChartTooltipDetail,
+  ChartTooltipHeader,
+} from '../ChartTooltip'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
 
@@ -20,20 +25,6 @@ const BAR_RADIUS      = 4     // border radius on bars
 const AXIS_H          = 28    // x-axis height
 const TICK_COUNT      = 5     // default x-axis tick count
 const TICK_DASH       = 4     // px for sparkline edge ticks
-
-// ─── Tooltip styles ───────────────────────────────────────────────────────────
-
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1.4,
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -99,6 +90,8 @@ export function GanttChart({
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop, tooltipOpen } =
     useTooltip<GanttTask>()
 
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
+
   const computed = useMemo(() => {
     if (!tasks.length) return null
 
@@ -134,7 +127,7 @@ export function GanttChart({
   const effRowH = heightProp && sparkline ? heightProp / tasks.length : rowHeight
 
   return (
-    <div style={{ position: 'relative', width, display: 'inline-block' }}>
+    <div ref={containerRef} style={{ position: 'relative', width, display: 'inline-block' }}>
       <svg
         width={width}
         height={totalH}
@@ -230,21 +223,19 @@ export function GanttChart({
 
       {/* ── Tooltip ──────────────────────────────────────────────────────── */}
       {tooltipOpen && tooltipData && (
-        <TooltipWithBounds
+        <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
-          style={TOOLTIP_STYLES}
+          style={chartTooltipStyles}
         >
-          <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 5 }}>
-            {tooltipData.label}
-          </div>
-          <div style={{ fontSize: 11, opacity: 0.6 }}>
+          <ChartTooltipHeader>{tooltipData.label}</ChartTooltipHeader>
+          <ChartTooltipDetail>
             {formatVal(tooltipData.start)} → {formatVal(tooltipData.end)}
-          </div>
-          <div style={{ fontSize: 11, opacity: 0.45, marginTop: 3 }}>
+          </ChartTooltipDetail>
+          <ChartTooltipDetail>
             Duration: {formatVal(tooltipData.end - tooltipData.start)}
-          </div>
-        </TooltipWithBounds>
+          </ChartTooltipDetail>
+        </TooltipInPortal>
       )}
     </div>
   )

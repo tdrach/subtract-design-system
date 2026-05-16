@@ -17,7 +17,7 @@
 
 .copy {
   font-size: $text-micro;
-  color: $muted-dark;
+  color: $muted;
   letter-spacing: $letter-spacing-tight;
 }
 
@@ -27,7 +27,7 @@
 
   a {
     font-size: $text-micro;
-    color: $muted-dark;
+    color: $muted;
     text-decoration: none;
     transition: opacity $transition-fast;
 

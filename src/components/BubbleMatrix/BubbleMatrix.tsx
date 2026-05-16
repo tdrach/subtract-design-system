@@ -2,7 +2,12 @@
 
 import { useMemo, useCallback } from 'react'
 import { scaleLinear } from '@visx/scale'
-import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip'
+import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
+import {
+  chartTooltipStyles,
+  ChartTooltipHeader,
+  ChartTooltipRow,
+} from '../ChartTooltip'
 import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
@@ -21,19 +26,6 @@ const MAX_R           = 14    // max bubble radius
 const MIN_R           = 2     // min bubble radius (non-zero values)
 const GLOW_THRESHOLD  = 0.5   // show glow when bubble is ≥ 50% of max
 
-// ─── Tooltip styles ───────────────────────────────────────────────────────────
-
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1.4,
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -271,14 +263,12 @@ export function BubbleMatrix({
         <TooltipInPortal
           left={tooltipLeft}
           top={tooltipTop}
-          style={TOOLTIP_STYLES}
+          style={chartTooltipStyles}
         >
-          <div style={{ fontSize: 11, opacity: 0.5, marginBottom: 6 }}>
+          <ChartTooltipHeader>
             {tooltipData.col.label} · {tooltipData.row.label}
-          </div>
-          <div style={{ fontWeight: 700, fontSize: 15 }}>
-            {formatVal(tooltipData.value)}
-          </div>
+          </ChartTooltipHeader>
+          <ChartTooltipRow color={color} value={formatVal(tooltipData.value)} />
         </TooltipInPortal>
       )}
     </div>

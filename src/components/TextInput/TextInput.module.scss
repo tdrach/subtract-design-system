@@ -14,7 +14,7 @@
   transition: border-color $t-micro $ease-hover;
   width: 100%;
 
-  &::placeholder { color: $muted-dark; opacity: 0.5; }
+  &::placeholder { color: $muted; opacity: 0.5; }
   &:focus { border-color: rgba(0, 0, 0, 0.3); }
   &:disabled { cursor: not-allowed; opacity: 0.4; }
 }

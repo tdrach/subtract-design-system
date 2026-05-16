@@ -1,4 +1,5 @@
 import localFont from 'next/font/local'
+import Script from 'next/script'
 import '@subtract/ds/styles/global.scss'
 import './layout.scss'
 
@@ -18,7 +19,10 @@ export const metadata = { title: 'Design System Preview' }
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={indivisible.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script src="https://mcp.figma.com/mcp/html-to-design/capture.js" strategy="beforeInteractive" />
+      </body>
     </html>
   )
 }
