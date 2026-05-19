@@ -1,0 +1,44 @@
+@use '../../styles/tokens' as *;
+
+.root {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: $radius-pill;
+  display: inline-flex;
+  gap: 0;
+  padding: 2px;
+}
+
+.btn {
+  background: transparent;
+  border: none;
+  border-radius: $radius-pill;
+  color: $muted;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: $weight-medium;
+  line-height: 1;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover:not(.active) {
+    background: rgba(0, 0, 0, 0.07);
+    color: $ink-dark;
+  }
+
+  &.active {
+    background: $black;
+    color: $ink-light;
+  }
+}
+
+// ─── Size variants ────────────────────────────────────────────────────────────
+
+.sm .btn {
+  font-size: $text-nano;
+  padding: $space-2 $space-6;
+}
+
+.md .btn {
+  font-size: $text-micro;
+  padding: $space-3 $space-8;
+}

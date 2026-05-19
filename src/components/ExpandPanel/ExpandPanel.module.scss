@@ -65,10 +65,9 @@
 
 .title {
   color: $muted;
-  font-size: $text-nano;
+  font-size: $text-micro;
   font-weight: $weight-medium;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: $letter-spacing-label;
 }
 
 .closeBtn {

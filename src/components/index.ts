@@ -71,3 +71,6 @@ export type { FunnelStage, FunnelChartProps } from './FunnelChart'
 
 export { BubbleMatrix } from './BubbleMatrix'
 export type { BubbleMatrixCell, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixProps } from './BubbleMatrix'
+
+export { SegmentedControl } from './SegmentedControl'
+export type { SegmentedControlOption, SegmentedControlProps } from './SegmentedControl'

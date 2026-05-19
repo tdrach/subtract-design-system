@@ -28,11 +28,13 @@ const Y_LABEL_W         = 52    // px reserved for y-axis labels (0 when showYAx
 const CALLOUT_MAX_W     = 88    // max width for callout label + value column
 const CALLOUT_DOT_GAP   = 10    // space between end dot and callout column
 const CALLOUT_RIGHT_PAD = 24    // $space-12 — inset from SVG edge so callout text doesn't clip
+const CALLOUT_ITEM_H    = 36    // px height of one callout block (label + value)
 const CIRCLE_R    = 4     // end-of-line hollow circle radius (8×8 px)
 const DOT_PITCH   = 7     // dot texture grid pitch (px)
 const DOT_R       = 0.9   // dot texture circle radius
 const X_AXIS_H        = 24    // px reserved for x-axis labels when present
 const X_LABEL_EDGE    = 28    // px from plot edge — switch textAnchor so labels aren't clipped
+const X_LABEL_MIN_GAP = 50    // px minimum horizontal gap between consecutive x-axis labels
 const PADDING_TOP     = 10    // px headroom so the top tick label isn't clipped
 const TICK_DASH   = 4     // px width of sparkline edge tick marks
 
@@ -258,21 +260,42 @@ export function LineChart({
 
     const yScale = scaleLinear({ domain: [yMin, yMax], range: [PADDING_TOP + chartH, PADDING_TOP] })
 
-    // End-point callout geometry
-    const callouts = series.map(s => {
+    // End-point callout geometry — with vertical collision resolution
+    const rawCallouts = series.map(s => {
       const lastVal = s.values[s.values.length - 1]
       return { ...s, endX: xByIndex(nPts - 1), endY: yScale(lastVal), lastVal }
     })
 
+    // Spread overlapping callout labels: sort by endY, push down if too close
+    const sorted = [...rawCallouts].sort((a, b) => a.endY - b.endY)
+    const dispPositions: number[] = []
+    for (let i = 0; i < sorted.length; i++) {
+      const ideal = sorted[i].endY
+      const minY  = i === 0 ? ideal : dispPositions[i - 1] + CALLOUT_ITEM_H
+      dispPositions[i] = Math.min(Math.max(ideal, minY), PADDING_TOP + chartH - 4)
+    }
+    const dispByid = Object.fromEntries(sorted.map((c, i) => [c.id, dispPositions[i]]))
+    const callouts = rawCallouts.map(c => ({ ...c, displayY: dispByid[c.id] }))
+
     // X-axis label positions — month boundaries at their real time positions
     const labelY = PADDING_TOP + chartH + X_AXIS_H - 4
-    const xLabelGeo = timeMs && !sparkline
+    const rawXLabelGeo = timeMs && !sparkline
       ? monthBoundaries(dates!).map(({ label, index }) => ({
           label, x: xByIndex(index), y: labelY,
         }))
       : xLabelsProp && !sparkline
         ? xLabelsProp.map((label, i) => ({ label, x: xByIndex(i), y: labelY }))
         : undefined
+    // Thin out labels so none are closer than X_LABEL_MIN_GAP px
+    const xLabelGeo = rawXLabelGeo?.reduce<NonNullable<typeof rawXLabelGeo>>(
+      (acc, item) => {
+        if (acc.length === 0 || item.x - acc[acc.length - 1].x >= X_LABEL_MIN_GAP) {
+          acc.push(item)
+        }
+        return acc
+      },
+      [],
+    )
 
     return { nPts, ticks, yMin, yMax, chartW, chartH, xByIndex, timeMs, tMin, tRange, yScale, callouts, xLabelGeo, svgWidth: w }
   }, [series, dates, xLabelsProp, layoutWidth, maxWidth, height, yLabelW, rightW, hasXAxis, sparkline])
@@ -490,10 +513,10 @@ export function LineChart({
           const textX = svgWidth - CALLOUT_RIGHT_PAD
           return (
             <g key={`callout-${s.id}`} clipPath={`url(#lc-callout-clip-${uid})`}>
-              <text x={textX} y={s.endY - 8} textAnchor="end" {...chartTextCaption}>
+              <text x={textX} y={s.displayY - 8} textAnchor="end" {...chartTextCaption}>
                 {s.label}
               </text>
-              <text x={textX} y={s.endY + 18} textAnchor="end" {...chartTextValue}>
+              <text x={textX} y={s.displayY + 18} textAnchor="end" {...chartTextValue}>
                 {formatVal(s.lastVal)}
               </text>
             </g>
