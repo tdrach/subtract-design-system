@@ -9,14 +9,14 @@ import {
   TagSelector, TagPill,
   ExpandPanel, ExpandPanelTrigger, ExpandPanelContent, ExpandPanelBody,
   TabBar, Tab,
-  CalendarChart,
   LineChart,
   SegmentBar,
   GanttChart,
   FunnelChart,
   BubbleMatrix,
+  DataTable,
 } from '@subtract/ds'
-import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell } from '@subtract/ds'
+import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
 import { ChartTooltipPreview } from './ChartTooltipPreview'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
@@ -237,6 +237,111 @@ const BM_DATA: BubbleMatrixCell[] = [
   { rowId: 'data',    colId: 'fri', value: 35  },
 ]
 
+// ─── DataTable demo data ──────────────────────────────────────────────────────
+
+type TaskRow = {
+  id: string
+  name: string
+  status: 'Todo' | 'In progress' | 'Done' | 'Blocked'
+  priority: 'High' | 'Medium' | 'Low'
+  tags: Tag[]
+  due: string
+}
+
+const TASK_ROWS: TaskRow[] = [
+  { id: '1', name: 'Homepage redesign',    status: 'In progress', priority: 'High',   tags: [DEMO_TAGS[0]],                    due: 'Jun 12' },
+  { id: '2', name: 'API authentication',   status: 'Todo',        priority: 'Medium', tags: [DEMO_TAGS[1]],                    due: 'Jun 15' },
+  { id: '3', name: 'Mobile onboarding',    status: 'Done',        priority: 'Low',    tags: [DEMO_TAGS[0], DEMO_TAGS[2]],      due: 'May 28' },
+  { id: '4', name: 'Error state handling', status: 'Blocked',     priority: 'High',   tags: [DEMO_TAGS[1]],                    due: 'Jun 8'  },
+  { id: '5', name: 'Analytics dashboard',  status: 'In progress', priority: 'Medium', tags: [DEMO_TAGS[2]],                    due: 'Jun 20' },
+  { id: '6', name: 'User settings page',   status: 'Todo',        priority: 'Low',    tags: [],                                due: 'Jul 1'  },
+  { id: '7', name: 'Export to CSV',        status: 'Done',        priority: 'Low',    tags: [DEMO_TAGS[1]],                    due: 'May 20' },
+  { id: '8', name: 'Notification system',  status: 'Todo',        priority: 'High',   tags: [DEMO_TAGS[0], DEMO_TAGS[1]],      due: 'Jun 28' },
+]
+
+const STATUS_COLORS: Record<string, string> = {
+  'Todo':        'rgba(12,12,12,0.32)',
+  'In progress': '#11A0FF',
+  'Done':        '#06D021',
+  'Blocked':     '#FF2111',
+}
+
+const PRIORITY_COLORS: Record<string, string> = {
+  'High':   '#FF2111',
+  'Medium': '#FFA811',
+  'Low':    'rgba(12,12,12,0.32)',
+}
+
+function renderStatus(value: unknown) {
+  const s = String(value)
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: STATUS_COLORS[s] ?? 'rgba(12,12,12,0.32)', flexShrink: 0 }} />
+      {s}
+    </span>
+  )
+}
+
+function renderPriority(value: unknown) {
+  const p = String(value)
+  return (
+    <span style={{ fontSize: 13, fontWeight: 500, color: PRIORITY_COLORS[p] ?? 'rgba(12,12,12,0.32)' }}>
+      {p}
+    </span>
+  )
+}
+
+const TASK_COLUMNS: ColumnDef<TaskRow>[] = [
+  {
+    id: 'name',
+    header: 'Task',
+    accessorKey: 'name',
+  },
+  {
+    id: 'status',
+    header: 'Status',
+    accessorKey: 'status',
+    width: 150,
+    cell: (v) => renderStatus(v),
+  },
+  {
+    id: 'priority',
+    header: 'Priority',
+    accessorKey: 'priority',
+    width: 100,
+    cell: (v) => renderPriority(v),
+  },
+  {
+    id: 'tags',
+    header: 'Tags',
+    accessorKey: 'tags',
+    sortable: false,
+    cell: (v) => {
+      const tags = (v as Tag[]) ?? []
+      if (!tags.length) return null
+      return (
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+          {tags.map(tag => <TagPill key={tag.id} tag={tag} />)}
+        </div>
+      )
+    },
+  },
+  {
+    id: 'due',
+    header: 'Due',
+    accessorKey: 'due',
+    width: 90,
+    align: 'right',
+  },
+]
+
+const TASK_ACTIONS: RowAction<TaskRow>[] = [
+  { label: 'Edit',      onSelect: (row) => console.log('Edit', row.name) },
+  { label: 'Duplicate', onSelect: (row) => console.log('Duplicate', row.name) },
+  { separator: true },
+  { label: 'Delete', destructive: true, onSelect: (row) => console.log('Delete', row.name) },
+]
+
 // ─── Icon groups ──────────────────────────────────────────────────────────────
 
 const iconGroups = [
@@ -307,7 +412,7 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
@@ -315,6 +420,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'icons',      label: 'Icons'      },
   { id: 'ui',         label: 'UI'         },
   { id: 'charts',     label: 'Charts'     },
+  { id: 'tables',     label: 'Tables'     },
 ]
 
 // ─── Page content (needs Suspense for useSearchParams) ────────────────────────
@@ -521,9 +627,9 @@ function PageContent() {
                 </div>
 
                 <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>sm — step=10</p>
+                  <p className={styles.tokenName}>step=10</p>
                   <div style={{ width: 320 }}>
-                    <Slider defaultValue={[30]} step={10} size="sm" aria-label="Step" />
+                    <Slider defaultValue={[30]} step={10} aria-label="Step" />
                   </div>
                 </div>
 
@@ -532,11 +638,6 @@ function PageContent() {
                   <div style={{ width: 320 }}>
                     <Slider defaultValue={[55]} disabled aria-label="Disabled" />
                   </div>
-                </div>
-
-                <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>vertical — md</p>
-                  <Slider defaultValue={[65]} orientation="vertical" verticalHeight={120} aria-label="Vertical" />
                 </div>
 
               </div>
@@ -750,22 +851,22 @@ function PageContent() {
             </section>
 
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>CalendarChart</h2>
+              <h2 className={styles.sectionTitle}>BubbleMatrix — calendar mode</h2>
               <p className={styles.chartIntro}>
                 Calendar bubble chart where each day is represented by one of
                 four discrete bubble sizes (r5 / r9 / r15 / r24) scaled to the
                 month&rsquo;s peak value. Larger bubbles carry a soft radial
                 glow; days outside the displayed month are shown as faint date
-                numbers. Demo: April 2026 daily sign-ups.
+                numbers. Pass <code>calendarData</code> to activate calendar mode.
+                Demo: April 2026 daily sign-ups.
               </p>
-              <div className={styles.chartStack}>
+              <div className={styles.chartGrid}>
 
-                {/* Default width */}
                 <div className={styles.chartDemo}>
-                  <p className={styles.tokenName}>width=360 — default</p>
+                  <p className={styles.tokenName}>calendarData — width=360, default color</p>
                   <div className={styles.calendarWrap}>
-                    <CalendarChart
-                      data={CALENDAR_DATA}
+                    <BubbleMatrix
+                      calendarData={CALENDAR_DATA}
                       month={new Date(2026, 3)}
                       width={360}
                       uid="cal-a"
@@ -773,12 +874,11 @@ function PageContent() {
                   </div>
                 </div>
 
-                {/* Wider, with alt color */}
                 <div className={styles.chartDemo}>
                   <p className={styles.tokenName}>width=480, color=&ldquo;$blue&rdquo;</p>
                   <div className={styles.calendarWrap}>
-                    <CalendarChart
-                      data={CALENDAR_DATA}
+                    <BubbleMatrix
+                      calendarData={CALENDAR_DATA}
                       month={new Date(2026, 3)}
                       color="#11A0FF"
                       width={480}
@@ -959,6 +1059,50 @@ function PageContent() {
                 </div>
 
               </div>
+            </section>
+          </>
+        )}
+
+        {/* ─── Tables ─────────────────────────────────────────────────────── */}
+        {activeTab === 'tables' && (
+          <>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>DataTable</h2>
+              <p className={styles.chartIntro}>
+                Generic sortable table with row selection, tag cells, status
+                badges, and a per-row overflow menu. Columns are sortable by
+                default when they have an accessor key — pass{' '}
+                <code>sortable={'{false}'}</code> to opt out. Row actions accept
+                a static array or a per-row function.
+              </p>
+              <DataTable
+                columns={TASK_COLUMNS}
+                data={TASK_ROWS}
+                getRowId={(row) => row.id}
+                rowActions={TASK_ACTIONS}
+                selectable
+                defaultSortId="name"
+              />
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>DataTable — no selection or actions</h2>
+              <DataTable
+                columns={TASK_COLUMNS.filter(c => c.id !== 'tags')}
+                data={TASK_ROWS}
+                getRowId={(row) => row.id}
+                defaultSortId="priority"
+                defaultSortDirection="desc"
+              />
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>DataTable — empty state</h2>
+              <DataTable
+                columns={TASK_COLUMNS}
+                data={[]}
+                emptyMessage="No tasks found. Create one to get started."
+              />
             </section>
           </>
         )}

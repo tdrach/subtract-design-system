@@ -1,0 +1,188 @@
+@use '../../styles/tokens' as *;
+
+// ─── Container ────────────────────────────────────────────────────────────────
+
+.container {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid $demure;
+  border-radius: $radius-md;
+  background: $white;
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: inherit;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.thead {
+  border-bottom: 1px solid $demure;
+}
+
+.th {
+  padding: $space-3 $space-6;
+  text-align: left;
+  font-size: 11px;
+  font-weight: $weight-semibold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $muted;
+  white-space: nowrap;
+  user-select: none;
+  background: $white;
+
+  &.sortable {
+    cursor: pointer;
+
+    &:hover {
+      color: $ink-dark;
+
+      .sortIcon { opacity: 0.6; }
+    }
+  }
+
+  &.sorted {
+    color: $ink-dark;
+
+    .sortIcon {
+      opacity: 1;
+      color: $blue;
+    }
+  }
+
+  &.alignRight  { text-align: right; }
+  &.alignCenter { text-align: center; }
+
+  &.checkboxCol { width: 44px; padding-right: 0; }
+  &.actionsCol  { width: 48px; }
+}
+
+.thInner {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.sortIcon {
+  opacity: 0.28;
+  transition:
+    opacity $t-micro $ease-hover,
+    color $t-micro $ease-hover;
+  flex-shrink: 0;
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.tr {
+  border-bottom: 1px solid $demure;
+  transition: background $t-micro $ease-hover;
+
+  &:last-child { border-bottom: none; }
+
+  &:hover          { background: $light; }
+  &.selected       { background: rgba($blue, 0.04); }
+  &.selected:hover { background: rgba($blue, 0.07); }
+}
+
+.td {
+  padding: $space-4 $space-6;
+  font-size: $text-xs;
+  color: $ink-dark;
+  vertical-align: middle;
+  line-height: 1.4;
+
+  &.alignRight  { text-align: right; }
+  &.alignCenter { text-align: center; }
+
+  &.checkboxCol { width: 44px; padding-right: 0; }
+  &.actionsCol  { width: 48px; text-align: right; }
+}
+
+// ─── Checkbox ─────────────────────────────────────────────────────────────────
+
+.checkbox {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  appearance: none;
+  border: 1.5px solid $demure;
+  border-radius: $radius-micro;
+  background: $white;
+  cursor: pointer;
+  transition:
+    background $t-micro $ease-hover,
+    border-color $t-micro $ease-hover;
+
+  &:hover {
+    border-color: rgba($blue, 0.55);
+  }
+
+  // Checked: blue fill + white checkmark
+  &:checked {
+    background: $blue;
+    border-color: $blue;
+    /* stylelint-disable-next-line */
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  // Indeterminate: blue fill + white dash
+  &:indeterminate {
+    background: $blue;
+    border-color: $blue;
+    /* stylelint-disable-next-line */
+    background-image: url("data:image/svg+xml,%3Csvg width='8' height='2' viewBox='0 0 8 2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.5 1H7.5' stroke='white' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($blue, 0.35);
+    outline-offset: 1px;
+  }
+}
+
+// ─── Row actions button ───────────────────────────────────────────────────────
+
+.actionsButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: $radius-sm;
+  color: $muted;
+  cursor: pointer;
+  transition:
+    background $t-micro $ease-hover,
+    color $t-micro $ease-hover;
+
+  &:hover {
+    background: $demure;
+    color: $ink-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba($blue, 0.35);
+    outline-offset: 1px;
+  }
+}
+
+// ─── Empty state ──────────────────────────────────────────────────────────────
+
+.emptyCell {
+  text-align: center;
+  padding: $space-32 $space-16;
+  color: $muted;
+  font-size: $text-xs;
+}

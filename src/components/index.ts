@@ -46,9 +46,6 @@ export type { TabBarProps, TabProps } from './Tabs'
 export { Skeleton } from './Skeleton'
 export type { SkeletonProps } from './Skeleton'
 
-export { CalendarChart } from './CalendarChart'
-export type { CalendarDataPoint, CalendarChartProps } from './CalendarChart'
-
 export { LineChart } from './LineChart'
 export type { LineSeriesData, LineChartProps } from './LineChart'
 
@@ -70,7 +67,10 @@ export { FunnelChart } from './FunnelChart'
 export type { FunnelStage, FunnelChartProps } from './FunnelChart'
 
 export { BubbleMatrix } from './BubbleMatrix'
-export type { BubbleMatrixCell, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixProps } from './BubbleMatrix'
+export type { BubbleMatrixCell, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixProps, CalendarDataPoint } from './BubbleMatrix'
 
 export { SegmentedControl } from './SegmentedControl'
 export type { SegmentedControlOption, SegmentedControlProps } from './SegmentedControl'
+
+export { DataTable } from './DataTable'
+export type { ColumnDef, RowAction, SortDirection, DataTableProps } from './DataTable'

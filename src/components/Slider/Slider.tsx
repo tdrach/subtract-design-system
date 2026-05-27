@@ -26,12 +26,6 @@ export interface SliderProps {
   'aria-label'?: string
   /** Accessible label id. */
   'aria-labelledby'?: string
-  /** Size variant. Defaults to 'md'. */
-  size?: 'sm' | 'md'
-  /** Orientation. Defaults to 'horizontal'. */
-  orientation?: 'horizontal' | 'vertical'
-  /** Height for vertical sliders in px. Defaults to 160. */
-  verticalHeight?: number
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -45,9 +39,6 @@ export function Slider({
   max = 100,
   step = 1,
   disabled = false,
-  size = 'md',
-  orientation = 'horizontal',
-  verticalHeight = 160,
   'aria-label': ariaLabel,
   'aria-labelledby': ariaLabelledBy,
 }: SliderProps) {
@@ -55,12 +46,7 @@ export function Slider({
 
   return (
     <RadixSlider.Root
-      className={[
-        styles.root,
-        styles[size],
-        styles[orientation],
-        disabled ? styles.disabled : '',
-      ].filter(Boolean).join(' ')}
+      className={[styles.root, disabled ? styles.disabled : ''].filter(Boolean).join(' ')}
       value={value}
       defaultValue={defaultValue}
       onValueChange={onValueChange}
@@ -69,8 +55,6 @@ export function Slider({
       max={max}
       step={step}
       disabled={disabled}
-      orientation={orientation}
-      style={orientation === 'vertical' ? { height: verticalHeight } : undefined}
     >
       <RadixSlider.Track className={styles.track}>
         <RadixSlider.Range className={styles.range} />
