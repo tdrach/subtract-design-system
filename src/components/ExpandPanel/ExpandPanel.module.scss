@@ -64,10 +64,12 @@
 }
 
 .title {
-  color: $muted;
-  font-size: $text-micro;
+  color: $ink-dark;
+  font-family: $font-text;
+  font-size: $text-base;
   font-weight: $weight-medium;
-  letter-spacing: $letter-spacing-label;
+  letter-spacing: $letter-spacing-tight;
+  line-height: 1;
 }
 
 .closeBtn {
@@ -93,8 +95,9 @@
 // ─── Body ─────────────────────────────────────────────────────────────────────
 .body {
   display: flex;
-  flex: 1;
+  flex: 1 1 0;
   flex-direction: column;
+  min-height: 0; // allow flex item to shrink so overflow-y: auto engages
   overflow-y: auto;
   // No padding — consumers control their own layout
 }

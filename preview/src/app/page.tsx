@@ -15,6 +15,8 @@ import {
   FunnelChart,
   BubbleMatrix,
   DataTable,
+  Sidebar, SidebarHeader, SidebarContent, SidebarFooter,
+  SidebarGroup, SidebarGroupLabel, SidebarSeparator, SidebarMenu, SidebarItem,
 } from '@subtract/ds'
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
 import { ChartTooltipPreview } from './ChartTooltipPreview'
@@ -27,6 +29,8 @@ import {
   File, FilePlus, Folder, FolderOpen, Image, Tag as TagIcon, Database, ListBullets,
   ChatCircle, Envelope, At, Warning, Info, CheckCircle, XCircle,
   Smiley, Sparkle, Rocket, Lightning,
+  ChartLine, Calendar, Tray, Wrench, Lifebuoy, Question,
+  SignOut, CaretUpDown,
 } from '@phosphor-icons/react'
 import styles from './page.module.scss'
 
@@ -412,7 +416,7 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
@@ -421,6 +425,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'ui',         label: 'UI'         },
   { id: 'charts',     label: 'Charts'     },
   { id: 'tables',     label: 'Tables'     },
+  { id: 'sidebar',    label: 'Sidebar'    },
 ]
 
 // ─── Page content (needs Suspense for useSearchParams) ────────────────────────
@@ -1103,6 +1108,183 @@ function PageContent() {
                 data={[]}
                 emptyMessage="No tasks found. Create one to get started."
               />
+            </section>
+          </>
+        )}
+
+        {/* ─── Sidebar ────────────────────────────────────────────────────── */}
+        {activeTab === 'sidebar' && (
+          <>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Sidebar</h2>
+              <p className={styles.chartIntro}>
+                Composable left-side navigation: <code>Sidebar</code> with{' '}
+                <code>SidebarHeader</code>, <code>SidebarContent</code>, and{' '}
+                <code>SidebarFooter</code>. Groups items with{' '}
+                <code>SidebarGroup</code> + <code>SidebarGroupLabel</code>.
+                Items render as <code>Link</code> when an <code>href</code> is
+                passed, or as <code>button</code> otherwise. Each{' '}
+                <code>SidebarItem</code> can include an{' '}
+                <code>icon</code> (any node — typically a Phosphor icon),{' '}
+                an <code>avatar</code> (image URL or node), a{' '}
+                <code>description</code>, and a <code>trailing</code> slot.
+              </p>
+
+              <div className={styles.sidebarDemoGrid}>
+                {/* Inset (default) */}
+                <div className={styles.sidebarDemo}>
+                  <p className={styles.sidebarDemoLabel}>variant=&quot;inset&quot; — flush against page content</p>
+                  <div className={styles.sidebarDemoFrame}>
+                    <Sidebar>
+                      <SidebarHeader>
+                        <div className={styles.sidebarBrandRow}>
+                          <div className={styles.sidebarBrandMark}>S</div>
+                          <div className={styles.sidebarBrandText}>
+                            <strong>Subtract</strong>
+                            <span>thomas@subtract.design</span>
+                          </div>
+                          <CaretUpDown size={14} weight="bold" />
+                        </div>
+                      </SidebarHeader>
+
+                      <SidebarContent>
+                        <SidebarGroup>
+                          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+                          <SidebarMenu>
+                            <SidebarItem icon={<House size={16} weight="regular" />} label="Home" href="#home" active />
+                            <SidebarItem icon={<Tray size={16} weight="regular" />} label="Tray" trailing="12" href="#inbox" />
+                            <SidebarItem icon={<ChartLine size={16} weight="regular" />} label="Insights" href="#insights" />
+                            <SidebarItem icon={<Calendar size={16} weight="regular" />} label="Calendar" href="#calendar" />
+                            <SidebarItem icon={<Folder size={16} weight="regular" />} label="Projects" trailing={<CaretRight size={12} weight="bold" />} href="#projects" />
+                          </SidebarMenu>
+                        </SidebarGroup>
+
+                        <SidebarSeparator />
+
+                        <SidebarGroup>
+                          <SidebarGroupLabel action={<Plus size={12} weight="bold" />}>Tags</SidebarGroupLabel>
+                          <SidebarMenu>
+                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#11A0FF' }} />} label="Design" trailing="24" href="#t-design" />
+                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#06D021' }} />} label="Engineering" trailing="18" href="#t-eng" />
+                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#FFA811' }} />} label="Product" trailing="7" href="#t-product" />
+                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#9333ea' }} />} label="Research" trailing="3" href="#t-research" />
+                          </SidebarMenu>
+                        </SidebarGroup>
+
+                        <SidebarSeparator />
+
+                        <SidebarGroup>
+                          <SidebarGroupLabel>Team</SidebarGroupLabel>
+                          <SidebarMenu>
+                            <SidebarItem avatar="https://i.pravatar.cc/64?img=12" label="Maya Chen" description="Designer" trailing={<span className={styles.sidebarStatusDot} />} href="#u-maya" />
+                            <SidebarItem avatar="https://i.pravatar.cc/64?img=14" label="Jordan Reyes" description="Engineering" href="#u-jordan" />
+                            <SidebarItem avatar="https://i.pravatar.cc/64?img=32" label="Sasha Park" description="Product" href="#u-sasha" />
+                            <SidebarItem icon={<Users size={16} weight="regular" />} label="Invite members" size="sm" href="#invite" />
+                          </SidebarMenu>
+                        </SidebarGroup>
+
+                        <SidebarSeparator />
+
+                        <SidebarGroup>
+                          <SidebarGroupLabel>Support</SidebarGroupLabel>
+                          <SidebarMenu>
+                            <SidebarItem icon={<Lifebuoy size={16} weight="regular" />} label="Help &amp; docs" href="#help" />
+                            <SidebarItem icon={<Question size={16} weight="regular" />} label="Send feedback" onClick={() => alert('Feedback!')} />
+                            <SidebarItem icon={<Gear size={16} weight="regular" />} label="Settings" href="#settings" />
+                            <SidebarItem icon={<SignOut size={16} weight="regular" />} label="Disabled item" disabled href="#x" />
+                          </SidebarMenu>
+                        </SidebarGroup>
+                      </SidebarContent>
+
+                      <SidebarFooter>
+                        <SidebarItem
+                          avatar="https://i.pravatar.cc/64?img=68"
+                          label="Thomas Drach"
+                          description="thomas@subtract.design"
+                          trailing={<DotsThreeVertical size={14} weight="bold" />}
+                          onClick={() => {}}
+                        />
+                      </SidebarFooter>
+                    </Sidebar>
+                    <div className={styles.sidebarDemoStage}>
+                      <span>Page content</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating */}
+                <div className={styles.sidebarDemo}>
+                  <p className={styles.sidebarDemoLabel}>variant=&quot;floating&quot; — card-style with shadow</p>
+                  <div className={styles.sidebarDemoFrame}>
+                    <Sidebar variant="floating">
+                      <SidebarHeader>
+                        <div className={styles.sidebarBrandRow}>
+                          <div className={styles.sidebarBrandMark} style={{ background: '#11A0FF' }}>C</div>
+                          <div className={styles.sidebarBrandText}>
+                            <strong>ClawMachine</strong>
+                            <span>Personal OS</span>
+                          </div>
+                        </div>
+                      </SidebarHeader>
+
+                      <SidebarContent>
+                        <SidebarMenu>
+                          <SidebarItem icon={<House size={16} />} label="Dashboard" href="#1" active />
+                          <SidebarItem icon={<ListBullets size={16} />} label="Tasks" trailing="3" href="#2" />
+                          <SidebarItem icon={<File size={16} />} label="Notes" href="#3" />
+                          <SidebarItem icon={<Database size={16} />} label="Data" href="#4" />
+                        </SidebarMenu>
+
+                        <SidebarGroup>
+                          <SidebarGroupLabel>Nested</SidebarGroupLabel>
+                          <SidebarMenu>
+                            <SidebarItem icon={<FolderOpen size={16} />} label="Documents" href="#d1" />
+                            <SidebarItem label="Reports" href="#d2" indent={1} size="sm" />
+                            <SidebarItem label="Invoices" href="#d3" indent={1} size="sm" active />
+                            <SidebarItem label="Receipts" href="#d4" indent={1} size="sm" />
+                            <SidebarItem label="2024 archive" href="#d5" indent={2} size="sm" />
+                          </SidebarMenu>
+                        </SidebarGroup>
+                      </SidebarContent>
+
+                      <SidebarFooter>
+                        <SidebarItem
+                          icon={<Wrench size={16} weight="regular" />}
+                          label="Settings"
+                          size="sm"
+                          href="#settings2"
+                        />
+                      </SidebarFooter>
+                    </Sidebar>
+                    <div className={styles.sidebarDemoStage}>
+                      <span>Page content</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>SidebarItem variants</h2>
+              <p className={styles.chartIntro}>
+                The list item primitive supports icon, avatar, description, and
+                trailing slots — and can render as either a <code>Link</code>{' '}
+                (when given an <code>href</code>) or a <code>button</code>.
+              </p>
+              <div className={styles.sidebarItemShowcase}>
+                <SidebarMenu>
+                  <SidebarItem icon={<House size={16} />} label="Icon only" href="#a" />
+                  <SidebarItem icon={<Tray size={16} />} label="Icon + trailing" trailing="42" href="#b" />
+                  <SidebarItem icon={<Bell size={16} />} label="Active state" href="#c" active />
+                  <SidebarItem icon={<ChartLine size={16} />} label="With description" description="Daily metrics &amp; trends" href="#d" />
+                  <SidebarItem avatar="https://i.pravatar.cc/64?img=5" label="Avatar — image URL" description="thomas@subtract.design" href="#e" />
+                  <SidebarItem avatar={<span style={{ background: '#11A0FF', color: '#fff', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>TD</span>} label="Avatar — custom node" href="#f" />
+                  <SidebarItem icon={<Trash size={16} />} label="Disabled" disabled href="#g" />
+                  <SidebarItem icon={<Lightning size={16} />} label="Small size" size="sm" href="#h" />
+                  <SidebarItem label="No icon, indent 1" href="#i" indent={1} size="sm" />
+                  <SidebarItem label="No icon, indent 2" href="#j" indent={2} size="sm" />
+                </SidebarMenu>
+              </div>
             </section>
           </>
         )}

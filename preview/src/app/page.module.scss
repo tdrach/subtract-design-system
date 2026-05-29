@@ -500,3 +500,128 @@
     opacity: 0.7;
   }
 }
+
+// ─── Sidebar demo ─────────────────────────────────────────────────────────────
+.sidebarDemoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: $space-32;
+  margin-top: $space-12;
+}
+
+.sidebarDemo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  min-width: 0;
+}
+
+.sidebarDemoLabel {
+  margin: 0;
+  font-size: $text-small;
+  color: $muted;
+
+  code {
+    font-family: $font-mono;
+    font-size: 0.9em;
+    padding: 1px 4px;
+    border-radius: $radius-micro;
+    background: $light;
+    color: $ink-dark;
+  }
+}
+
+// Faux "page" frame: sidebar on the left, fake content on the right
+.sidebarDemoFrame {
+  position: relative;
+  display: flex;
+  height: 560px;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $light;
+}
+
+.sidebarDemoStage {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $muted;
+  font-size: $text-small;
+  background:
+    radial-gradient(circle at 24px 24px, rgba(12, 12, 12, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.sidebarBrandRow {
+  display: flex;
+  align-items: center;
+  gap: $space-5;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background $t-micro $ease-hover;
+
+  &:hover { background: rgba(12, 12, 12, 0.04); }
+
+  > svg {
+    color: $muted;
+    margin-left: auto;
+  }
+}
+
+.sidebarBrandMark {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-sm;
+  background: $black;
+  color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: $weight-bold;
+  font-size: $text-xs;
+  flex-shrink: 0;
+}
+
+.sidebarBrandText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+
+  strong {
+    font-size: $text-xs;
+    font-weight: $weight-semibold;
+    color: $ink-dark;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  span {
+    font-size: $text-nano;
+    color: $muted;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.sidebarStatusDot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $green;
+  box-shadow: 0 0 0 2px rgba(6, 208, 33, 0.18);
+}
+
+.sidebarItemShowcase {
+  max-width: 360px;
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  padding: $space-6;
+}

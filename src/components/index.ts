@@ -74,3 +74,22 @@ export type { SegmentedControlOption, SegmentedControlProps } from './SegmentedC
 
 export { DataTable } from './DataTable'
 export type { ColumnDef, RowAction, SortDirection, DataTableProps } from './DataTable'
+
+export {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarSeparator,
+  SidebarMenu,
+  SidebarItem,
+} from './Sidebar'
+export type {
+  SidebarProps,
+  SidebarSectionProps,
+  SidebarGroupProps,
+  SidebarGroupLabelProps,
+  SidebarItemProps,
+} from './Sidebar'

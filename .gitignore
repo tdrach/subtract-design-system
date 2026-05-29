@@ -5,3 +5,6 @@ node_modules
 preview/node_modules
 preview/.next
 preview/public/fonts
+
+# Build artifacts
+*.tsbuildinfo
