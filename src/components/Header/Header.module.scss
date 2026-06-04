@@ -27,7 +27,7 @@
   font-weight: $weight-regular;
   color: $ink-dark;
   text-decoration: none;
-  letter-spacing: 0;
+  letter-spacing: $letter-spacing-normal;
   transition: opacity $transition-fast;
 
   &:hover { opacity: 0.75; }

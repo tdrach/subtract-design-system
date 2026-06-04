@@ -350,7 +350,7 @@
 }
 
 .iconName {
-  font-size: 11px;
+  font-size: $text-small;
   font-family: $font-mono;
   color: $muted;
   text-align: center;
@@ -582,7 +582,7 @@
   align-items: center;
   justify-content: center;
   font-weight: $weight-bold;
-  font-size: $text-xs;
+  font-size: $text-small;
   flex-shrink: 0;
 }
 
@@ -593,7 +593,7 @@
   line-height: 1.2;
 
   strong {
-    font-size: $text-xs;
+    font-size: $text-small;
     font-weight: $weight-semibold;
     color: $ink-dark;
     overflow: hidden;
@@ -601,7 +601,7 @@
     white-space: nowrap;
   }
   span {
-    font-size: $text-nano;
+    font-size: $text-small;
     color: $muted;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -624,4 +624,184 @@
   border: 1px solid $demure;
   border-radius: $radius-lg;
   padding: $space-6;
+}
+
+// ─── Chat demo ────────────────────────────────────────────────────────────────
+
+// Phone-width frame for the live thread
+.chatPhone {
+  width: 100%;
+  max-width: 420px;
+  height: 620px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  background: $white;
+  overflow: hidden;
+  margin-top: $space-12;
+}
+
+.chatPhoneHeader {
+  flex-shrink: 0;
+  padding: $space-6 $space-10;
+  border-bottom: 1px solid $demure;
+  background: $white;
+}
+
+.chatPhoneThreadWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chatPhoneThread {
+  height: 100%;
+}
+
+.chatMsgRow {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.chatInlineActions {
+  padding-left: $space-2;
+}
+
+.chatSuggestions {
+  margin-top: $space-3;
+}
+
+.chatPhoneComposer {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: $space-6;
+  border-top: 1px solid $demure;
+  background: $white;
+}
+
+// Ghost text/icon buttons used inside the composer toolbar
+.chatGhostBtn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: $muted;
+  font-family: inherit;
+  font-size: $text-small;
+  cursor: pointer;
+  padding: $space-2 $space-4;
+  border-radius: $radius-sm;
+  transition: background $transition-fast, color $transition-fast;
+
+  strong { color: $blue; font-weight: $weight-semibold; }
+  &:hover { background: rgba(12, 12, 12, 0.05); color: $ink-dark; }
+}
+
+.chatGhostIconBtn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: $muted;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  line-height: 0;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover { background: rgba(12, 12, 12, 0.05); color: $ink-dark; }
+}
+
+// Composer state gallery
+.composerStates {
+  display: flex;
+  flex-direction: column;
+  gap: $space-20;
+  margin-top: $space-12;
+}
+
+.submitRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-24;
+}
+
+.submitCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-5;
+}
+
+.submitCaption {
+  font-size: $text-small;
+  color: $muted;
+}
+
+.composerDockedDemo {
+  max-width: 560px;
+}
+
+// Persona gallery
+.personaGallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-32;
+  margin-top: $space-12;
+}
+
+.personaCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-6;
+}
+
+.personaCaption {
+  font-size: $text-small;
+  color: $muted;
+}
+
+.personaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-32;
+  margin-top: $space-20;
+  padding-top: $space-20;
+  border-top: 1px solid $demure;
+}
+
+// Bubble matrix
+.bubbleMatrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $space-24;
+  margin-top: $space-12;
+}
+
+.bubbleCol {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+}
+
+.bubbleColLabel {
+  font-size: $text-small;
+  font-weight: $weight-medium;
+  color: $muted;
+}
+
+.bubbleColThread {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  padding: $space-10;
 }

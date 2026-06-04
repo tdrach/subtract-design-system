@@ -10,7 +10,7 @@
   background: $white;
   color: $ink-dark;
   font-family: $font-text;
-  font-size: $text-xs;
+  font-size: $text-small;
   line-height: 1.4;
   box-sizing: border-box;
 }
@@ -86,10 +86,8 @@
   align-items: center;
   justify-content: space-between;
   padding: $space-4 $space-10 $space-2;
-  font-size: $text-nano;
+  font-size: $text-small;
   font-weight: $weight-semibold;
-  text-transform: uppercase;
-  letter-spacing: $letter-spacing-label;
   color: $muted;
   user-select: none;
 }
@@ -147,7 +145,7 @@
   border-radius: $radius-sm;
   color: $ink-dark;
   font: inherit;
-  font-size: $text-xs;
+  font-size: $text-small;
   font-weight: $weight-medium;
   text-align: left;
   text-decoration: none;
@@ -171,7 +169,7 @@
 .itemSm {
   min-height: 26px;
   padding: $space-2 $space-5;
-  font-size: $text-micro;
+  font-size: $text-small;
 }
 
 .active {
@@ -236,7 +234,7 @@
   border-radius: $radius-circle;
   overflow: hidden;
   background: $light;
-  font-size: $text-nano;
+  font-size: $text-small;
   font-weight: $weight-semibold;
   color: $ink-dark;
 
@@ -266,7 +264,7 @@
 
 .description {
   color: $muted;
-  font-size: $text-nano;
+  font-size: $text-small;
   font-weight: $weight-regular;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -280,7 +278,7 @@
   justify-content: flex-end;
   flex-shrink: 0;
   color: $muted;
-  font-size: $text-nano;
+  font-size: $text-small;
   font-weight: $weight-medium;
   gap: $space-2;
 }

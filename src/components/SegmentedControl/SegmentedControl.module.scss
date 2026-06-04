@@ -34,11 +34,11 @@
 // ─── Size variants ────────────────────────────────────────────────────────────
 
 .sm .btn {
-  font-size: $text-nano;
+  font-size: $text-small;
   padding: $space-2 $space-6;
 }
 
 .md .btn {
-  font-size: $text-micro;
+  font-size: $text-small;
   padding: $space-3 $space-8;
 }

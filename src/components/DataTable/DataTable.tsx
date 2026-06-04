@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
-import { ArrowUp, ArrowDown, ArrowsDownUp, DotsThree } from '@phosphor-icons/react'
+import { ArrowUp, ArrowDown, DotsThree } from '@phosphor-icons/react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -68,6 +68,11 @@ export interface DataTableProps<TData extends object> {
   defaultSortDirection?: SortDirection
   /** Text shown when `data` is empty. */
   emptyMessage?: string
+  /**
+   * Typography scale for headers, cells, and empty state.
+   * `sm` — `$text-small` (default). `md` — `$text-base`.
+   */
+  size?: 'sm' | 'md'
 }
 
 // ─── Internal checkbox (handles indeterminate state via ref) ──────────────────
@@ -110,6 +115,7 @@ export function DataTable<TData extends object>({
   defaultSortId,
   defaultSortDirection = 'asc',
   emptyMessage = 'No results.',
+  size = 'sm',
 }: DataTableProps<TData>) {
 
   // ── Sort ────────────────────────────────────────────────────────────────
@@ -174,12 +180,13 @@ export function DataTable<TData extends object>({
     })
   }
 
-  const hasActions = Boolean(rowActions)
-  const colSpan    = (selectable ? 1 : 0) + columns.length + (hasActions ? 1 : 0)
+  const hasActions   = Boolean(rowActions)
+  const colSpan      = (selectable ? 1 : 0) + columns.length + (hasActions ? 1 : 0)
+  const sortIconSize = size === 'md' ? 16 : 12
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className={styles.container}>
+    <div className={[styles.container, size === 'md' ? styles.md : ''].filter(Boolean).join(' ')}>
       <table className={styles.table}>
         <colgroup>
           {selectable && <col style={{ width: 44 }} />}
@@ -226,11 +233,11 @@ export function DataTable<TData extends object>({
                 >
                   <span className={styles.thInner}>
                     {col.header}
-                    {isSortable && (
+                    {isSorted && (
                       <span className={styles.sortIcon}>
-                        {isSorted && sort?.direction === 'asc'  ? <ArrowUp size={11} weight="bold" /> :
-                         isSorted && sort?.direction === 'desc' ? <ArrowDown size={11} weight="bold" /> :
-                         <ArrowsDownUp size={11} weight="bold" />}
+                        {sort?.direction === 'asc'
+                          ? <ArrowUp size={sortIconSize} weight="bold" />
+                          : <ArrowDown size={sortIconSize} weight="bold" />}
                       </span>
                     )}
                   </span>

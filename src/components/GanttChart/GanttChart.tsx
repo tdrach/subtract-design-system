@@ -9,10 +9,10 @@ import {
   ChartTooltipDetail,
   ChartTooltipHeader,
 } from '../ChartTooltip'
+import { chartTextCaption } from '../../styles/chartTokens'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
 
-const MUTED   = 'rgba(12,12,12,0.28)'
 const GRID    = 'rgba(12,12,12,0.07)'
 const DEFAULT_COLOR = '#11A0FF'
 
@@ -162,9 +162,7 @@ export function GanttChart({
                   x={effLabelW - 10}
                   y={i * rowHeight + rowHeight / 2 + 4}
                   textAnchor="end"
-                  fontSize={12}
-                  fill={MUTED}
-                  fontFamily="inherit"
+                  {...chartTextCaption}
                 >
                   {task.label}
                 </text>
@@ -199,9 +197,7 @@ export function GanttChart({
                 x={xScale(v)}
                 y={chartH + AXIS_H - 6}
                 textAnchor="middle"
-                fontSize={11}
-                fill={MUTED}
-                fontFamily="inherit"
+                {...chartTextCaption}
               >
                 {formatVal(v)}
               </text>

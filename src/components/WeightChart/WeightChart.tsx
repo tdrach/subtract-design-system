@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { chartType, chartWeight, chartTextCaption } from '../../styles/chartTokens'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,7 +28,6 @@ const BLUE  = '#0035ff'  // $blue
 const GREEN = '#16a34a'  // lean mass
 const AMBER = '#d97706'  // body fat %
 
-const MUTED      = 'rgba(12,12,12,0.32)'   // axis labels
 const PILL_FONT  = 'inherit'               // picks up $font-text from cascade
 const RADIUS_SM  = 5                       // $radius-micro
 
@@ -234,7 +234,7 @@ export function WeightChart({ data, width, height, uid = 'a' }: WeightChartProps
             <text
               x={c.x} y={pillY + pillH - 4.5}
               textAnchor="middle"
-              fontSize={10} fontWeight="500"
+              fontSize={chartType.small} fontWeight={chartWeight.medium}
               fill={BLUE} fillOpacity={0.8}
               fontFamily={PILL_FONT}
             >
@@ -260,7 +260,7 @@ export function WeightChart({ data, width, height, uid = 'a' }: WeightChartProps
             <text
               x={pillX + pillW / 2} y={pillY + pillH - 4}
               textAnchor="middle"
-              fontSize={10} fontWeight="500"
+              fontSize={chartType.small} fontWeight={chartWeight.medium}
               fill={AMBER} fillOpacity={0.9}
               fontFamily={PILL_FONT}
             >
@@ -286,7 +286,7 @@ export function WeightChart({ data, width, height, uid = 'a' }: WeightChartProps
             <text
               x={pillX + pillW / 2} y={pillY + pillH - 4}
               textAnchor="middle"
-              fontSize={10} fontWeight="500"
+              fontSize={chartType.small} fontWeight={chartWeight.medium}
               fill={GREEN} fillOpacity={0.9}
               fontFamily={PILL_FONT}
             >
@@ -301,9 +301,7 @@ export function WeightChart({ data, width, height, uid = 'a' }: WeightChartProps
         <text key={i}
           x={m.x} y={height - 4}
           textAnchor="middle"
-          fontSize={10}
-          fill={MUTED}
-          fontFamily={PILL_FONT}
+          {...chartTextCaption}
         >
           {m.label}
         </text>

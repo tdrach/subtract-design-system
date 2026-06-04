@@ -8,6 +8,19 @@
   border: 1px solid $demure;
   border-radius: $radius-md;
   background: $white;
+
+  &.md {
+    .th,
+    .td,
+    .emptyCell {
+      font-size: $text-base;
+    }
+
+    .sortIcon {
+      width: 16px;
+      height: 16px;
+    }
+  }
 }
 
 // ─── Table ────────────────────────────────────────────────────────────────────
@@ -25,12 +38,11 @@
 }
 
 .th {
-  padding: $space-3 $space-6;
+  padding: $space-4 $space-6 $space-3 $space-6;
   text-align: left;
-  font-size: 11px;
-  font-weight: $weight-semibold;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  vertical-align: middle;
+  font-size: $text-small;
+  font-weight: $weight-medium;
   color: $muted;
   white-space: nowrap;
   user-select: none;
@@ -41,8 +53,6 @@
 
     &:hover {
       color: $ink-dark;
-
-      .sortIcon { opacity: 0.6; }
     }
   }
 
@@ -50,8 +60,7 @@
     color: $ink-dark;
 
     .sortIcon {
-      opacity: 1;
-      color: $blue;
+      color: inherit;
     }
   }
 
@@ -69,10 +78,11 @@
 }
 
 .sortIcon {
-  opacity: 0.28;
-  transition:
-    opacity $t-micro $ease-hover,
-    color $t-micro $ease-hover;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
   flex-shrink: 0;
 }
 
@@ -91,7 +101,7 @@
 
 .td {
   padding: $space-4 $space-6;
-  font-size: $text-xs;
+  font-size: $text-small;
   color: $ink-dark;
   vertical-align: middle;
   line-height: 1.4;
@@ -184,5 +194,5 @@
   text-align: center;
   padding: $space-32 $space-16;
   color: $muted;
-  font-size: $text-xs;
+  font-size: $text-small;
 }

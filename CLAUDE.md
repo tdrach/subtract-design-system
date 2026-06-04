@@ -53,34 +53,35 @@ Font: **Indivisible** by Connary Fagen (custom web font, `.woff2`). Loaded via `
 // In the consuming app's root layout:
 const indivisible = localFont({
   src: [
-    { path: './public/fonts/IndivisibleWebRegular.woff2',      weight: '400', style: 'normal' },
-    { path: './public/fonts/IndivisibleWebMedium.woff2',       weight: '500', style: 'normal' },
-    { path: './public/fonts/IndivisibleWebBold.woff2',         weight: '700', style: 'normal' },
+    { path: './public/fonts/IndivisibleWebRegular.woff2',        weight: '400', style: 'normal' },
+    { path: './public/fonts/IndivisibleWebMedium.woff2',         weight: '500', style: 'normal' },
+    { path: './public/fonts/IndivisibleWebSemiBold.woff2',       weight: '600', style: 'normal' },
+    { path: './public/fonts/IndivisibleWebSemiBold.woff2',       weight: '700', style: 'normal' },
+    { path: './public/fonts/IndivisibleWebBold.woff2',          weight: '800', style: 'normal' },
     { path: './public/fonts/IndivisibleWebRegularItalic.woff2', weight: '400', style: 'italic' },
-    { path: './public/fonts/IndivisibleWebBoldItalic.woff2',   weight: '700', style: 'italic' },
+    { path: './public/fonts/IndivisibleWebSemiBoldItalic.woff2', weight: '600', style: 'italic' },
+    { path: './public/fonts/IndivisibleWebSemiBoldItalic.woff2', weight: '700', style: 'italic' },
+    { path: './public/fonts/IndivisibleWebBoldItalic.woff2',     weight: '800', style: 'italic' },
   ],
   variable: '--font-indivisible',
 })
 // Copy fonts from ds/public/fonts/ to the consuming app's public/fonts/
 ```
 
+This is the complete, canonical type scale — there are no other font-size tokens. Every text style in the DS must use one of these; pick the closest size rather than introducing a new value.
+
 | Variable | px | Use |
 |---|---|---|
-| `$text-nano` | 10px | — |
-| `$text-micro` | 12px | — |
-| `$text-small` | 12.8px | Captions, labels |
-| `$text-xs` | 14px | Small UI text |
-| `$text-base` | 17px | Default body |
-| `$text-normal` | 19.2px | Standard body (subtract.design normal) |
-| `$text-lg` | 24px | Inbetween |
+| `$text-small` | 12.8px | Labels, meta, captions, small UI text |
+| `$text-base` | 17px | UI: buttons, navigation, body |
 | `$text-large` | 28px | Body / editorial |
 | `$text-xl` | 42px | Section headings |
 | `$text-2xl` | 56px | Large display |
 | `$text-3xl` | 144px | Hero title |
 
-Letter-spacing tokens: `$letter-spacing-hero` (`-0.07em`), `$letter-spacing-tight` (`-0.025rem`), `$letter-spacing-label` (`0.08em`).
+Letter-spacing tokens: `$letter-spacing-hero` (`-0.07em`), `$letter-spacing-tight` (`-0.025rem`), `$letter-spacing-normal` (`0`), `$letter-spacing-label` (`0.08em`).
 
-Font weights: `$weight-regular` (400), `$weight-medium` (500), `$weight-semibold` (600), `$weight-bold` (700).
+Font weights: `$weight-regular` (400), `$weight-medium` (500), `$weight-semibold` (600), `$weight-bold` (700, SemiBold face), `$weight-extrabold` (800, Bold face).
 
 ### Spacing
 
@@ -274,12 +275,12 @@ Library: **Phosphor Icons** (`@phosphor-icons/react`)
 ```tsx
 import { X, DotsSix, Plus } from '@phosphor-icons/react'
 
-// Usage (props: size, weight)
+// Usage (props: size, weight) — always bold
 <X size={14} weight="bold" />
-<Plus size={16} weight="regular" />
+<Plus size={16} weight="bold" />
 ```
 
-Icons are used at `size={14}` (sm buttons), `size={15–16}` (normal UI), `size={20–24}` (larger actions). Weights used: `bold`, `regular`, `fill`.
+Icons are used at `size={14}` (sm buttons), `size={15–16}` (normal UI), `size={20–24}` (larger actions). Always use `weight="bold"`.
 
 No custom icon SVG files — all icons sourced from `@phosphor-icons/react`.
 

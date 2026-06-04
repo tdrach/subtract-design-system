@@ -18,7 +18,7 @@ export const chartTooltipStyles: CSSProperties = {
   padding: '12px 14px',
   borderRadius: chartRadius.sm,
   border: `1px solid ${chartColor.demure}`,
-  fontSize: chartType.micro,
+  fontSize: chartType.small,
   fontFamily: 'inherit',
   boxShadow: '0 4px 12px rgba(12, 12, 12, 0.08)',
   lineHeight: 1.4,
@@ -56,21 +56,21 @@ const indicatorStyle: CSSProperties = {
 }
 
 const labelStyle: CSSProperties = {
-  fontSize: chartType.micro,
+  fontSize: chartType.small,
   fontWeight: chartWeight.medium,
   color: chartColor.muted,
   flex: 1,
 }
 
 const valueStyle: CSSProperties = {
-  fontSize: chartType.micro,
+  fontSize: chartType.small,
   fontWeight: chartWeight.medium,
   color: chartColor.ink,
   fontVariantNumeric: 'tabular-nums',
 }
 
 const detailStyle: CSSProperties = {
-  fontSize: chartType.micro,
+  fontSize: chartType.small,
   fontWeight: chartWeight.medium,
   color: chartColor.muted,
   letterSpacing: chartLetterSpacing.tight,

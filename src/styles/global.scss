@@ -35,7 +35,7 @@ body {
   color: $ink-dark;
   background: $light;
   line-height: 1.5;
-  letter-spacing: -0.025rem;
+  letter-spacing: $letter-spacing-tight;
   overflow-x: hidden;
 }
 
@@ -45,7 +45,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: $weight-bold;
   color: $ink-dark;
   line-height: 1.1;
-  letter-spacing: -0.025rem;
+  letter-spacing: $letter-spacing-tight;
 }
 
 a {

@@ -27,14 +27,10 @@ export const chartRadius = {
 } as const
 
 export const chartType = {
-  /** $text-nano */
-  nano: rem(0.625),
-  /** $text-micro */
-  micro: rem(0.75),
   /** $text-small */
   small: rem(0.8),
-  /** $text-lg */
-  lg: rem(1.5),
+  /** $text-large */
+  large: rem(1.75),
 } as const
 
 export const chartWeight = {
@@ -42,8 +38,10 @@ export const chartWeight = {
   medium: 500,
   /** $weight-semibold */
   semibold: 600,
-  /** $weight-bold */
+  /** $weight-bold (SemiBold face) */
   bold: 700,
+  /** $weight-extrabold (Bold face) */
+  extrabold: 800,
 } as const
 
 export const chartLetterSpacing = {
@@ -60,9 +58,9 @@ export const chartTextCaption = {
   fontFamily: 'inherit',
 } as const
 
-/** $text-lg · $weight-medium · $letter-spacing-tight · $ink-dark */
+/** $text-large · $weight-medium · $letter-spacing-tight · $ink-dark */
 export const chartTextValue = {
-  fontSize: chartType.lg,
+  fontSize: chartType.large,
   fontWeight: chartWeight.medium,
   letterSpacing: chartLetterSpacing.tight,
   fill: chartColor.ink,

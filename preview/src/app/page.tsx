@@ -19,6 +19,7 @@ import {
   SidebarGroup, SidebarGroupLabel, SidebarSeparator, SidebarMenu, SidebarItem,
 } from '@subtract/ds'
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
+import { ChatShowcase } from './ChatShowcase'
 import { ChartTooltipPreview } from './ChartTooltipPreview'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
@@ -279,7 +280,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 function renderStatus(value: unknown) {
   const s = String(value)
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
       <span style={{ width: 6, height: 6, borderRadius: '50%', background: STATUS_COLORS[s] ?? 'rgba(12,12,12,0.32)', flexShrink: 0 }} />
       {s}
     </span>
@@ -289,55 +290,59 @@ function renderStatus(value: unknown) {
 function renderPriority(value: unknown) {
   const p = String(value)
   return (
-    <span style={{ fontSize: 13, fontWeight: 500, color: PRIORITY_COLORS[p] ?? 'rgba(12,12,12,0.32)' }}>
+    <span style={{ fontWeight: 500, color: PRIORITY_COLORS[p] ?? 'rgba(12,12,12,0.32)' }}>
       {p}
     </span>
   )
 }
 
-const TASK_COLUMNS: ColumnDef<TaskRow>[] = [
-  {
-    id: 'name',
-    header: 'Task',
-    accessorKey: 'name',
-  },
-  {
-    id: 'status',
-    header: 'Status',
-    accessorKey: 'status',
-    width: 150,
-    cell: (v) => renderStatus(v),
-  },
-  {
-    id: 'priority',
-    header: 'Priority',
-    accessorKey: 'priority',
-    width: 100,
-    cell: (v) => renderPriority(v),
-  },
-  {
-    id: 'tags',
-    header: 'Tags',
-    accessorKey: 'tags',
-    sortable: false,
-    cell: (v) => {
-      const tags = (v as Tag[]) ?? []
-      if (!tags.length) return null
-      return (
-        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-          {tags.map(tag => <TagPill key={tag.id} tag={tag} />)}
-        </div>
-      )
+function getTaskColumns(size: 'sm' | 'md' = 'sm'): ColumnDef<TaskRow>[] {
+  return [
+    {
+      id: 'name',
+      header: 'Task',
+      accessorKey: 'name',
     },
-  },
-  {
-    id: 'due',
-    header: 'Due',
-    accessorKey: 'due',
-    width: 90,
-    align: 'right',
-  },
-]
+    {
+      id: 'status',
+      header: 'Status',
+      accessorKey: 'status',
+      width: 150,
+      cell: (v) => renderStatus(v),
+    },
+    {
+      id: 'priority',
+      header: 'Priority',
+      accessorKey: 'priority',
+      width: 100,
+      cell: (v) => renderPriority(v),
+    },
+    {
+      id: 'tags',
+      header: 'Tags',
+      accessorKey: 'tags',
+      sortable: false,
+      cell: (v) => {
+        const tags = (v as Tag[]) ?? []
+        if (!tags.length) return null
+        return (
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+            {tags.map(tag => <TagPill key={tag.id} tag={tag} size={size} />)}
+          </div>
+        )
+      },
+    },
+    {
+      id: 'due',
+      header: 'Due',
+      accessorKey: 'due',
+      width: 90,
+      align: 'right',
+    },
+  ]
+}
+
+const TASK_COLUMNS = getTaskColumns('sm')
 
 const TASK_ACTIONS: RowAction<TaskRow>[] = [
   { label: 'Edit',      onSelect: (row) => console.log('Edit', row.name) },
@@ -416,7 +421,7 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar' | 'chat'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
@@ -426,6 +431,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'charts',     label: 'Charts'     },
   { id: 'tables',     label: 'Tables'     },
   { id: 'sidebar',    label: 'Sidebar'    },
+  { id: 'chat',       label: 'Chat'       },
 ]
 
 // ─── Page content (needs Suspense for useSearchParams) ────────────────────────
@@ -492,7 +498,8 @@ function PageContent() {
                   copy. It ships with the package and is exposed via the CSS variable{' '}
                   <code>--font-indivisible</code>. Both <code>$font-display</code> and{' '}
                   <code>$font-text</code> tokens resolve to it. Available in Regular (400),
-                  Medium (500), and Bold (700) — each with matching italics.
+                  Medium (500), SemiBold (600 / $weight-bold at 700), and Bold (800) — each with
+                  matching italics.
                 </p>
               </div>
             </section>
@@ -1091,6 +1098,23 @@ function PageContent() {
             </section>
 
             <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>DataTable — size=&quot;md&quot;</h2>
+              <p className={styles.chartIntro}>
+                Uses <code>$text-base</code> for headers, cells, and empty state.
+                Default <code>size=&quot;sm&quot;</code> uses <code>$text-small</code>.
+              </p>
+              <DataTable
+                columns={getTaskColumns('md')}
+                data={TASK_ROWS}
+                getRowId={(row) => row.id}
+                rowActions={TASK_ACTIONS}
+                selectable
+                size="md"
+                defaultSortId="name"
+              />
+            </section>
+
+            <section className={styles.section}>
               <h2 className={styles.sectionTitle}>DataTable — no selection or actions</h2>
               <DataTable
                 columns={TASK_COLUMNS.filter(c => c.id !== 'tags')}
@@ -1151,11 +1175,11 @@ function PageContent() {
                         <SidebarGroup>
                           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
                           <SidebarMenu>
-                            <SidebarItem icon={<House size={16} weight="regular" />} label="Home" href="#home" active />
-                            <SidebarItem icon={<Tray size={16} weight="regular" />} label="Tray" trailing="12" href="#inbox" />
-                            <SidebarItem icon={<ChartLine size={16} weight="regular" />} label="Insights" href="#insights" />
-                            <SidebarItem icon={<Calendar size={16} weight="regular" />} label="Calendar" href="#calendar" />
-                            <SidebarItem icon={<Folder size={16} weight="regular" />} label="Projects" trailing={<CaretRight size={12} weight="bold" />} href="#projects" />
+                            <SidebarItem icon={<House size={16} weight="bold" />} label="Home" href="#home" active />
+                            <SidebarItem icon={<Tray size={16} weight="bold" />} label="Tray" trailing="12" href="#inbox" />
+                            <SidebarItem icon={<ChartLine size={16} weight="bold" />} label="Insights" href="#insights" />
+                            <SidebarItem icon={<Calendar size={16} weight="bold" />} label="Calendar" href="#calendar" />
+                            <SidebarItem icon={<Folder size={16} weight="bold" />} label="Projects" trailing={<CaretRight size={12} weight="bold" />} href="#projects" />
                           </SidebarMenu>
                         </SidebarGroup>
 
@@ -1164,10 +1188,10 @@ function PageContent() {
                         <SidebarGroup>
                           <SidebarGroupLabel action={<Plus size={12} weight="bold" />}>Tags</SidebarGroupLabel>
                           <SidebarMenu>
-                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#11A0FF' }} />} label="Design" trailing="24" href="#t-design" />
-                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#06D021' }} />} label="Engineering" trailing="18" href="#t-eng" />
-                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#FFA811' }} />} label="Product" trailing="7" href="#t-product" />
-                            <SidebarItem icon={<TagIcon size={16} weight="fill" style={{ color: '#9333ea' }} />} label="Research" trailing="3" href="#t-research" />
+                            <SidebarItem icon={<TagIcon size={16} weight="bold" style={{ color: '#11A0FF' }} />} label="Design" trailing="24" href="#t-design" />
+                            <SidebarItem icon={<TagIcon size={16} weight="bold" style={{ color: '#06D021' }} />} label="Engineering" trailing="18" href="#t-eng" />
+                            <SidebarItem icon={<TagIcon size={16} weight="bold" style={{ color: '#FFA811' }} />} label="Product" trailing="7" href="#t-product" />
+                            <SidebarItem icon={<TagIcon size={16} weight="bold" style={{ color: '#9333ea' }} />} label="Research" trailing="3" href="#t-research" />
                           </SidebarMenu>
                         </SidebarGroup>
 
@@ -1179,7 +1203,7 @@ function PageContent() {
                             <SidebarItem avatar="https://i.pravatar.cc/64?img=12" label="Maya Chen" description="Designer" trailing={<span className={styles.sidebarStatusDot} />} href="#u-maya" />
                             <SidebarItem avatar="https://i.pravatar.cc/64?img=14" label="Jordan Reyes" description="Engineering" href="#u-jordan" />
                             <SidebarItem avatar="https://i.pravatar.cc/64?img=32" label="Sasha Park" description="Product" href="#u-sasha" />
-                            <SidebarItem icon={<Users size={16} weight="regular" />} label="Invite members" size="sm" href="#invite" />
+                            <SidebarItem icon={<Users size={16} weight="bold" />} label="Invite members" size="sm" href="#invite" />
                           </SidebarMenu>
                         </SidebarGroup>
 
@@ -1188,10 +1212,10 @@ function PageContent() {
                         <SidebarGroup>
                           <SidebarGroupLabel>Support</SidebarGroupLabel>
                           <SidebarMenu>
-                            <SidebarItem icon={<Lifebuoy size={16} weight="regular" />} label="Help &amp; docs" href="#help" />
-                            <SidebarItem icon={<Question size={16} weight="regular" />} label="Send feedback" onClick={() => alert('Feedback!')} />
-                            <SidebarItem icon={<Gear size={16} weight="regular" />} label="Settings" href="#settings" />
-                            <SidebarItem icon={<SignOut size={16} weight="regular" />} label="Disabled item" disabled href="#x" />
+                            <SidebarItem icon={<Lifebuoy size={16} weight="bold" />} label="Help &amp; docs" href="#help" />
+                            <SidebarItem icon={<Question size={16} weight="bold" />} label="Send feedback" onClick={() => alert('Feedback!')} />
+                            <SidebarItem icon={<Gear size={16} weight="bold" />} label="Settings" href="#settings" />
+                            <SidebarItem icon={<SignOut size={16} weight="bold" />} label="Disabled item" disabled href="#x" />
                           </SidebarMenu>
                         </SidebarGroup>
                       </SidebarContent>
@@ -1229,16 +1253,16 @@ function PageContent() {
 
                       <SidebarContent>
                         <SidebarMenu>
-                          <SidebarItem icon={<House size={16} />} label="Dashboard" href="#1" active />
-                          <SidebarItem icon={<ListBullets size={16} />} label="Tasks" trailing="3" href="#2" />
-                          <SidebarItem icon={<File size={16} />} label="Notes" href="#3" />
-                          <SidebarItem icon={<Database size={16} />} label="Data" href="#4" />
+                          <SidebarItem icon={<House size={16} weight="bold" />} label="Dashboard" href="#1" active />
+                          <SidebarItem icon={<ListBullets size={16} weight="bold" />} label="Tasks" trailing="3" href="#2" />
+                          <SidebarItem icon={<File size={16} weight="bold" />} label="Notes" href="#3" />
+                          <SidebarItem icon={<Database size={16} weight="bold" />} label="Data" href="#4" />
                         </SidebarMenu>
 
                         <SidebarGroup>
                           <SidebarGroupLabel>Nested</SidebarGroupLabel>
                           <SidebarMenu>
-                            <SidebarItem icon={<FolderOpen size={16} />} label="Documents" href="#d1" />
+                            <SidebarItem icon={<FolderOpen size={16} weight="bold" />} label="Documents" href="#d1" />
                             <SidebarItem label="Reports" href="#d2" indent={1} size="sm" />
                             <SidebarItem label="Invoices" href="#d3" indent={1} size="sm" active />
                             <SidebarItem label="Receipts" href="#d4" indent={1} size="sm" />
@@ -1249,7 +1273,7 @@ function PageContent() {
 
                       <SidebarFooter>
                         <SidebarItem
-                          icon={<Wrench size={16} weight="regular" />}
+                          icon={<Wrench size={16} weight="bold" />}
                           label="Settings"
                           size="sm"
                           href="#settings2"
@@ -1273,14 +1297,14 @@ function PageContent() {
               </p>
               <div className={styles.sidebarItemShowcase}>
                 <SidebarMenu>
-                  <SidebarItem icon={<House size={16} />} label="Icon only" href="#a" />
-                  <SidebarItem icon={<Tray size={16} />} label="Icon + trailing" trailing="42" href="#b" />
-                  <SidebarItem icon={<Bell size={16} />} label="Active state" href="#c" active />
-                  <SidebarItem icon={<ChartLine size={16} />} label="With description" description="Daily metrics &amp; trends" href="#d" />
+                  <SidebarItem icon={<House size={16} weight="bold" />} label="Icon only" href="#a" />
+                  <SidebarItem icon={<Tray size={16} weight="bold" />} label="Icon + trailing" trailing="42" href="#b" />
+                  <SidebarItem icon={<Bell size={16} weight="bold" />} label="Active state" href="#c" active />
+                  <SidebarItem icon={<ChartLine size={16} weight="bold" />} label="With description" description="Daily metrics &amp; trends" href="#d" />
                   <SidebarItem avatar="https://i.pravatar.cc/64?img=5" label="Avatar — image URL" description="thomas@subtract.design" href="#e" />
                   <SidebarItem avatar={<span style={{ background: '#11A0FF', color: '#fff', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>TD</span>} label="Avatar — custom node" href="#f" />
-                  <SidebarItem icon={<Trash size={16} />} label="Disabled" disabled href="#g" />
-                  <SidebarItem icon={<Lightning size={16} />} label="Small size" size="sm" href="#h" />
+                  <SidebarItem icon={<Trash size={16} weight="bold" />} label="Disabled" disabled href="#g" />
+                  <SidebarItem icon={<Lightning size={16} weight="bold" />} label="Small size" size="sm" href="#h" />
                   <SidebarItem label="No icon, indent 1" href="#i" indent={1} size="sm" />
                   <SidebarItem label="No icon, indent 2" href="#j" indent={2} size="sm" />
                 </SidebarMenu>
@@ -1288,6 +1312,9 @@ function PageContent() {
             </section>
           </>
         )}
+
+        {/* ─── Chat ───────────────────────────────────────────────────────── */}
+        {activeTab === 'chat' && <ChatShowcase />}
       </main>
 
       <Footer copyright="© 2026 Subtract" navLinks={[{ href: '/writing', label: 'Writing' }, { href: '/about', label: 'About' }, { href: 'https://github.com', label: 'GitHub', external: true }]} />

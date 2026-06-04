@@ -8,6 +8,7 @@ import {
   ChartTooltipHeader,
   ChartTooltipRow,
 } from '../ChartTooltip'
+import { chartType, chartWeight, chartLetterSpacing } from '../../styles/chartTokens'
 import { localPoint } from '@visx/event'
 
 // ─── DS token constants ───────────────────────────────────────────────────────
@@ -281,9 +282,9 @@ export function FunnelChart({
                 x={x}
                 y={centerY + 5}
                 textAnchor="middle"
-                fontSize={13}
-                fontWeight={600}
-                letterSpacing="-0.02em"
+                fontSize={chartType.small}
+                fontWeight={chartWeight.semibold}
+                letterSpacing={chartLetterSpacing.tight}
                 fill={BLACK}
                 fontFamily="inherit"
                 style={{ pointerEvents: 'none' }}

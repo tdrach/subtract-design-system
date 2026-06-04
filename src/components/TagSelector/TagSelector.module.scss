@@ -41,10 +41,14 @@
   border-radius: $radius-micro;
   font-size: $text-small;
   font-weight: $weight-medium;
-  letter-spacing: -0.01em;
+  letter-spacing: $letter-spacing-tight;
   padding: $space-2 $space-5;
   white-space: nowrap;
   line-height: 1.4;
+
+  &.pillMd {
+    font-size: $text-base;
+  }
 }
 
 .addMore {

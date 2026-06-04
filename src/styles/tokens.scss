@@ -28,21 +28,17 @@ $font-display: var(--font-indivisible, 'Indivisible', sans-serif);
 $font-text:    var(--font-indivisible, 'Indivisible', sans-serif);
 $font-mono:    'Mono', monospace;
 
-// Font weights
-$weight-regular:  400;
-$weight-medium:   500;
-$weight-semibold: 600;
-$weight-bold:     700;
+// Font weights — $weight-bold (700) and $weight-semibold (600) load SemiBold;
+// $weight-extrabold (800) loads the native Bold cut.
+$weight-regular:   400;
+$weight-medium:    500;
+$weight-semibold:  600;
+$weight-bold:      700;
+$weight-extrabold: 800;
 
-// Type scale
-// Named after subtract.design conventions + SneakPeak additions
-$text-nano:   0.625rem;  //  10px
-$text-micro:  0.75rem;   //  12px
-$text-small:  0.8rem;    //  12.8px — captions, labels
-$text-xs:     0.875rem;  //  14px
-$text-base:   1.0625rem; //  17px
-$text-normal: 1.2rem;    //  19.2px — standard body (subtract.design normal)
-$text-lg:     1.5rem;    //  24px   — inbetween
+// Type scale — the canonical set (mirrored on the typography preview page)
+$text-small:  0.8rem;    //  12.8px — labels, meta, captions
+$text-base:   1.0625rem; //  17px   — UI: buttons, navigation, body
 $text-large:  1.75rem;   //  28px   — body / editorial
 $text-xl:     2.625rem;  //  42px   — section headings
 $text-2xl:    3.5rem;    //  56px   — large display
@@ -52,6 +48,8 @@ $text-3xl:    9rem;      // 144px   — hero title
 $letter-spacing-hero: -0.07em;
 // Standard tight letter-spacing (body copy, headings)
 $letter-spacing-tight: -0.025rem;
+// Neutral tracking — resets the body's tight default (e.g. wordmark)
+$letter-spacing-normal: 0;
 // Uppercase label letter-spacing (small caps, section labels)
 $letter-spacing-label: 0.08em;
 

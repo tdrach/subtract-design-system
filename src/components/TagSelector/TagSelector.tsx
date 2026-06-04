@@ -130,9 +130,12 @@ export function TagSelector({ tags, selected, onSelect, onDeselect, onCreate, co
   )
 }
 
-export function TagPill({ tag }: { tag: Tag }) {
+export function TagPill({ tag, size = 'sm' }: { tag: Tag; size?: 'sm' | 'md' }) {
   return (
-    <span className={styles.pill} style={{ background: `${tag.color}1f`, color: tag.color }}>
+    <span
+      className={[styles.pill, size === 'md' ? styles.pillMd : ''].filter(Boolean).join(' ')}
+      style={{ background: `${tag.color}1f`, color: tag.color }}
+    >
       {tag.name}
     </span>
   )
