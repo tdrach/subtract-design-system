@@ -1,0 +1,181 @@
+@use '../../styles/tokens' as *;
+
+// ─── Row (alignment + optional avatar) ────────────────────────────────────────
+.row {
+  display: flex;
+  align-items: flex-end;
+  gap: $space-3;
+  width: 100%;
+
+  &.from-user {
+    justify-content: flex-end;
+  }
+  &.from-assistant,
+  &.from-system {
+    justify-content: flex-start;
+  }
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-circle;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  // Only the last bubble in a run reserves the avatar; others align past it.
+  > * { width: 100%; height: 100%; }
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  min-width: 0;
+  max-width: 76%;
+}
+.row.from-user .stack { align-items: flex-end; }
+.row.from-assistant .stack,
+.row.from-system .stack { align-items: flex-start; }
+
+// ─── Bubble ───────────────────────────────────────────────────────────────────
+.bubble {
+  padding: $space-4 $space-6;
+  font-family: $font-text;
+  font-size: $text-small;
+  line-height: 1.45;
+  word-break: break-word;
+  border-radius: $radius-lg;
+  box-sizing: border-box;
+}
+
+// iMessage fills
+.v-bubble {
+  &.from-user {
+    background: $blue;
+    color: $ink-light;
+  }
+  &.from-assistant,
+  &.from-system {
+    background: rgba(12, 12, 12, 0.05);
+    color: $ink-dark;
+  }
+}
+
+// Plain (Claude-style, full-width, no fill)
+.v-plain {
+  background: transparent;
+  padding: 0;
+  color: $ink-dark;
+  border-radius: 0;
+
+  &.from-user { color: $ink-dark; }
+}
+.row.from-user .v-plain { text-align: left; }
+// Plain bubbles get full available width
+.stack:has(.v-plain) { max-width: 100%; }
+
+// ─── Grouped corner rounding ──────────────────────────────────────────────────
+// Tight inner corners on the sender's edge for consecutive runs.
+$tight: $radius-micro;
+
+.v-bubble.from-user {
+  &.group-first  { border-bottom-right-radius: $tight; }
+  &.group-middle { border-top-right-radius: $tight; border-bottom-right-radius: $tight; }
+  &.group-last   { border-top-right-radius: $tight; }
+}
+.v-bubble.from-assistant,
+.v-bubble.from-system {
+  &.group-first  { border-bottom-left-radius: $tight; }
+  &.group-middle { border-top-left-radius: $tight; border-bottom-left-radius: $tight; }
+  &.group-last   { border-top-left-radius: $tight; }
+}
+
+// ─── Error tone ───────────────────────────────────────────────────────────────
+.error {
+  background: rgba($warning, 0.12);
+  border: 1.5px solid $warning;
+  color: $ink-dark;
+
+  &.from-user { background: rgba($warning, 0.12); color: $ink-dark; }
+}
+
+// ─── Content prose styling (app renders markdown into the slot) ────────────────
+.bubble {
+  p { margin: 0; }
+  p + p { margin-top: $space-3; }
+
+  strong { font-weight: $weight-semibold; }
+  em { font-style: italic; }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  code {
+    font-family: $font-mono;
+    font-size: 0.92em;
+    padding: 1px 4px;
+    border-radius: $radius-micro;
+    background: rgba(12, 12, 12, 0.08);
+  }
+  &.from-user code { background: rgba(255, 255, 255, 0.22); }
+
+  ul, ol {
+    margin: $space-3 0;
+    padding-left: $space-8;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+  ul { list-style: none; padding-left: $space-6; }
+  ul > li {
+    position: relative;
+    &::before {
+      content: '–';
+      position: absolute;
+      left: -$space-6;
+      opacity: 0.55;
+    }
+  }
+
+  pre {
+    margin: $space-3 0;
+    padding: $space-5 $space-6;
+    border-radius: $radius-sm;
+    background: rgba(12, 12, 12, 0.06);
+    overflow-x: auto;
+    font-family: $font-mono;
+    font-size: $text-small;
+    line-height: 1.4;
+
+    code { background: none; padding: 0; }
+  }
+
+  > :first-child { margin-top: 0; }
+  > :last-child { margin-bottom: 0; }
+}
+
+// ─── Meta line (timestamp + delivery status) ──────────────────────────────────
+.meta {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: 0 $space-2;
+  font-size: $text-small;
+  color: $muted;
+  line-height: 1.2;
+}
+
+.timestamp { color: $muted; }
+
+.status { color: $muted; }
+.statusRead { color: $blue; font-weight: $weight-medium; }
+.statusFailed { color: $muted; }
+
+// ─── Reduced motion has nothing to disable here (static component) ─────────────

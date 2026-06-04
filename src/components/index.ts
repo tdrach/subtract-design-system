@@ -93,3 +93,59 @@ export type {
   SidebarGroupLabelProps,
   SidebarItemProps,
 } from './Sidebar'
+
+// ─── Chat ──────────────────────────────────────────────────────────────────────
+
+export { ChatBubble } from './ChatBubble'
+export type {
+  ChatBubbleProps,
+  ChatRole,
+  ChatBubbleTone,
+  ChatBubbleVariant,
+  ChatBubbleGroup,
+  ChatDeliveryStatus,
+} from './ChatBubble'
+
+export { ChatThread, ChatThreadScrollButton } from './ChatThread'
+export type {
+  ChatThreadProps,
+  ChatThreadScrollButtonProps,
+  ChatThreadHandle,
+} from './ChatThread'
+
+export {
+  ChatComposer,
+  ChatComposerTextarea,
+  ChatComposerToolbar,
+  ChatComposerTools,
+  ChatComposerSubmit,
+} from './ChatComposer'
+export type {
+  ChatComposerProps,
+  ChatComposerTextareaProps,
+  ChatComposerSubmitProps,
+  ChatComposerSubmitStatus,
+} from './ChatComposer'
+
+export { Persona, PersonaAvatar } from './Persona'
+export type {
+  PersonaProps,
+  PersonaAvatarProps,
+  PersonaState,
+  PersonaSize,
+} from './Persona'
+
+export { TypingIndicator } from './TypingIndicator'
+export type { TypingIndicatorProps } from './TypingIndicator'
+
+export { ChatMessageActions, ChatMessageAction } from './ChatMessageActions'
+export type {
+  ChatMessageActionsProps,
+  ChatMessageActionProps,
+} from './ChatMessageActions'
+
+export { SuggestionChips, SuggestionChip } from './SuggestionChips'
+export type {
+  SuggestionChipsProps,
+  SuggestionChipProps,
+} from './SuggestionChips'

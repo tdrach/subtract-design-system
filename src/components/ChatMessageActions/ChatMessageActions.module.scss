@@ -1,0 +1,53 @@
+@use '../../styles/tokens' as *;
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.alignStart { justify-content: flex-start; }
+.alignEnd { justify-content: flex-end; }
+
+// Reveal-on-hover: hidden until the nearest hovered/focused group shows it.
+.revealOnHover {
+  opacity: 0;
+  transition: opacity $transition-fast;
+
+  // Parent message wrapper should add :hover/:focus-within to reveal — we expose
+  // both the standard group-hover and focus-within on an ancestor.
+  *:hover > &,
+  *:focus-within > & {
+    opacity: 1;
+  }
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: $radius-sm;
+  color: $muted;
+  cursor: pointer;
+  line-height: 0;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover {
+    background: rgba(12, 12, 12, 0.06);
+    color: $ink-dark;
+  }
+  &:focus-visible {
+    outline: 2px solid $blue;
+    outline-offset: 1px;
+  }
+}
+
+.active {
+  color: $blue;
+  &:hover { color: $blue; }
+}

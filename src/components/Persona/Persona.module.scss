@@ -1,0 +1,175 @@
+@use 'sass:color';
+@use '../../styles/tokens' as *;
+
+// ─── Avatar base ──────────────────────────────────────────────────────────────
+.avatar {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-circle;
+  box-sizing: border-box;
+}
+
+.size-sm { width: 28px; height: 28px; }
+.size-md { width: 40px; height: 40px; }
+.size-lg { width: 64px; height: 64px; }
+
+// ─── Flat avatar (initials / glyph / image) ───────────────────────────────────
+.flat {
+  background: $light;
+  color: $ink-dark;
+  overflow: hidden;
+}
+
+.avatarImage { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatarGlyph { display: inline-flex; align-items: center; justify-content: center; }
+.avatarInitial {
+  font-family: $font-text;
+  font-weight: $weight-semibold;
+  font-size: $text-small;
+  color: $ink-dark;
+}
+
+// ─── Orb (Obsidian-inspired) ──────────────────────────────────────────────────
+// Self-contained gradient orb built only from $blue + light highlights.
+.orb {
+  overflow: visible;
+  // Base orb body: a glossy blue sphere with a top-left highlight.
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 38%),
+    radial-gradient(circle at 70% 75%, color.adjust($blue, $lightness: -14%) 0%, rgba($blue, 0) 60%),
+    $blue;
+  box-shadow:
+    inset 0 0 6px rgba(255, 255, 255, 0.35),
+    0 1px 6px rgba($blue, 0.35);
+}
+
+.orbCore {
+  position: absolute;
+  inset: 22%;
+  border-radius: $radius-circle;
+  background: radial-gradient(circle at 40% 35%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 70%);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+// Expanding ring used by listening / thinking states
+.orbRing {
+  position: absolute;
+  inset: 0;
+  border-radius: $radius-circle;
+  border: 2px solid $blue;
+  opacity: 0;
+  pointer-events: none;
+}
+
+// ─── States ───────────────────────────────────────────────────────────────────
+// idle — gentle breathing
+.state-idle {
+  animation: persona-breathe 4s $ease-silk infinite;
+}
+
+// thinking — quicker pulse + soft pulsing ring
+.state-thinking {
+  animation: persona-pulse 1.4s $ease-move infinite;
+  .orbRing { animation: persona-ring 1.4s $ease-enter infinite; }
+  .orbCore { animation: persona-core 1.4s $ease-move infinite; }
+}
+
+// listening — steady expanding ring, calm body
+.state-listening {
+  animation: persona-breathe 3s $ease-silk infinite;
+  .orbRing { animation: persona-ring 2s $ease-enter infinite; }
+}
+
+// speaking — lively scale flicker
+.state-speaking {
+  animation: persona-speak 0.7s $ease-move infinite;
+  .orbCore { animation: persona-core 0.7s $ease-move infinite; }
+}
+
+@keyframes persona-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+@keyframes persona-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.07); }
+}
+
+@keyframes persona-speak {
+  0%   { transform: scale(1); }
+  25%  { transform: scale(1.05); }
+  50%  { transform: scale(0.98); }
+  75%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes persona-ring {
+  0%   { opacity: 0.55; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+@keyframes persona-core {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.95; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state-idle,
+  .state-thinking,
+  .state-listening,
+  .state-speaking,
+  .orbCore,
+  .orbRing {
+    animation: none !important;
+  }
+}
+
+// ─── Persona layout ───────────────────────────────────────────────────────────
+.persona {
+  display: flex;
+  align-items: center;
+  gap: $space-5;
+  min-width: 0;
+}
+
+.persona-vertical {
+  flex-direction: column;
+  text-align: center;
+  gap: $space-3;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.persona-vertical .text { align-items: center; }
+
+.name {
+  font-family: $font-text;
+  font-weight: $weight-semibold;
+  color: $ink-dark;
+  font-size: $text-base;
+  letter-spacing: $letter-spacing-tight;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role {
+  font-size: $text-small;
+  color: $muted;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Scale name down for the small persona
+.persona-sm .name { font-size: $text-small; }
+.persona-lg .name { font-size: $text-large; }
