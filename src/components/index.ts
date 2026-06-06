@@ -72,6 +72,14 @@ export type { BubbleMatrixCell, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixPr
 export { SegmentedControl } from './SegmentedControl'
 export type { SegmentedControlOption, SegmentedControlProps } from './SegmentedControl'
 
+export {
+  ButtonGroup,
+  ButtonGroupItem,
+  ButtonGroupSeparator,
+  ButtonGroupText,
+} from './ButtonGroup'
+export type { ButtonGroupProps, ButtonGroupItemProps } from './ButtonGroup'
+
 export { DataTable } from './DataTable'
 export type { ColumnDef, RowAction, SortDirection, DataTableProps } from './DataTable'
 

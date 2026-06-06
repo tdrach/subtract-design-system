@@ -17,6 +17,7 @@ import {
   DataTable,
   Sidebar, SidebarHeader, SidebarContent, SidebarFooter,
   SidebarGroup, SidebarGroupLabel, SidebarSeparator, SidebarMenu, SidebarItem,
+  ButtonGroup, ButtonGroupItem,
 } from '@subtract/ds'
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
 import { ChatShowcase } from './ChatShowcase'
@@ -448,6 +449,8 @@ function PageContent() {
   const [selectedTags, setSelectedTags] = useState<string[]>(['1'])
   const [sliderA, setSliderA]       = useState([40])
   const [sliderB, setSliderB]       = useState([20, 70])
+  const [bgModel, setBgModel]       = useState('sonnet')
+  const [bgView, setBgView]         = useState('list')
 
   function setTab(tab: Tab) {
     router.push(`?tab=${tab}`, { scroll: false })
@@ -603,6 +606,49 @@ function PageContent() {
                 <div className={styles.componentGroup}><p className={styles.tokenName}>split / md</p><Button variant="primary" split>New</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>split / sm</p><Button variant="primary" size="sm" split>New</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>disabled</p><Button variant="primary" disabled>Get started</Button></div>
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>ButtonGroup</h2>
+              <p className={styles.iconIntro}>
+                Joins buttons into one connected unit. Use <code>ButtonGroupItem</code> with{' '}
+                <code>selected</code> for a single-select segmented control (model
+                pickers, view toggles), or drop plain <code>Button</code>s in to cluster
+                related actions. Selection uses the system&apos;s blue active state.
+              </p>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>single-select / sm</p>
+                  <ButtonGroup aria-label="Model">
+                    {['Haiku', 'Sonnet', 'Opus'].map((m) => (
+                      <ButtonGroupItem key={m} size="sm" selected={bgModel === m.toLowerCase()} onClick={() => setBgModel(m.toLowerCase())}>{m}</ButtonGroupItem>
+                    ))}
+                  </ButtonGroup>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>single-select / md</p>
+                  <ButtonGroup aria-label="View">
+                    <ButtonGroupItem selected={bgView === 'list'} onClick={() => setBgView('list')} iconBefore={<ListBullets size={15} weight="bold" />}>List</ButtonGroupItem>
+                    <ButtonGroupItem selected={bgView === 'board'} onClick={() => setBgView('board')} iconBefore={<Database size={15} weight="bold" />}>Board</ButtonGroupItem>
+                    <ButtonGroupItem selected={bgView === 'cal'} onClick={() => setBgView('cal')} iconBefore={<House size={15} weight="bold" />}>Calendar</ButtonGroupItem>
+                  </ButtonGroup>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>action cluster</p>
+                  <ButtonGroup aria-label="Text format">
+                    <ButtonGroupItem iconOnly size="sm" aria-label="Bold"><strong>B</strong></ButtonGroupItem>
+                    <ButtonGroupItem iconOnly size="sm" aria-label="Italic"><em>I</em></ButtonGroupItem>
+                    <ButtonGroupItem iconOnly size="sm" aria-label="Copy"><Copy size={14} weight="bold" /></ButtonGroupItem>
+                  </ButtonGroup>
+                </div>
+                <div className={styles.componentGroup}>
+                  <p className={styles.tokenName}>vertical</p>
+                  <ButtonGroup orientation="vertical" aria-label="Zoom">
+                    <ButtonGroupItem iconOnly size="sm" aria-label="Zoom in"><Plus size={14} weight="bold" /></ButtonGroupItem>
+                    <ButtonGroupItem iconOnly size="sm" aria-label="Zoom out"><Minus size={14} weight="bold" /></ButtonGroupItem>
+                  </ButtonGroup>
+                </div>
               </div>
             </section>
 

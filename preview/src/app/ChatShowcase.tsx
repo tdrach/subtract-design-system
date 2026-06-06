@@ -8,7 +8,7 @@ import {
   TypingIndicator,
   ChatMessageActions, ChatMessageAction,
   SuggestionChips, SuggestionChip,
-  SegmentedControl,
+  ButtonGroup, ButtonGroupItem,
 } from '@subtract/ds'
 import type {
   ChatThreadHandle, PersonaState, ChatComposerSubmitStatus,
@@ -249,7 +249,18 @@ function ComposerStates() {
           <ChatComposerToolbar>
             <ChatComposerTools>
               <button type="button" className={styles.chatGhostIconBtn} title="Attach"><Paperclip size={16} weight="bold" /></button>
-              <SegmentedControl options={MODEL_OPTIONS} value={model} onChange={setModel} size="sm" />
+              <ButtonGroup aria-label="Model">
+                {MODEL_OPTIONS.map((o) => (
+                  <ButtonGroupItem
+                    key={o.value}
+                    size="sm"
+                    selected={model === o.value}
+                    onClick={() => setModel(o.value)}
+                  >
+                    {o.label}
+                  </ButtonGroupItem>
+                ))}
+              </ButtonGroup>
             </ChatComposerTools>
             <ChatComposerSubmit status="ready" />
           </ChatComposerToolbar>

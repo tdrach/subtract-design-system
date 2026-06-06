@@ -1,0 +1,140 @@
+@use '../../styles/tokens' as *;
+
+// ─── Container ────────────────────────────────────────────────────────────────
+.group {
+  display: inline-flex;
+  // Isolation so item z-index (for selected/focus borders) stays local.
+  isolation: isolate;
+}
+
+.horizontal { flex-direction: row; }
+.vertical { flex-direction: column; }
+
+// Reset every child's corners, then re-round only the outer edges so the run
+// reads as one connected control. Targets ANY direct child (ButtonGroupItem,
+// DS Button, anchor, …) so the group works as a generic layout primitive.
+.group > * { border-radius: 0; }
+
+.horizontal {
+  > *:first-child {
+    border-top-left-radius: $radius-md;
+    border-bottom-left-radius: $radius-md;
+  }
+  > *:last-child {
+    border-top-right-radius: $radius-md;
+    border-bottom-right-radius: $radius-md;
+  }
+  // Merge the shared 1px border between neighbours.
+  > * + * { margin-left: -1px; }
+}
+
+.vertical {
+  > *:first-child {
+    border-top-left-radius: $radius-md;
+    border-top-right-radius: $radius-md;
+  }
+  > *:last-child {
+    border-bottom-left-radius: $radius-md;
+    border-bottom-right-radius: $radius-md;
+  }
+  > * + * { margin-top: -1px; }
+}
+
+// ─── Item ─────────────────────────────────────────────────────────────────────
+.item {
+  appearance: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-3;
+  border: 1px solid $demure;
+  background: $white;
+  color: $ink-dark;
+  font-family: $font-text;
+  font-weight: $weight-medium;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: $transition-fast;
+  transition-property: background, color, border-color;
+
+  &:hover:not(.selected):not(:disabled) {
+    background: $light;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $blue;
+    outline-offset: 1px;
+    z-index: 2; // ring sits above neighbouring borders
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+}
+
+// Selected — the DS "active" vocabulary (matches Sidebar / chat): blue tint,
+// blue text, semibold, with the blue border lifted above grey neighbours.
+.selected {
+  background: rgba($blue, 0.1);
+  color: $blue;
+  border-color: rgba($blue, 0.45);
+  font-weight: $weight-semibold;
+  z-index: 1;
+
+  &:hover:not(:disabled) {
+    background: rgba($blue, 0.14);
+  }
+}
+
+.itemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+.size-sm {
+  font-size: $text-small;
+  padding: $space-2 $space-6;
+  min-height: 28px;
+
+  &.iconOnly { padding: $space-2; width: 28px; }
+}
+
+.size-md {
+  font-size: $text-base;
+  padding: $space-4 $space-10;
+  min-height: 38px;
+
+  &.iconOnly { padding: $space-4; width: 38px; }
+}
+
+// ─── Separator (optional explicit divider) ────────────────────────────────────
+.separator {
+  align-self: stretch;
+  width: 1px;
+  background: $demure;
+  flex-shrink: 0;
+}
+.vertical > .separator {
+  width: auto;
+  height: 1px;
+}
+
+// ─── Text addon (non-interactive label segment) ───────────────────────────────
+.text {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid $demure;
+  background: $light;
+  color: $muted;
+  font-family: $font-text;
+  font-size: $text-small;
+  font-weight: $weight-medium;
+  white-space: nowrap;
+  padding: $space-2 $space-8;
+}
