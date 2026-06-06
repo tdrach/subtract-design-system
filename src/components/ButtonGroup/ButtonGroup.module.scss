@@ -97,9 +97,10 @@
 }
 
 // ─── Sizes ────────────────────────────────────────────────────────────────────
+// +2px top vs bottom: optically centers Indivisible, which sits high in the line box.
 .size-sm {
   font-size: $text-small;
-  padding: $space-2 $space-6;
+  padding: $space-3 $space-6 $space-2;
   min-height: 28px;
 
   &.iconOnly { padding: $space-2; width: 28px; }
@@ -107,7 +108,7 @@
 
 .size-md {
   font-size: $text-base;
-  padding: $space-4 $space-10;
+  padding: $space-5 $space-10 $space-4;
   min-height: 38px;
 
   &.iconOnly { padding: $space-4; width: 38px; }

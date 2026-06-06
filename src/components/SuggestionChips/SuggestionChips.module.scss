@@ -14,7 +14,8 @@
   display: inline-flex;
   align-items: center;
   gap: $space-3;
-  padding: $space-3 $space-6;
+  // +2px top vs bottom: optically centers Indivisible, which sits high in the line box.
+  padding: $space-4 $space-6 $space-3;
   border: 1px solid rgba(12, 12, 12, 0.15);
   border-radius: $radius-pill;
   background: $white;
