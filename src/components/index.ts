@@ -80,6 +80,27 @@ export {
 } from './ButtonGroup'
 export type { ButtonGroupProps, ButtonGroupItemProps } from './ButtonGroup'
 
+// ─── Board ─────────────────────────────────────────────────────────────────────
+
+export {
+  Board,
+  BoardColumn,
+  BoardColumnHeader,
+  BoardColumnBody,
+  BoardCard,
+  BoardCardTitle,
+  BoardCardMeta,
+  BoardCardAdd,
+  BoardDropIndicator,
+} from './Board'
+export type {
+  BoardProps,
+  BoardColumnProps,
+  BoardColumnHeaderProps,
+  BoardCardProps,
+  BoardCardAddProps,
+} from './Board'
+
 export { DataTable } from './DataTable'
 export type { ColumnDef, RowAction, SortDirection, DataTableProps } from './DataTable'
 

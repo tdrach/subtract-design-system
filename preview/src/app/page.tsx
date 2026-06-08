@@ -21,6 +21,7 @@ import {
 } from '@subtract/ds'
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
 import { ChatShowcase } from './ChatShowcase'
+import { BoardShowcase } from './BoardShowcase'
 import { ChartTooltipPreview } from './ChartTooltipPreview'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
@@ -422,7 +423,7 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar' | 'chat'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar' | 'chat' | 'board'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
@@ -433,6 +434,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'tables',     label: 'Tables'     },
   { id: 'sidebar',    label: 'Sidebar'    },
   { id: 'chat',       label: 'Chat'       },
+  { id: 'board',      label: 'Board'      },
 ]
 
 // ─── Page content (needs Suspense for useSearchParams) ────────────────────────
@@ -1361,6 +1363,9 @@ function PageContent() {
 
         {/* ─── Chat ───────────────────────────────────────────────────────── */}
         {activeTab === 'chat' && <ChatShowcase />}
+
+        {/* ─── Board ──────────────────────────────────────────────────────── */}
+        {activeTab === 'board' && <BoardShowcase />}
       </main>
 
       <Footer copyright="© 2026 Subtract" navLinks={[{ href: '/writing', label: 'Writing' }, { href: '/about', label: 'About' }, { href: 'https://github.com', label: 'GitHub', external: true }]} />
