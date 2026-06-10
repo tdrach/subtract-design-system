@@ -1,5 +1,6 @@
 'use client'
 
+import type { HTMLAttributes } from 'react'
 import styles from './SegmentedControl.module.scss'
 
 export interface SegmentedControlOption {
@@ -7,7 +8,7 @@ export interface SegmentedControlOption {
   value: string
 }
 
-export interface SegmentedControlProps {
+export interface SegmentedControlProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: SegmentedControlOption[]
   value: string
   onChange: (value: string) => void
@@ -22,6 +23,7 @@ export function SegmentedControl({
   onChange,
   size = 'sm',
   className,
+  ...rest
 }: SegmentedControlProps) {
   return (
     <div
@@ -31,13 +33,17 @@ export function SegmentedControl({
         size === 'md' ? styles.md : styles.sm,
         className,
       ].filter(Boolean).join(' ')}
+      {...rest}
     >
       {options.map(opt => (
         <button
           key={opt.value}
           type="button"
-          className={[styles.btn, opt.value === value ? styles.active : ''].filter(Boolean).join(' ')}
-          onClick={() => onChange(opt.value)}
+          className={styles.btn}
+          onClick={(e) => {
+            onChange(opt.value)
+            e.currentTarget.blur()
+          }}
           aria-pressed={opt.value === value}
         >
           {opt.label}

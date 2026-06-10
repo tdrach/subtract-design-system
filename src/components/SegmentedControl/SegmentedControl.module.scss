@@ -1,33 +1,66 @@
+@use 'sass:color';
 @use '../../styles/tokens' as *;
 
 .root {
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba($black, 0.05);
   border-radius: $radius-pill;
   display: inline-flex;
   gap: 0;
-  padding: 2px;
+  padding: $space-1;
 }
 
 .btn {
+  appearance: none;
+  -webkit-appearance: none;
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   border-radius: $radius-pill;
   color: $muted;
   cursor: pointer;
-  font-family: inherit;
-  font-weight: $weight-medium;
+  font-family: $font-text;
+  font-weight: $weight-regular;
   line-height: 1;
-  transition: background $transition-fast, color $transition-fast;
+  box-shadow: none;
+  transition:
+    background $transition-fast,
+    color $transition-fast,
+    border-color $transition-fast,
+    box-shadow $transition-fast,
+    transform $t-micro $ease-breeze;
 
-  &:hover:not(.active) {
-    background: rgba(0, 0, 0, 0.07);
+  &:hover:not([aria-pressed='true']) {
+    background: rgba($black, 0.07);
     color: $ink-dark;
   }
 
-  &.active {
-    background: $black;
+  &:focus-visible {
+    outline: 2px solid $blue;
+    outline-offset: 1px;
+    z-index: 1;
+  }
+
+  &[aria-pressed='true'] {
+    background: $blue;
+    border-color: rgba($black, 0.16);
     color: $ink-light;
+    font-weight: $weight-medium;
+    box-shadow:
+      inset 0 1px 0 rgba($white, 0.35),
+      0 1px 3px rgba($black, 0.12);
+
+    &:hover {
+      background: color.adjust($blue, $lightness: -8%);
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba($white, 0.85);
+      outline-offset: -2px;
+    }
   }
 }
 
@@ -35,10 +68,15 @@
 
 .sm .btn {
   font-size: $text-small;
-  padding: $space-2 $space-6;
+  padding: $space-4 $space-8;
 }
 
 .md .btn {
-  font-size: $text-small;
-  padding: $space-3 $space-8;
+  font-size: $text-base;
+  padding: $space-4 $space-8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: background $transition-fast, color $transition-fast, border-color $transition-fast, box-shadow $transition-fast; }
+  .btn[aria-pressed='true']:active { transform: none; }
 }
