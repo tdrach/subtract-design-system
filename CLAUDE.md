@@ -332,6 +332,8 @@ ds/
 }
 ```
 
+**Publishing workflow — changes only exist once they're pushed.** Consuming apps (e.g. the OS) install this package from GitHub (`github:tdrach/subtract-design-system`) and import the *source* files. The only way a DS change reaches a consumer — locally or in a deploy — is: commit + push here → `npm update @clawmachine/ds` in the consumer → commit the consumer's lockfile bump. **Never prototype by editing a consumer's `node_modules/@clawmachine/ds` in place**: it renders in their local dev (source imports) but is invisible to git/Vercel and is wiped by the next install. If a consumer's local UI mysteriously differs from its deploy, diff their `node_modules` copy against this repo at their lockfile-pinned commit.
+
 ---
 
 ## 8. Figma → code conventions
