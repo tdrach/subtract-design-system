@@ -75,9 +75,14 @@ function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[]
   const lo       = Math.floor(dataMin / niceStep) * niceStep
   const ticks: number[] = []
   for (let v = lo; v < dataMax + niceStep; v += niceStep) {
-    ticks.push(Math.round(v))
+    const rounded = Math.round(v)
+    if (ticks.at(-1) !== rounded) ticks.push(rounded)
   }
-  if (ticks[ticks.length - 1] < dataMax) ticks.push(Math.round(ticks[ticks.length - 1] + niceStep))
+  const last = ticks.at(-1)!
+  if (last < dataMax) {
+    const next = Math.round(last + niceStep)
+    if (next !== last) ticks.push(next)
+  }
   return ticks
 }
 

@@ -16,16 +16,67 @@
 
 .docked {
   background: $white;
-  border: 1.5px solid rgba(12, 12, 12, 0.12);
+  border: none;
   border-radius: $radius-lg;
   padding: $space-6 $space-6 $space-5;
   cursor: text;
+  transition: box-shadow $transition-fast;
+
+  &:focus-within {
+    box-shadow: 0 0 0 3px rgba($blue, 0.12);
+  }
+
+  .textarea {
+    margin-bottom: $space-8;
+  }
+}
+
+// Frosted dock — content scrolls beneath; gradient + blur fade upward.
+.dockedFrosted {
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  background: linear-gradient(
+    0deg,
+    $white 0%,
+    rgba($white, 0.97) 22%,
+    rgba($white, 0.72) 52%,
+    rgba($white, 0) 100%
+  );
+  border-radius: 0 0 $radius-lg $radius-lg;
+  gap: $space-4;
+  padding: $space-16 $space-10 $space-8;
+
+  &:focus-within {
+    box-shadow: none;
+  }
+
+  .field .textarea {
+    margin-bottom: 0;
+  }
+}
+
+// iMessage-style input shell — fixed corner radius (not pill) so multi-line
+// input grows as a rounded rectangle, matching macOS Messages.
+.field {
+  align-items: center;
+  background: $white;
+  border: 1px solid rgba($black, 0.12);
+  border-radius: $radius-lg;
+  box-shadow: 0 1px 3px rgba($black, 0.06);
+  display: flex;
+  gap: $space-3;
+  padding: $space-3 $space-3 $space-3 $space-8;
   transition: border-color $transition-fast, box-shadow $transition-fast;
 
-  // Focus-within lifts the border to the focus color (whole-composer focus ring)
   &:focus-within {
-    border-color: $blue;
+    border-color: rgba($blue, 0.45);
     box-shadow: 0 0 0 3px rgba($blue, 0.12);
+  }
+
+  .textarea {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
   }
 }
 
@@ -77,8 +128,8 @@
   gap: $space-4;
   width: 100%;
 
-  // Push the submit button to the far right
-  > :last-child { margin-left: auto; }
+  // Push the submit button to the far right (not the whole tools group).
+  .submit { margin-left: auto; }
 
   @media (max-width: 560px) {
     flex-wrap: wrap;
