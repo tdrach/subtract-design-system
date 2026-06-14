@@ -9,12 +9,15 @@ export interface ChatComposerProps
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
   /** `inline` (borderless) or `docked` (bordered, rounded card pinned to a page). */
   variant?: 'inline' | 'docked'
+  /** Frosted overlay bar — gradient + blur for content scrolling beneath. */
+  frosted?: boolean
   /** Called when the composer is submitted (Enter or the send button). */
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
 export function ChatComposer({
   variant = 'docked',
+  frosted = false,
   className,
   onSubmit,
   children,
@@ -40,7 +43,12 @@ export function ChatComposer({
   return (
     <form
       {...rest}
-      className={[styles.composer, styles[variant], className]
+      className={[
+        styles.composer,
+        styles[variant],
+        frosted ? styles.dockedFrosted : null,
+        className,
+      ]
         .filter(Boolean)
         .join(' ')}
       onSubmit={handleSubmit}
@@ -117,6 +125,20 @@ export const ChatComposerTextarea = React.forwardRef<
     />
   )
 })
+
+// ─── ChatComposerField (iMessage-style pill input row) ──────────────────────
+
+export function ChatComposerField({
+  className,
+  ...rest
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={[styles.field, className].filter(Boolean).join(' ')}
+      {...rest}
+    />
+  )
+}
 
 // ─── ChatComposerToolbar / Tools ──────────────────────────────────────────────
 

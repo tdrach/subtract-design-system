@@ -1,5 +1,6 @@
 export {
   ChatComposer,
+  ChatComposerField,
   ChatComposerTextarea,
   ChatComposerToolbar,
   ChatComposerTools,

@@ -25,7 +25,7 @@ const GRID       = chartColor.grid
 // ─── Layout constants ─────────────────────────────────────────────────────────
 
 const Y_LABEL_W         = 52    // px reserved for y-axis labels (0 when showYAxis=false)
-const CALLOUT_MAX_W     = 88    // max width for callout label + value column
+const CALLOUT_MAX_W     = 120   // max width for callout label + value column — fits 3-digit values like "218.3 lbs" at $text-large without clipping
 const CALLOUT_DOT_GAP   = 10    // space between end dot and callout column
 const CALLOUT_RIGHT_PAD = 24    // $space-12 — inset from SVG edge so callout text doesn't clip
 const CALLOUT_ITEM_H    = 36    // px height of one callout block (label + value)
@@ -75,9 +75,14 @@ function niceYTicks(dataMin: number, dataMax: number, targetCount = 7): number[]
   const lo       = Math.floor(dataMin / niceStep) * niceStep
   const ticks: number[] = []
   for (let v = lo; v < dataMax + niceStep; v += niceStep) {
-    ticks.push(Math.round(v))
+    const rounded = Math.round(v)
+    if (ticks.at(-1) !== rounded) ticks.push(rounded)
   }
-  if (ticks[ticks.length - 1] < dataMax) ticks.push(Math.round(ticks[ticks.length - 1] + niceStep))
+  const last = ticks.at(-1)!
+  if (last < dataMax) {
+    const next = Math.round(last + niceStep)
+    if (next !== last) ticks.push(next)
+  }
   return ticks
 }
 
