@@ -1,0 +1,38 @@
+@use '../../styles/tokens' as *;
+
+.wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input {
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-sm;
+  box-sizing: border-box;
+  color: $ink-dark;
+  font-family: $font-text;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  text-align: left;
+  transition: border-color $t-micro $ease-hover;
+  width: 100%;
+
+  &:focus { border-color: rgba(0, 0, 0, 0.3); }
+  &:disabled { cursor: not-allowed; opacity: 0.4; }
+}
+
+.suffix {
+  position: absolute;
+  pointer-events: none;
+  color: $muted;
+}
+
+// Density variants. Right padding reserves room for the unit suffix.
+.md .input { height: 44px; font-size: $text-base; padding: 0 $space-16 0 $space-10; }
+.md .suffix { right: $space-10; font-size: $text-base; }
+
+.sm .input { height: 28px; font-size: $text-small; padding: 0 $space-12 0 $space-8; }
+.sm .suffix { right: $space-6; font-size: $text-small; }

@@ -23,6 +23,15 @@ export type { Tag } from './TagSelector'
 export { TextInput } from './TextInput'
 export type { TextInputProps } from './TextInput'
 
+export { NumberInput } from './NumberInput'
+export type { NumberInputProps } from './NumberInput'
+
+export { Select } from './Select'
+export type { SelectProps } from './Select'
+
+export { Textarea } from './Textarea'
+export type { TextareaProps } from './Textarea'
+
 export { Slider } from './Slider'
 export type { SliderProps } from './Slider'
 

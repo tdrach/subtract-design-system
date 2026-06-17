@@ -1,13 +1,15 @@
 @use '../../styles/tokens' as *;
 
-.input {
+.textarea {
   background: $white;
   border: 1px solid $demure;
   border-radius: $radius-sm;
   box-sizing: border-box;
   color: $ink-dark;
   font-family: $font-text;
+  line-height: 1.4;
   outline: none;
+  resize: vertical;
   transition: border-color $t-micro $ease-hover;
   width: 100%;
 
@@ -17,5 +19,5 @@
 }
 
 // Density variants.
-.md { height: 44px; font-size: $text-base; padding: 0 $space-10; }
-.sm { height: 28px; font-size: $text-small; padding: 0 $space-8; }
+.md { font-size: $text-base; padding: $space-6 $space-10; min-height: 44px; }
+.sm { font-size: $text-small; padding: $space-3 $space-8; min-height: 30px; }
