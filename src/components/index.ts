@@ -188,3 +188,14 @@ export type {
   SuggestionChipsProps,
   SuggestionChipProps,
 } from './SuggestionChips'
+
+export { AgentChat, createEchoAdapter, createMockBuilderAdapter } from './AgentChat'
+export type {
+  AgentChatProps,
+  AgentAdapter,
+  AgentCapabilities,
+  AgentEvent,
+  AgentMessage,
+  AgentArtifact,
+  AgentJobState,
+} from './AgentChat'

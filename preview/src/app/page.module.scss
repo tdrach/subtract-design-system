@@ -837,3 +837,39 @@
 
   &:hover { background: rgba(12, 12, 12, 0.06); color: $ink-dark; }
 }
+
+// ─── AgentChat showcase ────────────────────────────────────────────────────────
+.sectionNote {
+  color: $muted;
+  font-size: $text-base;
+  max-width: 680px;
+  margin-bottom: $space-16;
+
+  code {
+    background: rgba($black, 0.06);
+    border-radius: $radius-sm;
+    font-size: $text-small;
+    padding: 1px 5px;
+  }
+}
+
+.agentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: $space-16;
+  align-items: start;
+}
+
+.agentDemo {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+}
+
+.agentDemoTitle {
+  color: $muted;
+  font-size: $text-small;
+  font-weight: $weight-semibold;
+  letter-spacing: $letter-spacing-label;
+  text-transform: uppercase;
+}

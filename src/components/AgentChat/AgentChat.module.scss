@@ -1,0 +1,66 @@
+@use '../../styles/tokens' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+  min-width: 0;
+}
+
+// Floating-card treatment for pinning at the bottom of a page.
+.docked {
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  gap: 0;
+  overflow: hidden;
+  padding: $space-8 $space-10;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-6 $space-8;
+  justify-content: space-between;
+}
+
+.thread {
+  max-height: 46vh;
+  min-height: 0;
+}
+
+// ─── Status row (coding-agent affordances) ─────────────────────────────────────
+.statusRow {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-6;
+}
+
+.statusLabel {
+  color: $muted;
+  font-size: $text-small;
+}
+
+.stWorking .statusLabel { color: $blue; }
+.stReview  .statusLabel { color: $warning; }
+.stOk      .statusLabel { color: $green; }
+.stFail    .statusLabel { color: $error; }
+
+.chip {
+  border-radius: $radius-pill;
+  font-size: $text-small;
+  font-weight: $weight-medium;
+  padding: $space-2 $space-8;
+  white-space: nowrap;
+}
+
+.chipPending { background: rgba($muted, 0.12); color: $muted; }
+.chipOk      { background: rgba($green, 0.16); color: $black; }
+.chipFail    { background: rgba($error, 0.12); color: $error; }
+
+.chipLink {
+  text-decoration: none;
+  &:hover .chip { filter: brightness(0.97); }
+}

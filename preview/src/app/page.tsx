@@ -22,6 +22,7 @@ import {
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
 import { ChatShowcase } from './ChatShowcase'
 import { BoardShowcase } from './BoardShowcase'
+import { AgentChatShowcase } from './AgentChatShowcase'
 import { ChartTooltipPreview } from './ChartTooltipPreview'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
@@ -423,7 +424,7 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar' | 'chat' | 'board'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar' | 'chat' | 'board' | 'agent'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
@@ -435,6 +436,7 @@ const tabs: { id: Tab; label: string }[] = [
   { id: 'sidebar',    label: 'Sidebar'    },
   { id: 'chat',       label: 'Chat'       },
   { id: 'board',      label: 'Board'      },
+  { id: 'agent',      label: 'Agent'      },
 ]
 
 // ─── Page content (needs Suspense for useSearchParams) ────────────────────────
@@ -1408,6 +1410,8 @@ function PageContent() {
 
         {/* ─── Board ──────────────────────────────────────────────────────── */}
         {activeTab === 'board' && <BoardShowcase />}
+
+        {activeTab === 'agent' && <AgentChatShowcase />}
       </main>
 
       <Footer copyright="© 2026 Subtract" navLinks={[{ href: '/writing', label: 'Writing' }, { href: '/about', label: 'About' }, { href: 'https://github.com', label: 'GitHub', external: true }]} />
