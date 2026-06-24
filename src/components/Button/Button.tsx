@@ -12,6 +12,8 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   split?: boolean
   /** Renders a square icon-only button — no label padding, width = height */
   iconOnly?: boolean
+  /** Disables the tactile scale-on-press (use when the motion would distract). */
+  static?: boolean
   /** Icon rendered before the label */
   iconBefore?: React.ReactNode
   /** Icon rendered after the label */
@@ -28,6 +30,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     external,
     split = false,
     iconOnly = false,
+    static: isStatic = false,
     iconBefore,
     iconAfter,
     onDropdownClick,
@@ -43,6 +46,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     styles[variant],
     styles[size],
     iconOnly && styles.iconOnly,
+    isStatic && styles.static,
     extraClass,
   ].filter(Boolean).join(' ')
 
