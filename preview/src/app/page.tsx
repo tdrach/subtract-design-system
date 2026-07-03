@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import {
-  Button, Footer, TextInput, NumberInput, Select, Textarea, ChecklistItem, Slider,
+  Button, Footer, TextInput, ChecklistItem, Slider,
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody,
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
   TagSelector, TagPill,
@@ -22,6 +22,7 @@ import {
 import type { Tag, CalendarDataPoint, LineSeriesData, GanttTask, FunnelStage, SegmentBarSegment, BubbleMatrixRow, BubbleMatrixCol, BubbleMatrixCell, ColumnDef, RowAction } from '@subtract/ds'
 import { ChatShowcase } from './ChatShowcase'
 import { BoardShowcase } from './BoardShowcase'
+import { DenseShowcase } from './DenseShowcase'
 import { ChartTooltipPreview } from './ChartTooltipPreview'
 import {
   Plus, Minus, Check, X, Trash, PencilSimple, Copy, DownloadSimple, UploadSimple,
@@ -423,13 +424,14 @@ const ICON_WEIGHTS = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as 
 
 // ─── Tabs ─────────────────────────────────────────────────────────────────────
 
-type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'charts' | 'tables' | 'sidebar' | 'chat' | 'board'
+type Tab = 'colors' | 'typography' | 'icons' | 'ui' | 'dense' | 'charts' | 'tables' | 'sidebar' | 'chat' | 'board'
 
 const tabs: { id: Tab; label: string }[] = [
   { id: 'colors',     label: 'Colors'     },
   { id: 'typography', label: 'Typography' },
   { id: 'icons',      label: 'Icons'      },
   { id: 'ui',         label: 'UI'         },
+  { id: 'dense',      label: 'Dense'      },
   { id: 'charts',     label: 'Charts'     },
   { id: 'tables',     label: 'Tables'     },
   { id: 'sidebar',    label: 'Sidebar'    },
@@ -447,10 +449,6 @@ function PageContent() {
   const [checked1, setChecked1]     = useState(false)
   const [checked2, setChecked2]     = useState(true)
   const [inputVal, setInputVal]     = useState('')
-  const [numVal, setNumVal]         = useState(12)
-  const [selVal, setSelVal]         = useState('extrude')
-  const [areaVal, setAreaVal]       = useState('')
-  const [denseText, setDenseText]   = useState('')
   const [tags, setTags]             = useState<Tag[]>(DEMO_TAGS)
   const [selectedTags, setSelectedTags] = useState<string[]>(['1'])
   const [sliderA, setSliderA]       = useState([40])
@@ -667,44 +665,6 @@ function PageContent() {
                 <TextInput placeholder="e.g. Email address" value={inputVal} onChange={(e) => setInputVal(e.target.value)} />
                 <TextInput type="date" />
                 <TextInput placeholder="Not editable" disabled />
-              </div>
-            </section>
-
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Dense inputs (size=&quot;sm&quot;)</h2>
-              <p className={styles.tokenDetail}>
-                Compact $text-small / 28px controls for inspectors and toolbars. NumberInput
-                supports ↑/↓ stepping (Shift ×10) and a unit suffix.
-              </p>
-              <div className={styles.componentStack}>
-                <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>TextInput — sm</p>
-                  <div style={{ width: 200 }}>
-                    <TextInput size="sm" placeholder="Name" value={denseText} onChange={(e) => setDenseText(e.target.value)} />
-                  </div>
-                </div>
-                <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>NumberInput — sm, suffix, step</p>
-                  <div style={{ width: 120 }}>
-                    <NumberInput size="sm" suffix="mm" step={1} value={numVal} onChange={setNumVal} aria-label="Size" />
-                  </div>
-                  <p className={styles.tokenDetail}>{numVal}</p>
-                </div>
-                <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>Select — sm</p>
-                  <div style={{ width: 160 }}>
-                    <Select size="sm" value={selVal} onChange={(e) => setSelVal(e.target.value)}>
-                      <option value="extrude">Extrude</option>
-                      <option value="revolve">Revolve</option>
-                    </Select>
-                  </div>
-                </div>
-                <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>Textarea — sm</p>
-                  <div style={{ width: 200 }}>
-                    <Textarea size="sm" rows={2} placeholder="Notes…" value={areaVal} onChange={(e) => setAreaVal(e.target.value)} />
-                  </div>
-                </div>
               </div>
             </section>
 
@@ -1408,6 +1368,9 @@ function PageContent() {
 
         {/* ─── Board ──────────────────────────────────────────────────────── */}
         {activeTab === 'board' && <BoardShowcase />}
+
+        {/* ─── Dense ────────────────────────────────────────────────────────────────── */}
+        {activeTab === 'dense' && <DenseShowcase />}
       </main>
 
       <Footer copyright="© 2026 Subtract" navLinks={[{ href: '/writing', label: 'Writing' }, { href: '/about', label: 'About' }, { href: 'https://github.com', label: 'GitHub', external: true }]} />

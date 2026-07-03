@@ -49,6 +49,8 @@ CSS custom properties for the subset of tokens used in JS are set in `global.scs
 
 Font: **Indivisible** by Connary Fagen (custom web font, `.woff2`). Loaded via `next/font/local`, exposed as CSS variable `--font-indivisible`.
 
+**Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) for inspectors and toolbars. Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font.
+
 ```tsx
 // In the consuming app's root layout:
 const indivisible = localFont({

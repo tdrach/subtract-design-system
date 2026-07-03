@@ -31,8 +31,10 @@
 }
 
 // Density variants. Right padding reserves room for the unit suffix.
+// Dense (sm) renders in the system UI font ($font-dense).
 .md .input { height: 44px; font-size: $text-base; padding: 0 $space-16 0 $space-10; }
 .md .suffix { right: $space-10; font-size: $text-base; }
 
-.sm .input { height: 28px; font-size: $text-small; padding: 0 $space-12 0 $space-8; }
-.sm .suffix { right: $space-6; font-size: $text-small; }
+// Right padding must clear the suffix footprint (right offset + "mm" width ≈ 31px).
+.sm .input { height: 28px; font-size: $text-small; padding: 0 $space-16 0 $space-8; font-family: $font-dense; }
+.sm .suffix { right: $space-6; font-size: $text-small; font-family: $font-dense; }

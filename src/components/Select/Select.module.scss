@@ -33,8 +33,9 @@
 }
 
 // Density variants. Right padding reserves room for the chevron.
+// Dense (sm) renders in the system UI font ($font-dense).
 .md .select { height: 44px; font-size: $text-base; padding: 0 $space-16 0 $space-10; }
 .md .chevron { right: $space-10; }
 
-.sm .select { height: 28px; font-size: $text-small; padding: 0 $space-12 0 $space-8; }
+.sm .select { height: 28px; font-size: $text-small; padding: 0 $space-12 0 $space-8; font-family: $font-dense; }
 .sm .chevron { right: $space-6; }

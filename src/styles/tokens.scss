@@ -29,6 +29,11 @@ $font-display: var(--font-indivisible, 'Indivisible', sans-serif);
 $font-text:    var(--font-indivisible, 'Indivisible', sans-serif);
 $font-mono:    'Mono', monospace;
 
+// System UI stack for the Dense system (size="sm" tool controls — inspectors,
+// toolbars). Resolves to SF Pro on macOS/iOS, Segoe UI on Windows. Indivisible
+// stays the brand voice at md+; dense surfaces borrow the platform's own UI font.
+$font-dense: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
 // Font weights — $weight-bold (700) and $weight-semibold (600) load SemiBold;
 // $weight-extrabold (800) loads the native Bold cut.
 $weight-regular:   400;

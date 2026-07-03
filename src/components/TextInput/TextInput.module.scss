@@ -16,6 +16,6 @@
   &:disabled { cursor: not-allowed; opacity: 0.4; }
 }
 
-// Density variants.
+// Density variants. Dense (sm) renders in the system UI font ($font-dense).
 .md { height: 44px; font-size: $text-base; padding: 0 $space-10; }
-.sm { height: 28px; font-size: $text-small; padding: 0 $space-8; }
+.sm { height: 28px; font-size: $text-small; padding: 0 $space-8; font-family: $font-dense; }
