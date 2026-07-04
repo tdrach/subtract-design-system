@@ -55,6 +55,26 @@ const colors = [
   { name: '$muted-light', value: 'rgba(255, 255, 255, 0.7)', dark: false, outline: true },
 ]
 
+// High-level typography tokens — one per Figma text style. The cls classes
+// apply the real tokens via the type-style mixin (see page.module.scss).
+const TYPE_STYLES = [
+  { name: '$text-display-1',  cls: 'tsDisplay1',  label: 'Display 1',  recipe: '$font-display · $text-3xl 144px · extrabold 800 · −7%' },
+  { name: '$text-display-2',  cls: 'tsDisplay2',  label: 'Display 2',  recipe: '$font-display · $text-3xl 144px · medium 500 · −7%' },
+  { name: '$text-display-3',  cls: 'tsDisplay3',  label: 'Display 3',  recipe: '$font-display · $text-3xl 144px · regular 400 · −7%' },
+  { name: '$text-title-1',    cls: 'tsTitle1',    label: 'Title 1',    recipe: '$font-display · $text-2xl 56px · extrabold 800 · −3%' },
+  { name: '$text-title-2',    cls: 'tsTitle2',    label: 'Title 2',    recipe: '$font-display · $text-2xl 56px · medium 500 · −3%' },
+  { name: '$text-title-3',    cls: 'tsTitle3',    label: 'Title 3',    recipe: '$font-display · $text-2xl 56px · regular 400 · −3%' },
+  { name: '$text-subtitle-1', cls: 'tsSubtitle1', label: 'Subtitle 1', recipe: '$font-display · $text-xl 42px · extrabold 800 · −2.5%' },
+  { name: '$text-subtitle-2', cls: 'tsSubtitle2', label: 'Subtitle 2', recipe: '$font-display · $text-xl 42px · medium 500 · −2.5%' },
+  { name: '$text-subtitle-3', cls: 'tsSubtitle3', label: 'Subtitle 3', recipe: '$font-display · $text-xl 42px · regular 400 · −2.5%' },
+  { name: '$text-text-1',     cls: 'tsText1',     label: 'Text 1',     recipe: '$font-text · $text-large 28px · medium 500 · −2%' },
+  { name: '$text-text-2',     cls: 'tsText2',     label: 'Text 2',     recipe: '$font-text · $text-large 28px · regular 400 · −2%' },
+  { name: '$text-body-1',     cls: 'tsBody1',     label: 'Body 1',     recipe: '$font-text · $text-base 17px · medium 500 · −2.5%' },
+  { name: '$text-body-2',     cls: 'tsBody2',     label: 'Body 2',     recipe: '$font-text · $text-base 17px · regular 400 · −2.5%' },
+  { name: '$text-label-1',    cls: 'tsLabel1',    label: 'Label 1',    recipe: '$font-dense (SF Pro) · $text-small 12.8px · medium 500 · −2.5%' },
+  { name: '$text-label-2',    cls: 'tsLabel2',    label: 'Label 2',    recipe: '$font-dense (SF Pro) · $text-small 12.8px · regular 400 · −2.5%' },
+]
+
 const typeScale = [
   { name: '$text-3xl',  size: '9rem',      px: '144px',  label: 'Hero title',              letterSpacing: '-0.07em', lineHeight: '0.88',
     samples: [{ weight: 400, style: 'normal', text: 'Subtract' }, { weight: 500, style: 'normal', text: 'Subtract' }, { weight: 700, style: 'normal', text: 'Subtract' }] },
@@ -510,6 +530,32 @@ function PageContent() {
                 </p>
               </div>
             </section>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Type Styles</h2>
+              <p className={styles.iconIntro}>
+                The high-level typography tokens — one per Figma text style.
+                Each bundles family, size, weight, and tracking from the base
+                tokens; apply with{' '}
+                <code>@include type-style($text-display-1)</code>. Numbered
+                variants step down in weight (1 = Bold cut, 2 = Medium,
+                3 = Regular). <strong>Labels</strong> sit on the Dense system
+                font (<code>$font-dense</code> — SF Pro on macOS).
+              </p>
+              <div className={styles.typeList}>
+                {TYPE_STYLES.map((t) => (
+                  <div key={t.name} className={styles.typeScaleEntry}>
+                    <div className={styles.typeMeta}>
+                      <span className={styles.tokenName}>{t.name}</span>
+                      <span className={styles.tokenRecipe}>{t.recipe}</span>
+                    </div>
+                    <div className={styles.typeSamples}>
+                      <p className={`${styles.typeStyleSample} ${styles[t.cls]}`}>{t.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Type Scale</h2>
               <div className={styles.typeList}>

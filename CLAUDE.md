@@ -51,6 +51,25 @@ Font: **Indivisible** by Connary Fagen (custom web font, `.woff2`). Loaded via `
 
 **Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) for inspectors and toolbars. Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font.
 
+### Type styles (high-level tokens)
+
+**Prefer these over raw size/weight combinations.** One token per Figma text style (SDS → Styles → Text styles); each bundles family + size + weight + tracking from the base tokens. Apply with the mixin:
+
+```scss
+h1 { @include type-style($text-display-1); }
+```
+
+| Token (1 / 2 / 3) | Family | Size | Tracking | Weights |
+|---|---|---|---|---|
+| `$text-display-1/2/3` | `$font-display` | `$text-3xl` 144px | −7% (`$letter-spacing-hero`) | 800 / 500 / 400 |
+| `$text-title-1/2/3` | `$font-display` | `$text-2xl` 56px | −3% | 800 / 500 / 400 |
+| `$text-subtitle-1/2/3` | `$font-display` | `$text-xl` 42px | −2.5% | 800 / 500 / 400 |
+| `$text-text-1/2` | `$font-text` | `$text-large` 28px | −2% | 500 / 400 |
+| `$text-body-1/2` | `$font-text` | `$text-base` 17px | −2.5% | 500 / 400 |
+| `$text-label-1/2` | `$font-dense` (SF Pro) | `$text-small` 12.8px | −2.5% | 500 / 400 |
+
+Numbered variants step down in weight: **1** = Bold cut (`$weight-extrabold` 800), **2** = Medium, **3** = Regular. Labels sit on the Dense system font. Line-height is auto in Figma, so the mixin leaves it inherited — set it locally when needed.
+
 ```tsx
 // In the consuming app's root layout:
 const indivisible = localFont({

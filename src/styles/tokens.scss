@@ -1,5 +1,6 @@
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 // Import this file in every component module: @use '../../styles/tokens' as *;
+@use 'sass:map';
 
 // ─── Color palette ────────────────────────────────────────────────────────────
 
@@ -58,6 +59,47 @@ $letter-spacing-tight: -0.025rem;
 $letter-spacing-normal: 0;
 // Uppercase label letter-spacing (small caps, section labels)
 $letter-spacing-label: 0.08em;
+
+// ─── Type styles ──────────────────────────────────────────────────────────────
+// The high-level typography tokens — one per Figma text style (SDS → Styles →
+// Text styles). Each references the base tokens above; apply with type-style:
+//
+//   h1 { @include type-style($text-display-1); }
+//
+// Numbered variants step down in weight: 1 = Bold cut ($weight-extrabold),
+// 2 = Medium, 3 = Regular. Labels sit on the Dense system font ($font-dense —
+// SF Pro on macOS). Line-height is auto in Figma, so the mixin leaves it
+// inherited; set it locally where a component needs something else.
+// Tracking tiers come from Figma percentages: -7% (hero) · -3% · -2.5% · -2%.
+
+$text-display-1:  (family: $font-display, size: $text-3xl,   weight: $weight-extrabold, tracking: $letter-spacing-hero);
+$text-display-2:  (family: $font-display, size: $text-3xl,   weight: $weight-medium,    tracking: $letter-spacing-hero);
+$text-display-3:  (family: $font-display, size: $text-3xl,   weight: $weight-regular,   tracking: $letter-spacing-hero);
+
+$text-title-1:    (family: $font-display, size: $text-2xl,   weight: $weight-extrabold, tracking: -0.03em);  // -3%
+$text-title-2:    (family: $font-display, size: $text-2xl,   weight: $weight-medium,    tracking: -0.03em);
+$text-title-3:    (family: $font-display, size: $text-2xl,   weight: $weight-regular,   tracking: -0.03em);
+
+$text-subtitle-1: (family: $font-display, size: $text-xl,    weight: $weight-extrabold, tracking: -0.025em); // -2.5%
+$text-subtitle-2: (family: $font-display, size: $text-xl,    weight: $weight-medium,    tracking: -0.025em);
+$text-subtitle-3: (family: $font-display, size: $text-xl,    weight: $weight-regular,   tracking: -0.025em);
+
+$text-text-1:     (family: $font-text,    size: $text-large, weight: $weight-medium,    tracking: -0.02em);  // -2%
+$text-text-2:     (family: $font-text,    size: $text-large, weight: $weight-regular,   tracking: -0.02em);
+
+$text-body-1:     (family: $font-text,    size: $text-base,  weight: $weight-medium,    tracking: -0.025em); // -2.5%
+$text-body-2:     (family: $font-text,    size: $text-base,  weight: $weight-regular,   tracking: -0.025em);
+
+$text-label-1:    (family: $font-dense,   size: $text-small, weight: $weight-medium,    tracking: -0.025em); // -2.5%
+$text-label-2:    (family: $font-dense,   size: $text-small, weight: $weight-regular,   tracking: -0.025em);
+
+// Applies a type-style token's four properties.
+@mixin type-style($style) {
+  font-family: map.get($style, family);
+  font-size: map.get($style, size);
+  font-weight: map.get($style, weight);
+  letter-spacing: map.get($style, tracking);
+}
 
 // ─── Spacing (8px base) ───────────────────────────────────────────────────────
 $space-1:  0.125rem;  //   2px

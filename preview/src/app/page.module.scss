@@ -72,6 +72,13 @@
   white-space: nowrap;
 }
 
+// Multi-part token recipe — wraps inside the narrow meta column.
+.tokenRecipe {
+  font-size: $text-small;
+  color: $muted;
+  line-height: 1.5;
+}
+
 // ─── Colors ───────────────────────────────────────────────────────────────────
 .colorGrid {
   display: grid;
@@ -185,6 +192,32 @@
   color: $black;
   margin: 0;
 }
+
+// ─── Type styles (high-level tokens) ─────────────────────────────────────────
+// Each class applies the real token via the type-style mixin, so the docs
+// render exactly what consumers get.
+.typeStyleSample {
+  color: $black;
+  margin: 0;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.tsDisplay1  { @include type-style($text-display-1); }
+.tsDisplay2  { @include type-style($text-display-2); }
+.tsDisplay3  { @include type-style($text-display-3); }
+.tsTitle1    { @include type-style($text-title-1); }
+.tsTitle2    { @include type-style($text-title-2); }
+.tsTitle3    { @include type-style($text-title-3); }
+.tsSubtitle1 { @include type-style($text-subtitle-1); }
+.tsSubtitle2 { @include type-style($text-subtitle-2); }
+.tsSubtitle3 { @include type-style($text-subtitle-3); }
+.tsText1     { @include type-style($text-text-1); }
+.tsText2     { @include type-style($text-text-2); }
+.tsBody1     { @include type-style($text-body-1); }
+.tsBody2     { @include type-style($text-body-2); }
+.tsLabel1    { @include type-style($text-label-1); }
+.tsLabel2    { @include type-style($text-label-2); }
 
 // ─── Spacing ─────────────────────────────────────────────────────────────────
 .spacingList {
