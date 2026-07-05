@@ -6,7 +6,7 @@ import {
   Button, Footer, TextInput, ChecklistItem, Slider,
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogBody,
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
-  TagSelector, TagPill,
+  TagSelector, TagPill, StatusTag,
   ExpandPanel, ExpandPanelTrigger, ExpandPanelContent, ExpandPanelBody,
   TabBar, Tab,
   LineChart,
@@ -40,19 +40,25 @@ import styles from './page.module.scss'
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
+// Canonical palette — mirrors the Figma Colors page (order + labels).
 const colors = [
-  { name: '$black',       value: '#0c0c0c',                  dark: true  },
-  { name: '$light',       value: '#f3f3f3',                  dark: false },
-  { name: '$white',       value: '#ffffff',                  dark: false },
-  { name: '$demure',      value: '#dcddd7',                  dark: false },
-  { name: '$blue',        value: '#11A0FF',                  dark: true  },
-  { name: '$error',       value: '#FF2111',                  dark: true  },
-  { name: '$green',       value: '#06D021',                  dark: true  },
-  { name: '$warning',     value: '#FFA811',                  dark: false },
-  { name: '$ink-dark',    value: '#0c0c0c',                  dark: true  },
-  { name: '$ink-light',   value: '#ffffff',                  dark: false, outline: true },
-  { name: '$muted',       value: '#0c0c0c7a',                  dark: true  },
-  { name: '$muted-light', value: 'rgba(255, 255, 255, 0.7)', dark: false, outline: true },
+  { label: 'Ink Dark',  name: '$ink-dark',  value: '#191918' },
+  { label: 'Ink Light', name: '$ink-light', value: '#8d8a86' },
+  { label: 'Demure',    name: '$demure',    value: '#dcddd7' },
+  { label: 'Light',     name: '$light',     value: '#faf9f8', outline: true },
+  { label: 'White',     name: '$white',     value: '#ffffff', outline: true },
+  { label: 'Primary',   name: '$primary',   value: '#11a0ff' },
+  { label: 'Positive',  name: '$positive',  value: '#06d021' },
+  { label: 'Error',     name: '$error',     value: '#ff2111' },
+  { label: 'Warning',   name: '$warning',   value: '#ffa811' },
+]
+
+// Deprecated aliases kept for compatibility — prefer the canonical names.
+const colorAliases = [
+  { name: '$black', to: '$ink-dark' },
+  { name: '$blue',  to: '$primary' },
+  { name: '$green', to: '$positive' },
+  { name: '$muted', to: '$ink-light' },
 ]
 
 // High-level typography tokens — one per Figma text style. The cls classes
@@ -498,18 +504,40 @@ function PageContent() {
 
         {/* ─── Colors ─────────────────────────────────────────────────────── */}
         {activeTab === 'colors' && (
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>Colors</h2>
-            <div className={styles.colorGrid}>
-              {colors.map((c) => (
-                <div key={c.name} className={styles.colorSwatch}>
-                  <div className={styles.swatchBlock} style={{ background: c.value, outline: c.outline ? '1px solid #dcddd7' : undefined }} />
-                  <p className={styles.swatchName}>{c.name}</p>
-                  <p className={styles.swatchValue}>{c.value}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+          <>
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Colors</h2>
+              <div className={styles.colorGrid}>
+                {colors.map((c) => (
+                  <div key={c.name} className={styles.colorSwatch}>
+                    <div className={styles.swatchBlock} style={{ background: c.value, outline: c.outline ? '1px solid #dcddd7' : undefined }} />
+                    <p className={styles.swatchLabel}>{c.label}</p>
+                    <p className={styles.swatchValue}>{c.value}</p>
+                    <p className={styles.swatchName}>{c.name}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Deprecated aliases</h2>
+              <p className={styles.iconIntro}>
+                These older names still compile but resolve to the canonical
+                tokens — prefer the new names in fresh code. Note{' '}
+                <code>$ink-light</code> changed meaning: it used to be
+                white-on-dark text (that role is <code>$white</code> now); today
+                it is the secondary-text gray.
+              </p>
+              <div className={styles.colorGrid}>
+                {colorAliases.map((a) => (
+                  <div key={a.name} className={styles.colorSwatch}>
+                    <p className={styles.swatchName}>{a.name}</p>
+                    <p className={styles.swatchValue}>→ {a.to}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
         )}
 
         {/* ─── Typography ─────────────────────────────────────────────────── */}
@@ -656,6 +684,23 @@ function PageContent() {
                 <div className={styles.componentGroup}><p className={styles.tokenName}>split / md</p><Button variant="primary" split>New</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>split / sm</p><Button variant="primary" size="sm" split>New</Button></div>
                 <div className={styles.componentGroup}><p className={styles.tokenName}>disabled</p><Button variant="primary" disabled>Get started</Button></div>
+              </div>
+            </section>
+
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Tag</h2>
+              <p className={styles.iconIntro}>
+                Status tag with five semantic tones (mirrors the Figma{' '}
+                <code>Tag</code> variants). Label renders in{' '}
+                <code>$text-label-1</code> on a 10% tint. Distinct from{' '}
+                <code>TagPill</code>, which shows user-colored content tags.
+              </p>
+              <div className={styles.componentRow}>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>active</p><StatusTag tone="active">Active</StatusTag></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>positive</p><StatusTag tone="positive">Positive</StatusTag></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>warning</p><StatusTag tone="warning">Warning</StatusTag></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>error</p><StatusTag tone="error">Error</StatusTag></div>
+                <div className={styles.componentGroup}><p className={styles.tokenName}>neutral (default)</p><StatusTag>Neutral</StatusTag></div>
               </div>
             </section>
 

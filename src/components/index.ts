@@ -20,6 +20,11 @@ export { Dialog, DialogTrigger, DialogClose, DialogContent, DialogHeader, Dialog
 export { TagSelector, TagPill } from './TagSelector'
 export type { Tag } from './TagSelector'
 
+// Status tag (Figma: Tag). Exported as StatusTag because the name `Tag` is
+// taken by TagSelector's data type above.
+export { Tag as StatusTag } from './Tag'
+export type { TagProps as StatusTagProps, TagTone as StatusTagTone } from './Tag'
+
 export { TextInput } from './TextInput'
 export type { TextInputProps } from './TextInput'
 

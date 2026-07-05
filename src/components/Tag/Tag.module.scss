@@ -1,0 +1,20 @@
+@use '../../styles/tokens' as *;
+
+// Figma: Tag component set (Style=Active|Positive|Warning|Error|Neutral) —
+// 10%-tint fill, $radius-micro, $space-2/$space-4 padding, $text-label-1 label.
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: $radius-micro;
+  white-space: nowrap;
+  line-height: 1.25; // 16px at $text-small — 24px tag, matching Figma
+  @include type-style($text-label-1);
+}
+
+.active   { background: rgba($primary, 0.1);  color: $primary; }
+.positive { background: rgba($positive, 0.1); color: $positive; }
+.warning  { background: rgba($warning, 0.1);  color: $warning; }
+.error    { background: rgba($error, 0.1);    color: $error; }
+.neutral  { background: rgba($ink-dark, 0.1); color: $ink-dark; }

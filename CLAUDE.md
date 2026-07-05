@@ -22,20 +22,22 @@ All tokens live in **`src/styles/tokens.scss`** as SCSS variables. Every compone
 
 ### Color palette
 
+Canonical names + values mirror the Figma Colors page (SDS → Colors).
+
 | Variable | Value | Semantic use |
 |---|---|---|
-| `$black` | `#0c0c0c` | Primary text, dark backgrounds |
-| `$light` | `#f3f3f3` | Page background |
-| `$white` | `#ffffff` | Card / elevated surfaces |
+| `$ink-dark` | `#191918` | Primary text; dark surfaces |
+| `$ink-light` | `#8d8a86` | Secondary text (warm gray) |
 | `$demure` | `#dcddd7` | Borders, dividers, subtle fills |
-| `$ink-dark` | `$black` | Primary text on light |
-| `$ink-light` | `#ffffff` | Primary text on dark |
-| `$muted-dark` | `rgba(12,12,12,0.48)` | Secondary text on light |
+| `$light` | `#faf9f8` | Page background |
+| `$white` | `#ffffff` | Card / elevated surfaces |
+| `$primary` | `#11a0ff` | Primary CTA, links, focus rings |
+| `$positive` | `#06d021` | Success, positive |
+| `$error` | `#ff2111` | Error states |
+| `$warning` | `#ffa811` | Warning states |
 | `$muted-light` | `rgba(255,255,255,0.7)` | Secondary text on dark |
-| `$blue` | `#11A0FF` | Primary CTA, links, focus rings |
-| `$error` | `#FF2111` | Error states |
-| `$green` | `#06D021` | Success, positive |
-| `$warning` | `#FFA811` | Warning states |
+
+**Deprecated aliases** (compile but prefer canonical): `$black` → `$ink-dark`, `$blue` → `$primary`, `$green` → `$positive`, `$muted` → `$ink-light`. ⚠️ `$ink-light` changed meaning — it was white text-on-dark (use `$white` for that now); today it is the secondary-text gray.
 
 Chart components use these as inline constants (not SCSS vars) since they are SVG:
 - `MUTED = 'rgba(12,12,12,0.28)'` — axis labels
@@ -243,6 +245,7 @@ ComponentName/
 | `Dialog` | Modal dialog (Radix) | Composable: `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogBody`, `DialogClose` |
 | `DropdownMenu` | Dropdown (Radix) | Composable: `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator` |
 | `TabBar` / `Tab` | Tab navigation | `active`, `border`, `ariaLabel` |
+| `Tag` | Status tag, 5 semantic tones (Figma: Tag) | `tone` (active/positive/warning/error/neutral) |
 | `TagSelector` / `TagPill` | Multi-tag input with create | `tags`, `selected`, `onSelect`, `onDeselect`, `onCreate`, `compact` |
 | `TextInput` | Styled `<input>` | All native input attrs |
 | `ChecklistItem` | Checkbox row with drag handle | `checked`, `done`, `trailing`, `dragHandleProps` |

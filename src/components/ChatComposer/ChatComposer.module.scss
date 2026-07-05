@@ -161,7 +161,7 @@
   border-radius: $radius-circle;
   cursor: pointer;
   background: $blue;
-  color: $ink-light;
+  color: $white;
   padding: 0;
   transition:
     background $transition-fast,
@@ -197,7 +197,7 @@
 // Streaming = a dark stop control (matches iMessage's filled stop)
 .submit-streaming {
   background: $black;
-  color: $ink-light;
+  color: $white;
 
   &:hover:not(:disabled) {
     background: color.adjust($black, $lightness: 12%);
@@ -207,7 +207,7 @@
 // Error = error-tinted send
 .submit-error {
   background: $error;
-  color: $ink-light;
+  color: $white;
 
   &:hover:not(:disabled) {
     background: color.adjust($error, $lightness: -8%);

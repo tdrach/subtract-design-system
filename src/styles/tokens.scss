@@ -3,25 +3,32 @@
 @use 'sass:map';
 
 // ─── Color palette ────────────────────────────────────────────────────────────
+// Canonical names + values mirror the Figma Colors page (SDS → Colors).
 
-// Backgrounds
-$black:   #0c0c0c;  // near-black — text, hero backgrounds
-$light:   #f3f3f3;  // standard page background
+// Surfaces
+$light:   #faf9f8;  // standard page background
 $white:   #ffffff;  // card surfaces, elevated content
 $surface-card: #F7F7F7; // preview cards, subtle elevated surfaces
 $demure:  #dcddd7;  // muted gray — borders, dividers, subtle fills
 
-// Text
-$ink-dark:    $black;                    // primary text on light backgrounds
-$ink-light:   #ffffff;                   // primary text on dark backgrounds
-$muted:       #0c0c0c7a;                 // secondary text on light
-$muted-light: rgba(255, 255, 255, 0.7); // secondary text on dark
+// Ink
+$ink-dark:  #191918;  // primary text; dark surfaces
+$ink-light: #8d8a86;  // secondary text — warm gray (was translucent $muted)
 
-// Interactive
-$blue:    #11A0FF;  // primary CTA, links, focus rings
-$error:   #FF2111;  // error states
-$green:   #06D021;  // success, positive states
-$warning: #FFA811;  // warning states
+// Accent / status
+$primary:  #11a0ff;  // primary CTA, links, focus rings
+$positive: #06d021;  // success, positive states
+$error:    #ff2111;  // error states
+$warning:  #ffa811;  // warning states
+
+// Deprecated aliases — prefer the canonical names above.
+// NOTE: $ink-light changed meaning. It used to be "text on dark" (#ffffff);
+// that role is $white now. $ink-light is the secondary-text gray.
+$black: $ink-dark;   // was #0c0c0c
+$blue:  $primary;
+$green: $positive;
+$muted: $ink-light;  // was rgba(12, 12, 12, 0.48)
+$muted-light: rgba(255, 255, 255, 0.7); // secondary text on dark (not in Figma)
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 // Indivisible by Connary Fagen — loaded via next/font/local in the consuming app.
