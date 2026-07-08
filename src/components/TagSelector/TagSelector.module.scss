@@ -113,14 +113,13 @@
 }
 
 .option {
+  @include type-style($text-label-1);
   align-items: center;
   background: transparent;
   border: none;
   color: $ink-dark;
   cursor: pointer;
   display: flex;
-  font-family: $font-text;
-  font-size: $text-base;
   gap: $space-8;
   padding: $space-5 $space-10;
   text-align: left;
@@ -153,7 +152,7 @@
 }
 
 .empty {
+  @include type-style($text-label-2);
   color: $muted;
-  font-size: $text-small;
   padding: $space-8 $space-10;
 }

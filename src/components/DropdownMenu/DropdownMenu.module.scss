@@ -32,11 +32,11 @@
 }
 
 .item {
+  @include type-style($text-label-1);
   align-items: center;
   color: $ink-dark;
   cursor: pointer;
   display: flex;
-  font-size: $text-small;
   gap: $space-8;
   outline: none;
   padding: $space-6 $space-12;
