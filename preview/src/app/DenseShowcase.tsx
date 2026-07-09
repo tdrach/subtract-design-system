@@ -24,6 +24,9 @@ export function DenseShowcase() {
   const [selVal, setSelVal] = useState('extrude')
   const [areaVal, setAreaVal] = useState('')
 
+  // Inline-label fields (Flatland inspector row)
+  const [box, setBox] = useState({ w: 42, h: 21, a: 12 })
+
   // Inspector panel demo
   const [dims, setDims] = useState({ w: 42, h: 21, d: 7, r: 2 })
   const [op, setOp] = useState('union')
@@ -70,6 +73,46 @@ export function DenseShowcase() {
             <p className={styles.tokenName}>Textarea — sm</p>
             <div style={{ width: 200 }}>
               <Textarea size="sm" rows={2} placeholder="Notes…" value={areaVal} onChange={(e) => setAreaVal(e.target.value)} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Inline-label fields</h2>
+        <p className={styles.chartIntro}>
+          <code>NumberInput</code> takes a <code>label</code> prop — a muted
+          prefix rendered <em>inside</em> the field, before the value. It
+          collapses a labelled dimension (<code>W</code> · value · <code>mm</code>)
+          into one dense control (Figma: the Flatland inspector), instead of a
+          separate label beside the input. The whole field is one hit target —
+          clicking the label or unit focuses the value.
+        </p>
+        <div className={styles.componentRow}>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>label + suffix — sm</p>
+            <div style={{ width: 90 }}>
+              <NumberInput size="sm" label="W" suffix="mm" value={box.w} onChange={(w) => setBox((b) => ({ ...b, w }))} aria-label="Width" />
+            </div>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>row of fields</p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ width: 90 }}><NumberInput size="sm" label="W" suffix="mm" value={box.w} onChange={(w) => setBox((b) => ({ ...b, w }))} aria-label="Width" /></div>
+              <div style={{ width: 90 }}><NumberInput size="sm" label="H" suffix="mm" value={box.h} onChange={(h) => setBox((b) => ({ ...b, h }))} aria-label="Height" /></div>
+              <div style={{ width: 80 }}><NumberInput size="sm" label="∠" suffix="°" value={box.a} onChange={(a) => setBox((b) => ({ ...b, a }))} aria-label="Angle" /></div>
+            </div>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>label only (no unit)</p>
+            <div style={{ width: 90 }}>
+              <NumberInput size="sm" label="X" value={box.w} onChange={(w) => setBox((b) => ({ ...b, w }))} aria-label="X position" />
+            </div>
+          </div>
+          <div className={styles.componentGroup}>
+            <p className={styles.tokenName}>md</p>
+            <div style={{ width: 140 }}>
+              <NumberInput label="W" suffix="mm" value={box.w} onChange={(w) => setBox((b) => ({ ...b, w }))} aria-label="Width md" />
             </div>
           </div>
         </div>

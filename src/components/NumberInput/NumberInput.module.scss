@@ -1,40 +1,64 @@
 @use '../../styles/tokens' as *;
 
+// The wrap owns the field chrome so an inline label + value + unit read as one
+// control (Figma: the dense "W 42 mm" inspector input).
 .wrap {
-  position: relative;
   display: inline-flex;
   align-items: center;
   width: 100%;
-}
-
-.input {
+  box-sizing: border-box;
   background: $white;
   border: 1px solid $demure;
   border-radius: $radius-sm;
-  box-sizing: border-box;
   color: $ink-dark;
   font-family: $font-text;
-  font-variant-numeric: tabular-nums;
-  outline: none;
-  text-align: left;
+  cursor: text;
   transition: border-color $t-micro $ease-hover;
-  width: 100%;
 
-  &:focus { border-color: rgba(0, 0, 0, 0.3); }
-  &:disabled { cursor: not-allowed; opacity: 0.4; }
+  &:focus-within { border-color: rgba(0, 0, 0, 0.3); }
 }
 
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.input {
+  flex: 1 1 0;
+  min-width: 2.5ch; // floor so the value never collapses when label + unit are present
+  border: none;
+  background: transparent;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums; // no width jitter while stepping
+  padding: 0;
+}
+
+// Muted prefix (label) and suffix (unit) — chrome, so the value stays prominent.
+.label,
 .suffix {
-  position: absolute;
+  flex-shrink: 0;
+  color: $ink-light;
   pointer-events: none;
-  color: $muted;
+  user-select: none;
 }
 
-// Density variants. Right padding reserves room for the unit suffix.
-// Dense (sm) renders in the system UI font ($font-dense).
-.md .input { height: 44px; font-size: $text-base; padding: 0 $space-16 0 $space-10; }
-.md .suffix { right: $space-10; font-size: $text-base; }
+// ─── Density ────────────────────────────────────────────────────────────────
+// $space tokens aren't px-linear: $space-4 = 8px, $space-8 = 17px.
+.md {
+  height: 44px;
+  padding: 0 $space-10; // 20px
+  gap: $space-4;        // 8px
+  font-size: $text-base;
+}
 
-// Right padding must clear the suffix footprint (right offset + "mm" width ≈ 31px).
-.sm .input { height: 28px; font-size: $text-small; padding: 0 $space-16 0 $space-8; font-family: $font-dense; }
-.sm .suffix { right: $space-6; font-size: $text-small; font-family: $font-dense; }
+// Dense (sm) — system UI font ($font-dense), 8px padding + tighter radius (Figma).
+.sm {
+  height: 28px;
+  padding: 0 $space-4; // 8px
+  gap: $space-3;       // 6px
+  font-size: $text-small;
+  font-family: $font-dense;
+  border-radius: $radius-micro;
+}

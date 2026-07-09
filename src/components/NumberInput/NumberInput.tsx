@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import styles from './NumberInput.module.scss'
 
 export interface NumberInputProps {
@@ -12,11 +12,17 @@ export interface NumberInputProps {
    * (tolerances, scale factors). Default 1.
    */
   step?: number
-  /** Unit shown inside the field, e.g. `mm`, `°`, `%`. */
+  /**
+   * Muted prefix rendered inside the field, before the value — e.g. `W`, `X`, `∠`.
+   * Lets a labelled dimension field collapse into a single dense control
+   * (Figma: the inspector "W 42 mm" input) instead of a separate label + input.
+   */
+  label?: React.ReactNode
+  /** Unit shown inside the field, after the value, e.g. `mm`, `°`, `%`. */
   suffix?: string
   min?: number
   max?: number
-  /** Density. `md` (default) = 44px / `$text-base`; `sm` = 28px / `$text-small`. */
+  /** Density. `md` (default) = 44px / `$text-base`; `sm` = 28px / `$text-small` dense. */
   size?: 'sm' | 'md'
   disabled?: boolean
   className?: string
@@ -36,10 +42,11 @@ const round = (n: number) => Math.round(n * 1000) / 1000
  * parent owns the number and any clamping beyond `min`/`max`.
  */
 export function NumberInput({
-  value, onChange, step = 1, suffix, min, max, size = 'md', disabled, className,
+  value, onChange, step = 1, label, suffix, min, max, size = 'md', disabled, className,
   onFocus, 'aria-label': ariaLabel,
 }: NumberInputProps) {
   const [draft, setDraft] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const display = draft ?? String(round(value))
 
   const clamp = (n: number) => {
@@ -69,8 +76,23 @@ export function NumberInput({
   }
 
   return (
-    <span className={[styles.wrap, size === 'sm' ? styles.sm : styles.md, className].filter(Boolean).join(' ')}>
+    <span
+      className={[
+        styles.wrap,
+        size === 'sm' ? styles.sm : styles.md,
+        disabled ? styles.disabled : null,
+        className,
+      ].filter(Boolean).join(' ')}
+      // Clicking the label / unit / padding focuses the input — the whole field
+      // is one hit target, not just the value glyphs.
+      onMouseDown={(e) => {
+        if (disabled) return
+        if (e.target !== inputRef.current) { e.preventDefault(); inputRef.current?.focus() }
+      }}
+    >
+      {label != null ? <span className={styles.label}>{label}</span> : null}
       <input
+        ref={inputRef}
         type="text"
         inputMode="decimal"
         className={styles.input}
