@@ -1,14 +1,17 @@
 @use '../../styles/tokens' as *;
 
+// Dense, native-feeling menu: SF Pro items, tight rows with rounded inset
+// highlights, a floating shadow + hairline border (Figma: Flatland page menu).
 .content {
   background: $white;
   border: 1px solid $demure;
-  border-radius: $radius-sm;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  min-width: 140px;
+  border-radius: $radius-micro;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 10px 28px -6px rgba(0, 0, 0, 0.16);
+  min-width: 160px;
   outline: none;
-  overflow: hidden;
-  padding: $space-4 0;
+  padding: $space-1; // 2px — item highlights sit inset from the menu edge
   z-index: 402;
   // Scale out of the trigger corner, not the menu's center.
   transform-origin: var(--radix-dropdown-menu-content-transform-origin);
@@ -34,27 +37,33 @@
 .item {
   @include type-style($text-label-1);
   align-items: center;
+  border-radius: $radius-micro;
   color: $ink-dark;
   cursor: pointer;
   display: flex;
-  gap: $space-8;
+  gap: $space-3; // 6px between a leading icon/check and the label
   outline: none;
-  padding: $space-6 $space-12;
+  padding: $space-2 $space-4; // 4px 8px → ~26px native row
   transition: background $transition-fast;
   user-select: none;
 
   &:hover,
   &[data-highlighted] {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgba(0, 0, 0, 0.05);
   }
 
   &.destructive {
     color: $error;
+
+    &:hover,
+    &[data-highlighted] {
+      background: rgba($error, 0.08);
+    }
   }
 }
 
 .separator {
   background: $demure;
   height: 1px;
-  margin: $space-4 0;
+  margin: $space-1 0; // 2px — tight native rhythm
 }

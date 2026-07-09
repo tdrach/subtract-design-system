@@ -243,7 +243,7 @@ ComponentName/
 | `Header` | Sticky top nav | `wordmark`, `navLinks`, `rightSlot` |
 | `Footer` | Page footer | `FooterProps` |
 | `Dialog` | Modal dialog (Radix) | Composable: `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogBody`, `DialogClose` |
-| `DropdownMenu` | Dropdown (Radix) | Composable: `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator` |
+| `DropdownMenu` | Dropdown (Radix) — dense/native by default: SF Pro (`$text-label-1`), ~26px rows, `$radius-micro` menu + rounded inset item highlights, floating shadow | Composable: `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator` |
 | `TabBar` / `Tab` | Tab navigation | `active`, `border`, `ariaLabel` |
 | `Tag` | Status tag, 5 semantic tones (Figma: Tag) | `tone` (active/positive/warning/error/neutral) |
 | `TagSelector` / `TagPill` | Multi-tag input with create | `tags`, `selected`, `onSelect`, `onDeselect`, `onCreate`, `compact` |
