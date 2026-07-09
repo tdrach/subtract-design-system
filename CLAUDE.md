@@ -239,7 +239,7 @@ ComponentName/
 
 | Component | Description | Key props |
 |---|---|---|
-| `Button` | Primary action button | `variant` (primary/secondary/gray), `size` (sm/md), `href`, `iconBefore`, `iconAfter`, `split`, `iconOnly` |
+| `Button` | Primary action button | `variant` (primary/secondary/gray), `size` (sm/md/**dense**), `href`, `iconBefore`, `iconAfter`, `split`, `iconOnly`. `dense` = 28px SF Pro, pairs with `size="sm"` dense fields |
 | `Header` | Sticky top nav | `wordmark`, `navLinks`, `rightSlot` |
 | `Footer` | Page footer | `FooterProps` |
 | `Dialog` | Modal dialog (Radix) | Composable: `Dialog`, `DialogTrigger`, `DialogContent`, `DialogHeader`, `DialogBody`, `DialogClose` |

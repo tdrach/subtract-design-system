@@ -187,3 +187,30 @@
   &.splitGroup .splitMain    { font-size: $text-small; padding: $space-4 $space-8; min-height: 32px; }
   &.splitGroup .splitChevron { padding: 0 $space-6; min-height: 32px; }
 }
+
+// Dense — matches the dense field (NumberInput/Select size="sm"): 28px,
+// $font-dense (SF Pro), $radius-micro, 1px border, 8px padding. Pairs edge to
+// edge with those fields in an inspector/toolbar row.
+.dense {
+  font-family: $font-dense;
+  font-size: $text-small;
+  letter-spacing: $letter-spacing-normal; // SF Pro reads best at its native tracking
+  min-height: 28px;
+  border-width: 1px;
+  border-radius: $radius-micro;
+  gap: $space-2;
+
+  &:not(.splitGroup):not(.iconOnly) { padding: 0 $space-4; }
+  &.iconOnly { width: 28px; }
+
+  &.splitGroup { border-radius: $radius-micro; }
+  &.splitGroup .splitMain {
+    font-family: $font-dense;
+    font-size: $text-small;
+    letter-spacing: $letter-spacing-normal;
+    border-width: 1px;
+    padding: 0 $space-4;
+    min-height: 28px;
+  }
+  &.splitGroup .splitChevron { border-width: 1px; padding: 0 $space-3; min-height: 28px; }
+}

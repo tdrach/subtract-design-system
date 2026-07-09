@@ -6,7 +6,12 @@ import styles from './Button.module.scss'
 
 export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   variant?: 'primary' | 'secondary' | 'gray'
-  size?: 'sm' | 'md'
+  /**
+   * `md` (default) · `sm` · `dense`. `dense` is the 28px / `$font-dense` (SF Pro)
+   * button that pairs edge-to-edge with `size="sm"` dense fields (NumberInput,
+   * Select…) in an inspector/toolbar row.
+   */
+  size?: 'sm' | 'md' | 'dense'
   href?: string
   external?: boolean
   split?: boolean

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { NumberInput, Select, TextInput, Textarea } from '@subtract/ds'
+import { Button, NumberInput, Select, TextInput, Textarea } from '@subtract/ds'
+import { Plus, ArrowsClockwise } from '@phosphor-icons/react'
 import styles from './page.module.scss'
 
 // ─── Labelled dense field (mirrors gridfinity's Inspector Field) ───────────────
@@ -75,6 +76,38 @@ export function DenseShowcase() {
               <Textarea size="sm" rows={2} placeholder="Notes…" value={areaVal} onChange={(e) => setAreaVal(e.target.value)} />
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Dense buttons</h2>
+        <p className={styles.chartIntro}>
+          <code>Button size=&quot;dense&quot;</code> — 28px, <code>$font-dense</code>{' '}
+          (SF Pro), <code>$radius-micro</code>, 1px border — matches the dense
+          field metrics exactly, so inputs and buttons line up edge-to-edge in
+          an inspector or toolbar row.
+        </p>
+        <div className={styles.componentRow}>
+          <div className={styles.componentGroup}><p className={styles.tokenName}>primary</p><Button size="dense" variant="primary">Apply</Button></div>
+          <div className={styles.componentGroup}><p className={styles.tokenName}>secondary</p><Button size="dense" variant="secondary">Reset</Button></div>
+          <div className={styles.componentGroup}><p className={styles.tokenName}>gray</p><Button size="dense" variant="gray">Cancel</Button></div>
+          <div className={styles.componentGroup}><p className={styles.tokenName}>iconBefore</p><Button size="dense" variant="secondary" iconBefore={<Plus size={13} weight="bold" />}>Add</Button></div>
+          <div className={styles.componentGroup}><p className={styles.tokenName}>iconOnly</p><Button size="dense" variant="secondary" iconOnly aria-label="Refresh"><ArrowsClockwise size={13} weight="bold" /></Button></div>
+          <div className={styles.componentGroup}><p className={styles.tokenName}>disabled</p><Button size="dense" variant="primary" disabled>Apply</Button></div>
+        </div>
+
+        <p className={styles.tokenName} style={{ marginTop: 24 }}>paired toolbar row (dense fields + buttons)</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ width: 90 }}><NumberInput size="sm" label="W" suffix="mm" value={box.w} onChange={(w) => setBox((b) => ({ ...b, w }))} aria-label="Width toolbar" /></div>
+          <div style={{ width: 90 }}><NumberInput size="sm" label="H" suffix="mm" value={box.h} onChange={(h) => setBox((b) => ({ ...b, h }))} aria-label="Height toolbar" /></div>
+          <div style={{ width: 120 }}>
+            <Select size="sm" value={op} onChange={(e) => setOp(e.target.value)}>
+              <option value="union">Union</option>
+              <option value="subtract">Subtract</option>
+            </Select>
+          </div>
+          <Button size="dense" variant="secondary" iconBefore={<Plus size={13} weight="bold" />}>Add</Button>
+          <Button size="dense" variant="primary">Apply</Button>
         </div>
       </section>
 
