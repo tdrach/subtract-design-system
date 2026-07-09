@@ -20,4 +20,5 @@
 
 // Density variants. Dense (sm) renders in the system UI font ($font-dense).
 .md { font-size: $text-base; padding: $space-6 $space-10; min-height: 44px; }
-.sm { font-size: $text-small; padding: $space-3 $space-8; min-height: 30px; font-family: $font-dense; }
+// Dense — matches the dense field family ($radius-micro, 8px inline padding).
+.sm { font-size: $text-small; padding: $space-3 $space-4; min-height: 30px; font-family: $font-dense; border-radius: $radius-micro; }

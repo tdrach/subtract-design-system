@@ -34,6 +34,10 @@ export function DenseShowcase() {
   const [name, setName] = useState('Bin 2×1')
   const [notes, setNotes] = useState('')
 
+  // Gridfinity properties-panel use case
+  const [printer, setPrinter] = useState('p1s')
+  const [plate, setPlate] = useState({ w: 256, d: 256, h: 250 })
+
   return (
     <>
       <section className={styles.section}>
@@ -108,6 +112,40 @@ export function DenseShowcase() {
           </div>
           <Button size="dense" variant="secondary" iconBefore={<Plus size={13} weight="bold" />}>Add</Button>
           <Button size="dense" variant="primary">Apply</Button>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>Properties panel — Gridfinity</h2>
+        <p className={styles.chartIntro}>
+          The real use case: Gridfinity&apos;s build-plate properties panel, where
+          a <code>Select</code>, <code>NumberInput</code>s, and{' '}
+          <code>Button</code>s all share the dense metrics — 28px tall,{' '}
+          <code>$radius-micro</code>, <code>$font-dense</code> — so the dropdown,
+          the dimension fields, and the actions read as one family.
+        </p>
+
+        <div className={styles.densePanel} style={{ width: 300 }}>
+          <p className={styles.densePanelTitle}>Build plate</p>
+          <Select size="sm" value={printer} onChange={(e) => setPrinter(e.target.value)} aria-label="Printer">
+            <option value="p1s">Bambu Lab P1S</option>
+            <option value="p2s">Bambu Lab P2S</option>
+            <option value="x1c">Bambu Lab X1C</option>
+          </Select>
+
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <div style={{ flex: 1, minWidth: 0 }}><NumberInput size="sm" label="W" suffix="mm" value={plate.w} onChange={(w) => setPlate((p) => ({ ...p, w }))} aria-label="Width" /></div>
+            <div style={{ flex: 1, minWidth: 0 }}><NumberInput size="sm" label="D" suffix="mm" value={plate.d} onChange={(d) => setPlate((p) => ({ ...p, d }))} aria-label="Depth" /></div>
+          </div>
+          <NumberInput size="sm" label="Max height" suffix="mm" value={plate.h} onChange={(h) => setPlate((p) => ({ ...p, h }))} aria-label="Max height" />
+
+          <div className={styles.denseDivider} />
+
+          <Button size="dense" variant="primary" iconBefore={<Plus size={13} weight="bold" />}>Add plate</Button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button size="dense" variant="secondary" style={{ flex: 1 }}>Set as my default</Button>
+            <Button size="dense" variant="gray" style={{ flex: 1 }}>Duplicate plate</Button>
+          </div>
         </div>
       </section>
 
