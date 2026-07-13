@@ -4,8 +4,11 @@ import type { HTMLAttributes } from 'react'
 import styles from './SegmentedControl.module.scss'
 
 export interface SegmentedControlOption {
-  label: string
+  /** Text or an icon — pass `title` when the label isn't readable text. */
+  label: React.ReactNode
   value: string
+  /** Tooltip + accessible name for icon-only labels. */
+  title?: string
 }
 
 export interface SegmentedControlProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
@@ -45,6 +48,8 @@ export function SegmentedControl({
             e.currentTarget.blur()
           }}
           aria-pressed={opt.value === value}
+          title={opt.title}
+          aria-label={opt.title}
         >
           {opt.label}
         </button>
