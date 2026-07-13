@@ -37,9 +37,58 @@ export interface NumberInputProps {
 const round = (n: number) => Math.round(n * 1000) / 1000
 
 /**
- * Dense numeric field with a draft-while-typing buffer (commit on blur/Enter)
- * and Figma-style arrow-key stepping. Editing is resolution-independent: the
- * parent owns the number and any clamping beyond `min`/`max`.
+ * Tiny arithmetic for the draft — Figma-style: "180+20/2" commits as 190.
+ * Four operators, parentheses, unary minus, decimals; ×/÷/− glyphs accepted.
+ * Recursive descent, no eval(), no identifiers — anything else parses to NaN
+ * and the field reverts exactly like any other bad draft.
+ */
+function evalExpression(src: string): number {
+  const s = src.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/\s+/g, '')
+  let i = 0
+  const number = (): number => {
+    const start = i
+    while (i < s.length && /[0-9.]/.test(s[i])) i++
+    return start === i ? NaN : parseFloat(s.slice(start, i))
+  }
+  const factor = (): number => {
+    if (s[i] === '-') { i++; return -factor() }
+    if (s[i] === '+') { i++; return factor() }
+    if (s[i] === '(') {
+      i++
+      const v = expr()
+      if (s[i] !== ')') return NaN
+      i++
+      return v
+    }
+    return number()
+  }
+  const term = (): number => {
+    let v = factor()
+    while (s[i] === '*' || s[i] === '/') {
+      const op = s[i++]
+      const r = factor()
+      v = op === '*' ? v * r : v / r
+    }
+    return v
+  }
+  const expr = (): number => {
+    let v = term()
+    while (s[i] === '+' || s[i] === '-') {
+      const op = s[i++]
+      const r = term()
+      v = op === '+' ? v + r : v - r
+    }
+    return v
+  }
+  const v = expr()
+  return i === s.length && Number.isFinite(v) ? v : NaN
+}
+
+/**
+ * Dense numeric field with a draft-while-typing buffer (commit on blur/Enter),
+ * Figma-style arrow-key stepping, and basic math on commit — type "180+20",
+ * "42*3" or "(17+4)/2" and the field resolves it. Editing is resolution-
+ * independent: the parent owns the number and any clamping beyond `min`/`max`.
  */
 export function NumberInput({
   value, onChange, step = 1, label, suffix, min, max, size = 'md', disabled, className,
@@ -59,18 +108,19 @@ export function NumberInput({
     if (draft === null) return
     const t = draft.trim()
     if (t !== '') {
-      const v = parseFloat(t)
+      const v = evalExpression(t)
       if (!Number.isNaN(v)) onChange(clamp(round(v)))
     }
     setDraft(null)
   }
 
-  // ↑/↓ step by `step` (Shift ×10). Operates on the in-progress draft if any,
-  // else the committed value; commits immediately so parent clamping shows through.
+  // ↑/↓ step by `step` (Shift ×10). Operates on the in-progress draft if any
+  // (expressions resolve first — "180+20" then ↑ steps from 200), else the
+  // committed value; commits immediately so parent clamping shows through.
   const stepBy = (dir: 1 | -1, shift: boolean) => {
     if (disabled) return
-    const base = draft !== null && draft.trim() !== '' && !Number.isNaN(parseFloat(draft))
-      ? parseFloat(draft) : value
+    const draftVal = draft !== null && draft.trim() !== '' ? evalExpression(draft) : NaN
+    const base = Number.isNaN(draftVal) ? value : draftVal
     onChange(clamp(round(base + dir * step * (shift ? 10 : 1))))
     setDraft(null)
   }
