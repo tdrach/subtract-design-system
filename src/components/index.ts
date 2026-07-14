@@ -5,6 +5,8 @@ export { default as Footer } from './Footer'
 export type { FooterProps } from './Footer'
 
 export { default as Button } from './Button'
+export { IconButton } from './IconButton'
+export type { IconButtonProps } from './IconButton'
 export type { ButtonProps } from './Button'
 
 export {

@@ -39,5 +39,5 @@
 
 // Dense — matches the dense field family ($radius-micro, 8px left edge like
 // NumberInput/Button); right padding reserves room for the pulled-in chevron.
-.sm .select { height: 28px; font-size: $text-small; padding: 0 $space-12 0 $space-4; font-family: $font-dense; border-radius: $radius-micro; }
+.sm .select { height: $control-height-dense; font-size: $text-small; padding: 0 $space-12 0 $space-4; font-family: $font-dense; border-radius: $radius-micro; }
 .sm .chevron { right: $space-4; }

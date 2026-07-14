@@ -55,7 +55,7 @@
 
 // Dense (sm) — system UI font ($font-dense), 8px padding + tighter radius (Figma).
 .sm {
-  height: 28px;
+  height: $control-height-dense;
   padding: 0 $space-4; // 8px
   gap: $space-3;       // 6px
   font-size: $text-small;

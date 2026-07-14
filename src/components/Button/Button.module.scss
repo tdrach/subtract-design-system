@@ -195,7 +195,7 @@
   font-family: $font-dense;
   font-size: $text-small;
   letter-spacing: $letter-spacing-normal; // SF Pro reads best at its native tracking
-  min-height: 28px;
+  min-height: $control-height-dense;
   border-width: 1px;
   border-radius: $radius-micro;
   gap: $space-2;
@@ -210,7 +210,7 @@
     letter-spacing: $letter-spacing-normal;
     border-width: 1px;
     padding: 0 $space-4;
-    min-height: 28px;
+    min-height: $control-height-dense;
   }
-  &.splitGroup .splitChevron { border-width: 1px; padding: 0 $space-3; min-height: 28px; }
+  &.splitGroup .splitChevron { border-width: 1px; padding: 0 $space-3; min-height: $control-height-dense; }
 }

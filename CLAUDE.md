@@ -51,7 +51,7 @@ CSS custom properties for the subset of tokens used in JS are set in `global.scs
 
 Font: **Indivisible** by Connary Fagen (custom web font, `.woff2`). Loaded via `next/font/local`, exposed as CSS variable `--font-indivisible`.
 
-**Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) plus `Button size="dense"`, for inspectors and toolbars. All share one metric set — 28px tall, `$text-small`, `$font-dense`, `$radius-micro` (5px), 1px `$demure` border, 8px (`$space-4`) inline padding — so a dropdown, dimension fields, and action buttons line up edge-to-edge as one family (Figma: the Gridfinity build-plate properties panel). Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font. `NumberInput` also takes an inline `label` prop (a muted prefix inside the field) so a labelled dimension collapses into one dense control — `<NumberInput size="sm" label="W" suffix="mm" …>` renders "W 42 mm" (Figma: the Flatland inspector field).
+**Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) plus `Button size="dense"`, for inspectors and toolbars. All share one metric set — `$control-height-dense` (28px) tall, `$text-small`, `$font-dense`, `$radius-micro` (5px), 1px `$demure` border, 8px (`$space-4`) inline padding — so a dropdown, dimension fields, and action buttons line up edge-to-edge as one family (Figma: the Gridfinity build-plate properties panel). Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font. `NumberInput` also takes an inline `label` prop (a muted prefix inside the field) so a labelled dimension collapses into one dense control — `<NumberInput size="sm" label="W" suffix="mm" …>` renders "W 42 mm" (Figma: the Flatland inspector field).
 
 **Inline-label rule (dense fields):** a label may live INSIDE a dense control only at glyph scale — one character or one icon (`W`, `X`, `↔`, `TL`, a Phosphor glyph). Anything wordier ("Outline", "Smoothing", "Clearance") must render as a dense heading ABOVE an unlabeled control (Label-1 style, `$ink-light`), Figma-inspector style — inline words overflow the 28px field. Consumers should enforce this in their field wrappers rather than per call site.
 
@@ -241,6 +241,7 @@ ComponentName/
 
 | Component | Description | Key props |
 |---|---|---|
+| `IconButton` | Dense square icon button — field-adjacent split toggles / popover triggers; exactly `$control-height-dense` | `active`, `size` (dense) |
 | `Button` | Primary action button | `variant` (primary/secondary/gray), `size` (sm/md/**dense**), `href`, `iconBefore`, `iconAfter`, `split`, `iconOnly`. `dense` = 28px SF Pro, pairs with `size="sm"` dense fields |
 | `Header` | Sticky top nav | `wordmark`, `navLinks`, `rightSlot` |
 | `Footer` | Page footer | `FooterProps` |

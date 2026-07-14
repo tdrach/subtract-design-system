@@ -1,0 +1,30 @@
+@use '../../styles/tokens' as *;
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid $demure;
+  background: $white;
+  color: $ink-light;
+  cursor: pointer;
+  padding: 0;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover:not(:disabled) { background: $light; color: $ink-dark; }
+  &:disabled { opacity: 0.45; cursor: default; }
+  &:focus-visible { outline: 2px solid $primary; outline-offset: 1px; }
+}
+
+.dense {
+  width: $control-height-dense;
+  height: $control-height-dense;
+  border-radius: $radius-micro;
+}
+
+.active {
+  background: $demure;
+  color: $ink-dark;
+  &:hover:not(:disabled) { background: $demure; }
+}
