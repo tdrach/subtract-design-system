@@ -53,6 +53,8 @@ Font: **Indivisible** by Connary Fagen (custom web font, `.woff2`). Loaded via `
 
 **Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) plus `Button size="dense"`, for inspectors and toolbars. All share one metric set — 28px tall, `$text-small`, `$font-dense`, `$radius-micro` (5px), 1px `$demure` border, 8px (`$space-4`) inline padding — so a dropdown, dimension fields, and action buttons line up edge-to-edge as one family (Figma: the Gridfinity build-plate properties panel). Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font. `NumberInput` also takes an inline `label` prop (a muted prefix inside the field) so a labelled dimension collapses into one dense control — `<NumberInput size="sm" label="W" suffix="mm" …>` renders "W 42 mm" (Figma: the Flatland inspector field).
 
+**Inline-label rule (dense fields):** a label may live INSIDE a dense control only at glyph scale — one character or one icon (`W`, `X`, `↔`, `TL`, a Phosphor glyph). Anything wordier ("Outline", "Smoothing", "Clearance") must render as a dense heading ABOVE an unlabeled control (Label-1 style, `$ink-light`), Figma-inspector style — inline words overflow the 28px field. Consumers should enforce this in their field wrappers rather than per call site.
+
 ### Type styles (high-level tokens)
 
 **Prefer these over raw size/weight combinations.** One token per Figma text style (SDS → Styles → Text styles); each bundles family + size + weight + tracking from the base tokens. Apply with the mixin:
