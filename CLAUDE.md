@@ -386,3 +386,5 @@ When implementing a Figma design into this codebase:
 9. **`'use client'`** — required for any component using hooks, event handlers, or Radix primitives. Omit for pure presentational server components (Header, Footer, Skeleton, TextInput).
 
 10. **Figma capture** — the preview app includes `https://mcp.figma.com/mcp/html-to-design/capture.js` in the root layout, enabling the MCP server to capture live rendered pages back into Figma.
+
+11. **Cursor states** — every interactive component declares a cursor for EVERY state it can reach (pointer, grab/grabbing, resize directions, text, help, not-allowed); live gestures derive the cursor from drag state, never hover. Full doctrine + audit checklist: the `cursor-states` skill (.claude/skills/cursor-states).
