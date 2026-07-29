@@ -82,6 +82,21 @@
   gap: $space-2;
 }
 
+.infoBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $muted;
+  cursor: pointer;
+  transition: color $t-micro $ease-hover;
+
+  &:hover {
+    color: $ink-dark;
+  }
+}
+
 // Visible affordance for a headerTitle tooltip.
 .hasTitle {
   text-decoration: underline dotted;

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
-import { ArrowUp, ArrowDown, DotsThree } from '@phosphor-icons/react'
+import { ArrowUp, ArrowDown, DotsThree, Info } from '@phosphor-icons/react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -25,6 +25,12 @@ export interface ColumnDef<TData> {
    * use it for abbreviations and derived metrics ("OI", "Edge").
    */
   headerTitle?: string
+  /**
+   * Renders a small ⓘ button in the header that fires this callback —
+   * for opening a fuller explanation (dialog, side panel) than a tooltip
+   * can carry. Doesn't interfere with sorting.
+   */
+  onInfo?: () => void
   /**
    * Key on the data object used to read the cell value and to sort.
    * When omitted, the column is display-only (cell renderer required).
@@ -247,6 +253,19 @@ export function DataTable<TData extends object>({
                           ? <ArrowUp size={sortIconSize} weight="bold" />
                           : <ArrowDown size={sortIconSize} weight="bold" />}
                       </span>
+                    )}
+                    {col.onInfo && (
+                      <button
+                        type="button"
+                        className={styles.infoBtn}
+                        aria-label={`About ${col.header}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          col.onInfo!()
+                        }}
+                      >
+                        <Info size={12} weight="bold" />
+                      </button>
                     )}
                   </span>
                 </th>
