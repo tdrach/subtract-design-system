@@ -20,6 +20,12 @@ export interface ColumnDef<TData> {
   /** Column header label. */
   header: string
   /**
+   * Hover explanation for the column (rendered as the header's native
+   * `title` tooltip). Adds a dotted underline so the affordance is visible —
+   * use it for abbreviations and derived metrics ("OI", "Edge").
+   */
+  headerTitle?: string
+  /**
    * Key on the data object used to read the cell value and to sort.
    * When omitted, the column is display-only (cell renderer required).
    */
@@ -228,10 +234,12 @@ export function DataTable<TData extends object>({
                     isSorted   ? styles.sorted   : '',
                     col.align === 'right'  ? styles.alignRight  : '',
                     col.align === 'center' ? styles.alignCenter : '',
+                    col.headerTitle && !isSortable ? styles.help : '',
                   ].filter(Boolean).join(' ')}
                   onClick={isSortable ? () => handleSort(col.id) : undefined}
+                  title={col.headerTitle}
                 >
-                  <span className={styles.thInner}>
+                  <span className={col.headerTitle ? `${styles.thInner} ${styles.hasTitle}` : styles.thInner}>
                     {col.header}
                     {isSorted && (
                       <span className={styles.sortIcon}>

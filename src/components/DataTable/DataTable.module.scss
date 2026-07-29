@@ -56,6 +56,11 @@
     }
   }
 
+  // Tooltip-only header (headerTitle without sorting) — help, not pointer.
+  &.help {
+    cursor: help;
+  }
+
   &.sorted {
     color: $ink-dark;
 
@@ -75,6 +80,13 @@
   display: inline-flex;
   align-items: center;
   gap: $space-2;
+}
+
+// Visible affordance for a headerTitle tooltip.
+.hasTitle {
+  text-decoration: underline dotted;
+  text-decoration-color: $demure;
+  text-underline-offset: 3px;
 }
 
 .sortIcon {
