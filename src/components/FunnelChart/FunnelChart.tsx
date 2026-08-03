@@ -25,13 +25,22 @@ const BADGE_MIN_W  = 72   // minimum badge width
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/** Parse #rrggbb → rgba string */
-function hexToRgba(hex: string, alpha: number): string {
+/**
+ * Mix `#rrggbb` toward white by `amount` (0 = untouched, 1 = white) and return
+ * an **opaque** rgb string.
+ *
+ * The bands are same-hue and overlap — each is painted on top of the wider one
+ * behind it — so they must be opaque. A translucent same-hue fill composited
+ * over an opaque same-hue base is a visual no-op, which would collapse the
+ * funnel into one flat blob and make the per-stage `bands` data decorative.
+ */
+function mixToWhite(hex: string, amount: number): string {
   const h = hex.replace('#', '')
-  const r = parseInt(h.slice(0, 2), 16)
-  const g = parseInt(h.slice(2, 4), 16)
-  const b = parseInt(h.slice(4, 6), 16)
-  return `rgba(${r},${g},${b},${alpha.toFixed(2)})`
+  const mix = (c: number) => Math.round(c + (255 - c) * amount)
+  const r = mix(parseInt(h.slice(0, 2), 16))
+  const g = mix(parseInt(h.slice(2, 4), 16))
+  const b = mix(parseInt(h.slice(4, 6), 16))
+  return `rgb(${r},${g},${b})`
 }
 
 /** Catmull-Rom → cubic Bézier smooth path, starting with M or L */
@@ -85,8 +94,11 @@ export interface FunnelChartProps {
    */
   color?: string
   /**
-   * Explicit fill colors per band, from outermost (lightest) to innermost (darkest).
-   * Overrides `color`.
+   * Explicit fill colors per band, indexed from the **innermost** band (`0`)
+   * outward — index 0 is the narrowest and is painted last (on top), the final
+   * entry is the outermost full-height band painted first. Pass **opaque**
+   * colors: the bands overlap, so translucent same-hue fills composite to
+   * nothing. Overrides `color`.
    */
   colors?: string[]
   /**
@@ -135,10 +147,13 @@ export function FunnelChart({
       ...stages.map(s => s.bands?.length ?? 0)
     )
 
-    // Resolve band colors: outermost (index 0) → lightest, innermost → darkest
+    // Resolve band colors. Index 0 is the INNERMOST (narrowest) band, painted
+    // last/on top; index nBands-1 is the outermost, full-height band, painted
+    // first. The ramp therefore runs darkest (inner) → lightest (outer), and
+    // every step is opaque — see mixToWhite for why translucency renders flat.
     const bandColors = colorsProp ?? Array.from({ length: nBands }, (_, i) => {
-      const alpha = 0.18 + (i / (nBands - 1)) * 0.82
-      return hexToRgba(color, alpha)
+      const t = nBands > 1 ? i / (nBands - 1) : 0
+      return mixToWhite(color, t * 0.72)
     })
 
     const centerY  = height / 2

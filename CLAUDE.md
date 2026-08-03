@@ -271,26 +271,45 @@ All chart components are `'use client'`, SVG-based, and built on `@visx/*`. They
 | `WeightChart` | Specialized weight/metric chart |
 | `BubbleMatrix` | Grid of sized/colored bubbles with column headers |
 
-**Chart tooltip pattern** (used across all charts):
+**Chart tooltip pattern** — don't hand-roll it. The DS exports the shell style plus a small
+component family from `src/components/ChartTooltip/`; every chart uses them:
+
 ```tsx
-const TOOLTIP_STYLES: React.CSSProperties = {
-  ...defaultStyles,           // from @visx/tooltip
-  background: '#0c0c0c',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'inherit',
-  boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-  lineHeight: 1,
-}
+import {
+  chartTooltipStyles, ChartTooltipHeader, ChartTooltipBody,
+  ChartTooltipRow, ChartTooltipDetail,
+} from '@subtract/ds'
+
+<div style={chartTooltipStyles}>
+  <ChartTooltipHeader>Jun 7</ChartTooltipHeader>
+  <ChartTooltipBody>
+    <ChartTooltipRow color="#11A0FF" label="Revenue" value="496" />
+  </ChartTooltipBody>
+  <ChartTooltipDetail>38%</ChartTooltipDetail>
+</div>
 ```
 
-**Chart DS token constants** (used inline in SVG components):
+The shell is a **light** surface — `chartColor.white` background, `chartColor.ink` text, 1px
+`chartColor.demure` border, `12px 14px` padding, `chartRadius.sm`, `chartType.small`,
+`0 4px 12px rgba(12,12,12,0.08)`, `lineHeight: 1.4`, `width: max-content`, `maxWidth: 280`.
+`ChartTooltipRow`'s `label` is optional (calendar/bubble tooltips pass only `color` + `value`);
+`ChartTooltipDetail` is the muted secondary line.
+
+⚠️ `chartTooltipStyles` spreads visx `defaultStyles`, which includes **`position: 'absolute'`**.
+That is correct inside a chart (visx's `TooltipInPortal` positions it), but in any **static**
+render — a preview, a docs page, a screenshot — the chip leaves the flow, its backdrop collapses
+to its own padding, and it lands at the page's top-left. Give the backdrop `position: relative`
+and override the shell with `position: 'static'`.
+
+**Chart color/type tokens** live in **`src/styles/chartTokens.ts`** — `chartColor`, `chartRadius`,
+`chartType`, `chartWeight`, `chartLetterSpacing`, `chartTextCaption`, `chartTextValue`. Prefer them
+in new chart work (`LineChart` already uses `chartColor.grid`). Older charts still declare
+equivalent constants inline, which is why you'll see both spellings:
+
 ```ts
-const MUTED = 'rgba(12,12,12,0.28)'   // axis labels, secondary
-const GRID  = 'rgba(12,12,12,0.07)'   // horizontal/vertical grid lines
-const BLACK = '#0c0c0c'               // callout values
+const MUTED = 'rgba(12,12,12,0.28)'   // = chartColor.axis — axis labels, secondary
+const GRID  = 'rgba(12,12,12,0.07)'   // = chartColor.grid — grid lines
+const BLACK = '#0c0c0c'               // = chartColor.ink  — callout values
 ```
 
 ---
