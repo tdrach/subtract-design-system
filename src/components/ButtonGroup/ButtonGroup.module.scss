@@ -1,46 +1,29 @@
 @use '../../styles/tokens' as *;
 
-// ─── Container ────────────────────────────────────────────────────────────────
+// Segmented control: a tinted track holding borderless segments; the selected
+// segment lifts into a raised white pill (approved: button-group before/after).
+$seg-radius: 6px;
+$track-radius: 9px;
+$track: #efeeea; // sits between $light and $demure — no exact token
+
+// ─── Container (the track) ─────────────────────────────────────────────────────
 .group {
   display: inline-flex;
-  // Isolation so item z-index (for selected/focus borders) stays local.
+  // Isolation so the selected pill's z-index / shadow stay local.
   isolation: isolate;
+  background: $track;
+  border-radius: $track-radius;
+  padding: $space-1; // 2px inset around the segments
 }
 
 .horizontal { flex-direction: row; }
 .vertical { flex-direction: column; }
 
-// Reset every child's corners, then re-round only the outer edges so the run
-// reads as one connected control. Targets ANY direct child (ButtonGroupItem,
-// DS Button, anchor, …) so the group works as a generic layout primitive.
-.group > * { border-radius: 0; }
+// Uniform segment corners — the track owns the outer rounding, and segments no
+// longer overlap, so there are no per-edge or negative-margin rules anymore.
+.group > * { border-radius: $seg-radius; }
 
-.horizontal {
-  > *:first-child {
-    border-top-left-radius: $radius-md;
-    border-bottom-left-radius: $radius-md;
-  }
-  > *:last-child {
-    border-top-right-radius: $radius-md;
-    border-bottom-right-radius: $radius-md;
-  }
-  // Merge the shared 1px border between neighbours.
-  > * + * { margin-left: -1px; }
-}
-
-.vertical {
-  > *:first-child {
-    border-top-left-radius: $radius-md;
-    border-top-right-radius: $radius-md;
-  }
-  > *:last-child {
-    border-bottom-left-radius: $radius-md;
-    border-bottom-right-radius: $radius-md;
-  }
-  > * + * { margin-top: -1px; }
-}
-
-// ─── Item ─────────────────────────────────────────────────────────────────────
+// ─── Item (segment) ────────────────────────────────────────────────────────────
 .item {
   appearance: none;
   position: relative;
@@ -48,25 +31,28 @@
   align-items: center;
   justify-content: center;
   gap: $space-3;
-  border: 1px solid $demure;
-  background: $white;
+  border: 0;
+  background: transparent;
   color: $ink-dark;
   font-family: $font-text;
   font-weight: $weight-medium;
   line-height: 1;
   white-space: nowrap;
+  padding-inline: 1.125rem; // block padding comes from the size rule below
   cursor: pointer;
   transition: $transition-fast;
   transition-property: background, color, border-color;
 
+  &.iconOnly { padding-inline: 0.25rem; }
+
   &:hover:not(.selected):not(:disabled) {
-    background: $light;
+    background: rgba(0, 0, 0, 0.035);
   }
 
   &:focus-visible {
     outline: 2px solid $blue;
     outline-offset: 1px;
-    z-index: 2; // ring sits above neighbouring borders
+    z-index: 2; // ring sits above the pill
   }
 
   &:disabled {
@@ -75,18 +61,16 @@
   }
 }
 
-// Selected — the DS "active" vocabulary (matches Sidebar / chat): blue tint,
-// blue text, semibold, with the blue border lifted above grey neighbours.
+// Selected — raised white pill with a soft shadow, normal ink text (was a
+// translucent-blue tint with blue text).
 .selected {
-  background: rgba($blue, 0.1);
-  color: $blue;
-  border-color: rgba($blue, 0.45);
+  background: $white;
+  color: $ink-dark;
   font-weight: $weight-semibold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0.5px 0.5px rgba(0, 0, 0, 0.04);
   z-index: 1;
 
-  &:hover:not(:disabled) {
-    background: rgba($blue, 0.14);
-  }
+  &:hover:not(:disabled) { background: $white; } // no hover shift on the active segment
 }
 
 .itemIcon {
@@ -96,29 +80,21 @@
   line-height: 0;
 }
 
-// ─── Sizes ────────────────────────────────────────────────────────────────────
-// +2px top vs bottom: optically centers Indivisible, which sits high in the line box.
+// ─── Size (sm is the only size now) ─────────────────────────────────────────────
+// +2px top vs bottom optically centers Indivisible, which sits high in the line box.
 .size-sm {
   font-size: $text-small;
-  padding: $space-3 $space-6 $space-2;
+  padding: 0.375rem 1.125rem 0.25rem;
   min-height: 28px;
 
-  &.iconOnly { padding: $space-2; width: 28px; }
-}
-
-.size-md {
-  font-size: $text-base;
-  padding: $space-5 $space-10 $space-4;
-  min-height: 38px;
-
-  &.iconOnly { padding: $space-4; width: 38px; }
+  &.iconOnly { padding: 0.25rem; width: 28px; }
 }
 
 // ─── Separator (optional explicit divider) ────────────────────────────────────
 .separator {
   align-self: stretch;
   width: 1px;
-  background: $demure;
+  background: rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
 }
 .vertical > .separator {
@@ -130,12 +106,12 @@
 .text {
   display: inline-flex;
   align-items: center;
-  border: 1px solid $demure;
-  background: $light;
-  color: $muted;
+  border: 0;
+  background: transparent;
+  color: $ink-light;
   font-family: $font-text;
   font-size: $text-small;
   font-weight: $weight-medium;
   white-space: nowrap;
-  padding: $space-2 $space-8;
+  padding: 0.25rem 1.125rem;
 }

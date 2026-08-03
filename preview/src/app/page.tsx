@@ -710,7 +710,7 @@ function PageContent() {
                 Joins buttons into one connected unit. Use <code>ButtonGroupItem</code> with{' '}
                 <code>selected</code> for a single-select segmented control (model
                 pickers, view toggles), or drop plain <code>Button</code>s in to cluster
-                related actions. Selection uses the system&apos;s blue active state.
+                related actions. The selected segment lifts into a raised white pill.
               </p>
               <div className={styles.componentRow}>
                 <div className={styles.componentGroup}>
@@ -722,7 +722,7 @@ function PageContent() {
                   </ButtonGroup>
                 </div>
                 <div className={styles.componentGroup}>
-                  <p className={styles.tokenName}>single-select / md</p>
+                  <p className={styles.tokenName}>single-select / icons</p>
                   <ButtonGroup aria-label="View">
                     <ButtonGroupItem selected={bgView === 'list'} onClick={() => setBgView('list')} iconBefore={<ListBullets size={15} weight="bold" />}>List</ButtonGroupItem>
                     <ButtonGroupItem selected={bgView === 'board'} onClick={() => setBgView('board')} iconBefore={<Database size={15} weight="bold" />}>Board</ButtonGroupItem>
