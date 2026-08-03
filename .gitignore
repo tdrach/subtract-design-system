@@ -8,3 +8,9 @@ preview/public/fonts
 
 # Build artifacts
 *.tsbuildinfo
+.ds-sync/
+ds-bundle/
+dist/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
