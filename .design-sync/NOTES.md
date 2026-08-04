@@ -194,6 +194,19 @@ It spreads visx's `defaultStyles` (`position:'absolute'`, `pointer-events:'none'
 - `cfg.dtsPropsFor` now hand-writes props for **TextInput, Textarea, IconButton, SegmentedControl, DataTable** — the auto-extractor was dropping the entire native-attribute surface and `ColumnDef`/`RowAction`. Keep these in sync if those components change.
 - Only remaining validate warn is the pre-triaged `[FONT_MISSING] "Mono"` (see Known render warns).
 
+### Re-sync 2026-08-03/04 — ButtonGroup segmented-control redesign
+
+- Trigger: `main` advanced to `4fcd848 ButtonGroup → segmented control (tinted track + raised white pill)`. Synced **main + these sync inputs**; PR #8's DS fixes deliberately excluded (user's call), so **FunnelChart still renders flat** in the project until #8 merges and a re-sync runs.
+- **`.design-sync/` was NOT on `main`** (it lives on the unmerged PR #7 branch), so the re-sync had to run from `design-sync/initial-import` with `main` merged in. **Until #7 merges, every re-sync must do that** — running `/design-sync` from bare `main` finds no config and would be treated as a first-time import, re-authoring all 45 previews from scratch.
+- Driver verdict: `ok:true`, `anchor:ok`, **`unchanged:82`, `changed:[]`, `added:[]`, `pendingGrade:[]`**, capture skipped (`empty_worklist`). Upload partition disagreed and was right: `upload.components:["ButtonGroupItem"]`, `bundle:true`, `styling:true`, `deletePaths:[]`. Only `ButtonGroupItem.d.ts` + `.prompt.md` changed as artifacts, plus the bundle/CSS.
+- **Why the partitions disagreed, and why it matters.** Grades key off *preview* sources, not component sources — so a pure restyle of a component never lands in `pendingGrade` even though every card's pixels change. That is by design, but it means **a visual redesign silently carries forward stale grades**. Here the carried-forward ButtonGroup notes claimed a *blue tinted* selected state and a "size axis"; both were false after the redesign. Resolved with a deliberate audit (`package-capture.mjs --components … --spot-check-components …`), reading the fresh sheet, and rewriting the notes. **Do this whenever a component's SCSS/TSX changed but `pendingGrade` is empty.**
+- **API narrowing caught by the watch-list:** `ButtonGroupItemProps.size` went from `'sm' | 'md'` to `'sm'` only, and the default flipped `md`→`sm`; the SCSS no longer defines `.sm`/`.md` at all. **This is breaking for any consumer passing `size="md"`.** The authored preview only ever passes `size="sm"` or omits it, so nothing became invalid — but `ViewToggle` had *omitted* `size` and therefore silently dropped from md to sm, and no longer demonstrates a size axis (there isn't one). Its grade note now says so.
+- ButtonGroup vs SegmentedControl are now visual cousins but still distinguishable: ButtonGroup = squarer tinted track + **raised white pill**; SegmentedControl = fully-rounded pill track + **blue filled thumb**. SegmentedControl was spot-checked in the same pass and all four of its recorded notes still matched the sheet — genuinely unchanged.
+- The `dtsPropsFor` drift check (TextInput, Textarea, IconButton, SegmentedControl, DataTable) found **zero source changes** — all five entries still accurate.
+- `conventions.md` re-validated against the fresh build: every component, custom property and prop still resolves; it makes no ButtonGroup claims, so no drift and no rebuild was needed.
+- The remote sentinel `_ds_needs_recompile` returned **404 before this upload** — the app had opened the project and cleared it, i.e. the first sync was consumed cleanly by the self-check. Expected, not an error.
+- Render check stayed 82/82 clean, 0 bad. New anchor `bundleSha12: 0847e3272513` (was `4df2a6862197`).
+
 ### Next re-sync — the one command
 
 ```sh
