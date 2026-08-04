@@ -38,7 +38,8 @@ export interface ButtonGroupItemProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Marks this segment as the current selection. */
   selected?: boolean
-  size?: 'sm' | 'md'
+  /** Segment size. `sm` is the only size — kept as a prop for forward room. */
+  size?: 'sm'
   /** Icon rendered before the label. */
   iconBefore?: React.ReactNode
   /** Icon rendered after the label. */
@@ -49,7 +50,7 @@ export interface ButtonGroupItemProps
 
 export function ButtonGroupItem({
   selected = false,
-  size = 'md',
+  size = 'sm',
   iconBefore,
   iconAfter,
   iconOnly = false,
