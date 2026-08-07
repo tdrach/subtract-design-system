@@ -8,12 +8,41 @@ $track: #efeeea; // sits between $light and $demure — no exact token
 
 // ─── Container (the track) ─────────────────────────────────────────────────────
 .group {
+  position: relative; // containing block for the sliding pill
   display: inline-flex;
   // Isolation so the selected pill's z-index / shadow stay local.
   isolation: isolate;
   background: $track;
   border-radius: $track-radius;
   padding: $space-1; // 2px inset around the segments
+}
+
+// Shared sliding pill — one white pill that moves between segments instead of
+// each segment drawing its own. Width/height/transform are measured & set in JS
+// (ButtonGroup); only the motion lives here. Hidden until JS places it, so
+// without JS the per-segment .selected pill below is the fallback (no flash).
+.indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0; // behind the segment labels (which sit at z-index 1)
+  opacity: 0;
+  background: $white;
+  border-radius: $seg-radius;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0.5px 0.5px rgba(0, 0, 0, 0.04);
+  pointer-events: none;
+  // Moving on-screen between two positions → strong ease-in-out ($ease-swift),
+  // select-tier duration; transform-driven so it rides the compositor. A CSS
+  // transition (not a keyframe) so rapid taps retarget mid-slide.
+  transition:
+    transform $t-fast $ease-swift,
+    width $t-fast $ease-swift,
+    height $t-fast $ease-swift;
+}
+
+// Reduced motion: jump to the new segment, never slide.
+@media (prefers-reduced-motion: reduce) {
+  .indicator { transition: none; }
 }
 
 .horizontal { flex-direction: row; }
@@ -27,6 +56,7 @@ $track: #efeeea; // sits between $light and $demure — no exact token
 .item {
   appearance: none;
   position: relative;
+  z-index: 1; // labels sit above the sliding pill
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -61,14 +91,21 @@ $track: #efeeea; // sits between $light and $demure — no exact token
   }
 }
 
-// Selected — raised white pill with a soft shadow, normal ink text (was a
-// translucent-blue tint with blue text).
+// Selected — normal ink text + semibold (was a translucent-blue tint with blue
+// text). Text styling applies in every mode.
 .selected {
-  background: $white;
   color: $ink-dark;
   font-weight: $weight-semibold;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0.5px 0.5px rgba(0, 0, 0, 0.04);
   z-index: 1;
+}
+
+// The raised white pill itself is scoped to the no-JS fallback: when the shared
+// sliding pill is NOT active, each selected segment paints its own pill. Once JS
+// mounts the sliding pill (.animated), this rule stops matching and the pill
+// hands off cleanly — no cascade override, so nothing double-paints.
+.group:not(.animated) .selected {
+  background: $white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0.5px 0.5px rgba(0, 0, 0, 0.04);
 
   &:hover:not(:disabled) { background: $white; } // no hover shift on the active segment
 }
