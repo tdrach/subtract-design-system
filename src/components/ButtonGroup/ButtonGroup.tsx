@@ -19,16 +19,68 @@ export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 export function ButtonGroup({
   orientation = 'horizontal',
   className,
+  children,
   ...rest
 }: ButtonGroupProps) {
+  const groupRef = React.useRef<HTMLDivElement>(null)
+  const indicatorRef = React.useRef<HTMLSpanElement>(null)
+  const hasPlacedRef = React.useRef(false)
+  const [active, setActive] = React.useState(false)
+
+  // Move/resize the shared pill to sit exactly over the selected segment. Size
+  // and position are measured here; the motion between positions lives in CSS.
+  const place = React.useCallback((animate: boolean) => {
+    const group = groupRef.current
+    const indicator = indicatorRef.current
+    if (!group || !indicator) return
+    const selected = group.querySelector<HTMLElement>('[data-selected]')
+    if (!selected) {
+      indicator.style.opacity = '0' // action cluster / nothing selected — no pill
+      return
+    }
+    const g = group.getBoundingClientRect()
+    const s = selected.getBoundingClientRect()
+    if (!animate) indicator.style.transitionDuration = '0ms'
+    indicator.style.opacity = '1'
+    indicator.style.width = `${s.width}px`
+    indicator.style.height = `${s.height}px`
+    indicator.style.transform = `translate(${s.left - g.left}px, ${s.top - g.top}px)`
+    if (!animate) {
+      void indicator.offsetWidth // commit the jump, then hand motion back to CSS
+      indicator.style.transitionDuration = ''
+    }
+  }, [])
+
+  // Re-place on every render (selection / children change). First placement is
+  // instant — the pill shouldn't slide in from the origin on mount; only later
+  // selection changes animate.
+  React.useLayoutEffect(() => {
+    place(hasPlacedRef.current)
+    hasPlacedRef.current = true
+    if (!active) setActive(true)
+  })
+
+  // Track container resizes (responsive layouts) — reposition without sliding.
+  React.useLayoutEffect(() => {
+    const group = groupRef.current
+    if (!group) return
+    const ro = new ResizeObserver(() => place(false))
+    ro.observe(group)
+    return () => ro.disconnect()
+  }, [place])
+
   return (
     <div
+      ref={groupRef}
       role="group"
-      className={[styles.group, styles[orientation], className]
+      className={[styles.group, styles[orientation], active && styles.animated, className]
         .filter(Boolean)
         .join(' ')}
       {...rest}
-    />
+    >
+      <span ref={indicatorRef} className={styles.indicator} aria-hidden="true" />
+      {children}
+    </div>
   )
 }
 
