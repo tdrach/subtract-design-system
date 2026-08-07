@@ -1,0 +1,62 @@
+/* Indivisible (Connary Fagen) @font-face for design-sync previews.
+   The DS references `var(--font-indivisible, 'Indivisible', sans-serif)`; the
+   host app normally sets --font-indivisible via next/font. Defining the
+   'Indivisible' fallback family here makes bundle previews render on-brand.
+   url()s resolve relative to this file (.design-sync/) -> ../public/fonts/.
+   Wired via cfg.extraFonts; the converter copies the woff2 into fonts/. */
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebRegular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebMedium.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebSemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebSemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebRegularItalic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebSemiBoldItalic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Indivisible';
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+  src: url('../public/fonts/IndivisibleWebBoldItalic.woff2') format('woff2');
+}
