@@ -482,6 +482,21 @@
   box-sizing: border-box;
 }
 
+// A fixed ~phone-width frame so the responsive behaviour is visible on a
+// desktop screen; caps at the viewport so it also holds up at a real 400px.
+.mobileFrame {
+  width: 380px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: $space-12;
+  background: $white;
+  border: 1px solid $demure;
+  border-radius: $radius-lg;
+  padding: $space-12;
+}
+
 // CalendarChart demo — no horizontal padding, glow overflows containment
 .calendarWrap {
   background: $white;

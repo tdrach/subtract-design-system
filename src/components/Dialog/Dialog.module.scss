@@ -32,7 +32,11 @@
   display: flex;
   flex-direction: column;
   left: 50%;
+  // dvh tracks the mobile soft-keyboard / dynamic toolbars; vh does not. Keep a
+  // vh fallback first for older browsers. On desktop the two are equal, so
+  // dialog sizing there is unchanged.
   max-height: 80vh;
+  max-height: 80dvh;
   outline: none;
   overflow: hidden;
   position: fixed;
