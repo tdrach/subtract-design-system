@@ -114,6 +114,10 @@
 // ─── Separator ────────────────────────────────────────────────────────────────
 .separator {
   height: 1px;
+  // `.content` is a scrolling flex column, so without this the 1px rule is
+  // shrunk to 0 as soon as the sidebar overflows — the divider vanishes while
+  // its margins remain, reading as a missing rule rather than a collapsed one.
+  flex-shrink: 0;
   margin: $space-4 $space-6;
   background: $demure;
 }
