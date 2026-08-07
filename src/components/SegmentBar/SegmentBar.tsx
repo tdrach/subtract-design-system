@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { useTooltip, useTooltipInPortal } from '@visx/tooltip'
 import { localPoint } from '@visx/event'
 import {
@@ -20,7 +20,11 @@ export interface SegmentBarSegment {
 
 export interface SegmentBarProps {
   segments: SegmentBarSegment[]
-  /** Total bar width in px. Defaults to 560. */
+  /**
+   * Total bar width in px. When omitted, the bar fills its container fluidly
+   * (measured via ResizeObserver, rendered at real pixel width so tooltip
+   * coordinates stay accurate). Pass a number to pin an exact width.
+   */
   width?: number
   /** Bar height in px. Defaults to 24. */
   height?: number
@@ -40,7 +44,7 @@ type Computed = SegmentBarSegment & { x: number; w: number; pct: number }
 
 export function SegmentBar({
   segments,
-  width = 560,
+  width: widthProp,
   height = 24,
   gap = 2,
   radius = 6,
@@ -54,6 +58,35 @@ export function SegmentBar({
     useTooltip<Computed>()
 
   const { containerRef, TooltipInPortal } = useTooltipInPortal({ detectBounds: true, scroll: true })
+
+  // ── Fluid width ────────────────────────────────────────────────────────────
+  // With no explicit `width`, measure the wrapper and render at that real pixel
+  // width. Real pixels (not a viewBox scale) keep SVG user units === CSS px, so
+  // localPoint()-based tooltip coordinates stay aligned at any container size.
+  const [measuredWidth, setMeasuredWidth] = useState(0)
+  const measureRef = useRef<HTMLDivElement | null>(null)
+
+  const setWrapperNode = useCallback((node: HTMLDivElement | null) => {
+    measureRef.current = node
+    containerRef(node)
+  }, [containerRef])
+
+  useLayoutEffect(() => {
+    if (widthProp != null) return // explicit width — no measuring needed
+    const el = measureRef.current
+    if (!el) return
+    const update = () => {
+      const w = Math.floor(el.getBoundingClientRect().width)
+      if (w > 0) setMeasuredWidth(w)
+    }
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [widthProp])
+
+  // Explicit width always renders exactly; fluid falls back to 560 pre-measure.
+  const width = widthProp ?? (measuredWidth > 0 ? measuredWidth : 560)
 
   const handleMouseMove = useCallback((e: React.MouseEvent<SVGRectElement>, seg: Computed) => {
     const point = localPoint(e.currentTarget.ownerSVGElement!, e)
@@ -72,7 +105,14 @@ export function SegmentBar({
   })
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width, display: 'inline-block' }}>
+    <div
+      ref={setWrapperNode}
+      style={
+        widthProp != null
+          ? { position: 'relative', width: widthProp, display: 'inline-block' }
+          : { position: 'relative', width: '100%', display: 'block' }
+      }
+    >
       <svg
         width={width}
         height={height}

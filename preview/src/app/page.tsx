@@ -1072,6 +1072,38 @@ function PageContent() {
               </div>
             </section>
 
+            {/* ─── Responsive (mobile) ─────────────────────────────────────── */}
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Responsive (mobile)</h2>
+              <p className={styles.chartIntro}>
+                A permanent 380px frame — the phone case these components must
+                survive. SegmentBar (no width) fills fluidly; TabBar scrolls its
+                row instead of overflowing; LineChart drops its right callout
+                below 420px so the plot fills the width.
+              </p>
+              <div className={styles.mobileFrame}>
+                <div>
+                  <p className={styles.tokenName}>SegmentBar — fluid (no width prop)</p>
+                  <SegmentBar segments={SEGMENTS} uid="sb-fluid" />
+                </div>
+                <div>
+                  <p className={styles.tokenName}>TabBar — six tabs, scrolls horizontally</p>
+                  <TabBar ariaLabel="Responsive tabs">
+                    <Tab active>Overview</Tab>
+                    <Tab>Activity</Tab>
+                    <Tab>Nutrition</Tab>
+                    <Tab>Strength</Tab>
+                    <Tab>Sleep</Tab>
+                    <Tab>Settings</Tab>
+                  </TabBar>
+                </div>
+                <div>
+                  <p className={styles.tokenName}>LineChart — compact (callout dropped, plot fills)</p>
+                  <LineChart series={LINE_SINGLE} xLabels={LINE_X} height={160} uid="lc-mobile" />
+                </div>
+              </div>
+            </section>
+
             {/* ─── GanttChart ──────────────────────────────────────────────── */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>GanttChart</h2>

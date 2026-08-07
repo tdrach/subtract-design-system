@@ -29,6 +29,7 @@ const CALLOUT_MAX_W     = 120   // max width for callout label + value column �
 const CALLOUT_DOT_GAP   = 10    // space between end dot and callout column
 const CALLOUT_RIGHT_PAD = 24    // $space-12 — inset from SVG edge so callout text doesn't clip
 const CALLOUT_ITEM_H    = 36    // px height of one callout block (label + value)
+const COMPACT_W         = 420   // below this container width the right callout column is dropped so the plot doesn't starve (the value stays reachable via the tooltip)
 const CIRCLE_R    = 4     // end-of-line hollow circle radius (8×8 px)
 const DOT_PITCH   = 7     // dot texture grid pitch (px)
 const DOT_R       = 0.9   // dot texture circle radius
@@ -192,9 +193,6 @@ export function LineChart({
   const formatVal = valueFormat ?? ((v: number) => v.toLocaleString())
   const hasXAxis  = !sparkline && !!(dates?.length || xLabelsProp?.length)
   const yLabelW   = (showYAxis && !sparkline) ? Y_LABEL_W : 0
-  const rightW    = sparkline
-    ? 0
-    : CALLOUT_MAX_W + CIRCLE_R + CALLOUT_DOT_GAP + CALLOUT_RIGHT_PAD
 
   // ── Tooltip ────────────────────────────────────────────────────────────────
 
@@ -227,6 +225,19 @@ export function LineChart({
     ro.observe(el)
     return () => ro.disconnect()
   }, [maxWidth])
+
+  // Below COMPACT_W the 158px right-side callout column would starve the plot
+  // (and, once the plot collapses, the callout crowds onto the line). Drop the
+  // column on narrow containers — only the small right inset remains — and hide
+  // its label/value text; the latest value is still reachable via the tooltip.
+  // Wide/desktop layouts keep the full callout, so they render identically.
+  const effectiveWidth = layoutWidth > 0 ? layoutWidth : (maxWidth ?? 560)
+  const isCompact = !sparkline && effectiveWidth < COMPACT_W
+  const rightW = sparkline
+    ? 0
+    : isCompact
+      ? CALLOUT_RIGHT_PAD
+      : CALLOUT_MAX_W + CIRCLE_R + CALLOUT_DOT_GAP + CALLOUT_RIGHT_PAD
 
   // ── Computed layout ────────────────────────────────────────────────────────
 
@@ -514,7 +525,7 @@ export function LineChart({
             strokeWidth={2}
           />
         ))}
-        {!sparkline && callouts.map(s => {
+        {!sparkline && !isCompact && callouts.map(s => {
           const textX = svgWidth - CALLOUT_RIGHT_PAD
           return (
             <g key={`callout-${s.id}`} clipPath={`url(#lc-callout-clip-${uid})`}>

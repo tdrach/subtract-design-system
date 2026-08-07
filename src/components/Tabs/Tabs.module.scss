@@ -5,6 +5,17 @@
   gap: $space-4;
   padding-bottom: $space-4;
   border-bottom: 1px solid $demure;
+  // Below the tabs' natural width (mobile), scroll the row horizontally in a
+  // single line rather than wrapping — preserves scanability and vertical
+  // rhythm. Desktop is unchanged: when the tabs fit, nothing scrolls. Sticky
+  // consumers keep sticking (the scroll container is this element itself, not
+  // an ancestor). Scrollbar hidden cross-browser; touch/keyboard scroll intact.
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // legacy Edge
+  &::-webkit-scrollbar { display: none; } // Chrome / Safari
 }
 
 .tabBarNoBorder {
@@ -16,6 +27,8 @@
   appearance: none;
   background: transparent;
   border: none;
+  flex-shrink: 0; // keep full size; the row scrolls rather than the tabs squishing
+  white-space: nowrap;
   padding: $space-6 $space-12;
   font-family: $font-text;
   font-size: $text-base;
