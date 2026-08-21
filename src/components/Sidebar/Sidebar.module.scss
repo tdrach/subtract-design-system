@@ -177,26 +177,17 @@
 }
 
 .active {
-  background: rgba(17, 160, 255, 0.08);
-  color: $blue;
+  // Quiet by default: the active row speaks with color alone. The old
+  // treatment (tinted pill + left accent rail) was overridden by every
+  // consumer that used the Sidebar — os and subtract both wanted this.
+  color: $primary;
 
+  // Same hover as plain rows — no tinted variant for active.
   &:hover {
-    background: rgba(17, 160, 255, 0.12);
+    background: rgba(12, 12, 12, 0.05);
   }
 
-  // Inline accent rail on the left
-  &::before {
-    content: '';
-    position: absolute;
-    left: -$space-2;
-    top: 6px;
-    bottom: 6px;
-    width: 2px;
-    border-radius: 1px;
-    background: $blue;
-  }
-
-  .leadingIcon { color: $blue; }
+  .leadingIcon { color: $primary; }
 }
 
 .disabled {
@@ -287,4 +278,4 @@
   gap: $space-2;
 }
 
-.active .trailing { color: $blue; }
+.active .trailing { color: $primary; }
