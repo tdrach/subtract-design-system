@@ -65,14 +65,14 @@ h1 { @include type-style($text-display-1); }
 
 | Token (1 / 2 / 3) | Family | Size | Tracking | Weights |
 |---|---|---|---|---|
-| `$text-display-1/2/3` | `$font-display` | `$text-3xl` 144px | −7% (`$letter-spacing-hero`) | 800 / 500 / 400 |
-| `$text-title-1/2/3` | `$font-display` | `$text-2xl` 56px | −3% | 800 / 500 / 400 |
-| `$text-subtitle-1/2/3` | `$font-display` | `$text-xl` 42px | −2.5% | 800 / 500 / 400 |
+| `$text-display-1/2/3` | `$font-display` | `$text-3xl` 144px | −7% (`$letter-spacing-hero`) | 700 / 500 / 400 |
+| `$text-title-1/2/3` | `$font-display` | `$text-2xl` 56px | −3% | 700 / 500 / 400 |
+| `$text-subtitle-1/2/3` | `$font-display` | `$text-xl` 42px | −2.5% | 700 / 500 / 400 |
 | `$text-text-1/2` | `$font-text` | `$text-large` 28px | −2% | 500 / 400 |
 | `$text-body-1/2` | `$font-text` | `$text-base` 17px | −2.5% | 500 / 400 |
 | `$text-label-1/2` | `$font-dense` (SF Pro) | `$text-small` 12.8px | −2.5% | 500 / 400 |
 
-Numbered variants step down in weight: **1** = Bold cut (`$weight-extrabold` 800), **2** = Medium, **3** = Regular. Labels sit on the Dense system font. Line-height is auto in Figma, so the mixin leaves it inherited — set it locally when needed.
+Numbered variants step down in weight: **1** = Bold (`$weight-bold` 700, the SemiBold cut), **2** = Medium, **3** = Regular. There is no heavier step: the native Bold cut (800, the old `$weight-extrabold`) left the system in Nov 2026 because it read too heavy at display sizes. Labels sit on the Dense system font. Line-height is auto in Figma, so the mixin leaves it inherited — set it locally when needed.
 
 ```tsx
 // In the consuming app's root layout:
@@ -82,11 +82,9 @@ const indivisible = localFont({
     { path: './public/fonts/IndivisibleWebMedium.woff2',         weight: '500', style: 'normal' },
     { path: './public/fonts/IndivisibleWebSemiBold.woff2',       weight: '600', style: 'normal' },
     { path: './public/fonts/IndivisibleWebSemiBold.woff2',       weight: '700', style: 'normal' },
-    { path: './public/fonts/IndivisibleWebBold.woff2',          weight: '800', style: 'normal' },
     { path: './public/fonts/IndivisibleWebRegularItalic.woff2', weight: '400', style: 'italic' },
     { path: './public/fonts/IndivisibleWebSemiBoldItalic.woff2', weight: '600', style: 'italic' },
     { path: './public/fonts/IndivisibleWebSemiBoldItalic.woff2', weight: '700', style: 'italic' },
-    { path: './public/fonts/IndivisibleWebBoldItalic.woff2',     weight: '800', style: 'italic' },
   ],
   variable: '--font-indivisible',
 })
@@ -106,7 +104,7 @@ This is the complete, canonical type scale — there are no other font-size toke
 
 Letter-spacing tokens: `$letter-spacing-hero` (`-0.07em`), `$letter-spacing-tight` (`-0.025rem`), `$letter-spacing-normal` (`0`), `$letter-spacing-label` (`0.08em`).
 
-Font weights: `$weight-regular` (400), `$weight-medium` (500), `$weight-semibold` (600), `$weight-bold` (700, SemiBold face), `$weight-extrabold` (800, Bold face).
+Font weights: `$weight-regular` (400), `$weight-medium` (500), `$weight-semibold` (600), `$weight-bold` (700, SemiBold face, the top of the scale). The Bold face (800) is not part of the system.
 
 ### Spacing
 

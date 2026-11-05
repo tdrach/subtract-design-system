@@ -64,13 +64,13 @@ const colorAliases = [
 // High-level typography tokens — one per Figma text style. The cls classes
 // apply the real tokens via the type-style mixin (see page.module.scss).
 const TYPE_STYLES = [
-  { name: '$text-display-1',  cls: 'tsDisplay1',  label: 'Display 1',  recipe: '$font-display · $text-3xl 144px · extrabold 800 · −7%' },
+  { name: '$text-display-1',  cls: 'tsDisplay1',  label: 'Display 1',  recipe: '$font-display · $text-3xl 144px · bold 700 · −7%' },
   { name: '$text-display-2',  cls: 'tsDisplay2',  label: 'Display 2',  recipe: '$font-display · $text-3xl 144px · medium 500 · −7%' },
   { name: '$text-display-3',  cls: 'tsDisplay3',  label: 'Display 3',  recipe: '$font-display · $text-3xl 144px · regular 400 · −7%' },
-  { name: '$text-title-1',    cls: 'tsTitle1',    label: 'Title 1',    recipe: '$font-display · $text-2xl 56px · extrabold 800 · −3%' },
+  { name: '$text-title-1',    cls: 'tsTitle1',    label: 'Title 1',    recipe: '$font-display · $text-2xl 56px · bold 700 · −3%' },
   { name: '$text-title-2',    cls: 'tsTitle2',    label: 'Title 2',    recipe: '$font-display · $text-2xl 56px · medium 500 · −3%' },
   { name: '$text-title-3',    cls: 'tsTitle3',    label: 'Title 3',    recipe: '$font-display · $text-2xl 56px · regular 400 · −3%' },
-  { name: '$text-subtitle-1', cls: 'tsSubtitle1', label: 'Subtitle 1', recipe: '$font-display · $text-xl 42px · extrabold 800 · −2.5%' },
+  { name: '$text-subtitle-1', cls: 'tsSubtitle1', label: 'Subtitle 1', recipe: '$font-display · $text-xl 42px · bold 700 · −2.5%' },
   { name: '$text-subtitle-2', cls: 'tsSubtitle2', label: 'Subtitle 2', recipe: '$font-display · $text-xl 42px · medium 500 · −2.5%' },
   { name: '$text-subtitle-3', cls: 'tsSubtitle3', label: 'Subtitle 3', recipe: '$font-display · $text-xl 42px · regular 400 · −2.5%' },
   { name: '$text-text-1',     cls: 'tsText1',     label: 'Text 1',     recipe: '$font-text · $text-large 28px · medium 500 · −2%' },

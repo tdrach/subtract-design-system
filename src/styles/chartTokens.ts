@@ -38,10 +38,8 @@ export const chartWeight = {
   medium: 500,
   /** $weight-semibold */
   semibold: 600,
-  /** $weight-bold (SemiBold face) */
+  /** $weight-bold (SemiBold face) — the top of the scale */
   bold: 700,
-  /** $weight-extrabold (Bold face) */
-  extrabold: 800,
 } as const
 
 export const chartLetterSpacing = {

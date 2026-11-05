@@ -9,11 +9,9 @@ const indivisible = localFont({
     { path: '../../../public/fonts/IndivisibleWebMedium.woff2',         weight: '500', style: 'normal' },
     { path: '../../../public/fonts/IndivisibleWebSemiBold.woff2',       weight: '600', style: 'normal' },
     { path: '../../../public/fonts/IndivisibleWebSemiBold.woff2',       weight: '700', style: 'normal' },
-    { path: '../../../public/fonts/IndivisibleWebBold.woff2',          weight: '800', style: 'normal' },
     { path: '../../../public/fonts/IndivisibleWebRegularItalic.woff2', weight: '400', style: 'italic' },
     { path: '../../../public/fonts/IndivisibleWebSemiBoldItalic.woff2', weight: '600', style: 'italic' },
     { path: '../../../public/fonts/IndivisibleWebSemiBoldItalic.woff2', weight: '700', style: 'italic' },
-    { path: '../../../public/fonts/IndivisibleWebBoldItalic.woff2',     weight: '800', style: 'italic' },
   ],
   variable: '--font-indivisible',
 })

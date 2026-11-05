@@ -42,13 +42,14 @@ $font-mono:    'Mono', monospace;
 // stays the brand voice at md+; dense surfaces borrow the platform's own UI font.
 $font-dense: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-// Font weights — $weight-bold (700) and $weight-semibold (600) load SemiBold;
-// $weight-extrabold (800) loads the native Bold cut.
+// Font weights — $weight-bold (700) and $weight-semibold (600) both load the
+// SemiBold cut, and 700 is the top of the scale. The native Bold cut (800,
+// the old $weight-extrabold) left the system in Nov 2026: it read too heavy
+// at display sizes, so consumers no longer need to ship that file.
 $weight-regular:   400;
 $weight-medium:    500;
 $weight-semibold:  600;
 $weight-bold:      700;
-$weight-extrabold: 800;
 
 // Type scale — the canonical set (mirrored on the typography preview page)
 $text-small:  0.8rem;    //  12.8px — labels, meta, captions
@@ -73,21 +74,21 @@ $letter-spacing-label: 0.08em;
 //
 //   h1 { @include type-style($text-display-1); }
 //
-// Numbered variants step down in weight: 1 = Bold cut ($weight-extrabold),
-// 2 = Medium, 3 = Regular. Labels sit on the Dense system font ($font-dense —
+// Numbered variants step down in weight: 1 = Bold ($weight-bold, the
+// SemiBold cut), 2 = Medium, 3 = Regular. Labels sit on the Dense system font ($font-dense —
 // SF Pro on macOS). Line-height is auto in Figma, so the mixin leaves it
 // inherited; set it locally where a component needs something else.
 // Tracking tiers come from Figma percentages: -7% (hero) · -3% · -2.5% · -2%.
 
-$text-display-1:  (family: $font-display, size: $text-3xl,   weight: $weight-extrabold, tracking: $letter-spacing-hero);
+$text-display-1:  (family: $font-display, size: $text-3xl,   weight: $weight-bold,      tracking: $letter-spacing-hero);
 $text-display-2:  (family: $font-display, size: $text-3xl,   weight: $weight-medium,    tracking: $letter-spacing-hero);
 $text-display-3:  (family: $font-display, size: $text-3xl,   weight: $weight-regular,   tracking: $letter-spacing-hero);
 
-$text-title-1:    (family: $font-display, size: $text-2xl,   weight: $weight-extrabold, tracking: -0.03em);  // -3%
+$text-title-1:    (family: $font-display, size: $text-2xl,   weight: $weight-bold,      tracking: -0.03em);  // -3%
 $text-title-2:    (family: $font-display, size: $text-2xl,   weight: $weight-medium,    tracking: -0.03em);
 $text-title-3:    (family: $font-display, size: $text-2xl,   weight: $weight-regular,   tracking: -0.03em);
 
-$text-subtitle-1: (family: $font-display, size: $text-xl,    weight: $weight-extrabold, tracking: -0.025em); // -2.5%
+$text-subtitle-1: (family: $font-display, size: $text-xl,    weight: $weight-bold,      tracking: -0.025em); // -2.5%
 $text-subtitle-2: (family: $font-display, size: $text-xl,    weight: $weight-medium,    tracking: -0.025em);
 $text-subtitle-3: (family: $font-display, size: $text-xl,    weight: $weight-regular,   tracking: -0.025em);
 
