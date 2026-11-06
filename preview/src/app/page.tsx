@@ -79,6 +79,12 @@ const TYPE_STYLES = [
   { name: '$text-body-2',     cls: 'tsBody2',     label: 'Body 2',     recipe: '$font-text · $text-base 17px · regular 400 · −2.5%' },
   { name: '$text-label-1',    cls: 'tsLabel1',    label: 'Label 1',    recipe: '$font-dense (SF Pro) · $text-small 12.8px · medium 500 · −2.5%' },
   { name: '$text-label-2',    cls: 'tsLabel2',    label: 'Label 2',    recipe: '$font-dense (SF Pro) · $text-small 12.8px · regular 400 · −2.5%' },
+  { name: '$text-display-serif',  cls: 'tsDisplaySerif',  label: 'Display Serif',  recipe: '$font-serif (IM Fell English) · $text-3xl 144px · regular 400 · +1.2% · caps' },
+  { name: '$text-title-serif',    cls: 'tsTitleSerif',    label: 'Title Serif',    recipe: '$font-serif · $text-2xl 56px · regular 400 · +1.2% · caps' },
+  { name: '$text-subtitle-serif', cls: 'tsSubtitleSerif', label: 'Subtitle Serif', recipe: '$font-serif · $text-xl 42px · regular 400 · +1.2% · caps' },
+  { name: '$text-body-serif',     cls: 'tsBodySerif',     label: 'Body Serif',     recipe: '$font-serif · $text-base 17px · regular 400 · 0' },
+  { name: '$text-caps-serif',     cls: 'tsCapsSerif',     label: 'Caps Serif',     recipe: '$font-serif-sc (true small caps) · $text-base 17px · regular 400 · +1.2%' },
+  { name: '$text-label-serif',    cls: 'tsLabelSerif',    label: 'Label Serif',    recipe: '$font-serif italic · $text-small 12.8px · regular 400 · 0' },
 ]
 
 const typeScale = [

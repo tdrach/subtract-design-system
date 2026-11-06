@@ -224,6 +224,12 @@
 .tsBody2     { @include type-style($text-body-2); }
 .tsLabel1    { @include type-style($text-label-1); }
 .tsLabel2    { @include type-style($text-label-2); }
+.tsDisplaySerif  { @include type-style($text-display-serif); }
+.tsTitleSerif    { @include type-style($text-title-serif); }
+.tsSubtitleSerif { @include type-style($text-subtitle-serif); }
+.tsBodySerif     { @include type-style($text-body-serif); }
+.tsCapsSerif     { @include type-style($text-caps-serif); }
+.tsLabelSerif    { @include type-style($text-label-serif); }
 
 // ─── Spacing ─────────────────────────────────────────────────────────────────
 .spacingList {

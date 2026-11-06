@@ -51,7 +51,9 @@ CSS custom properties for the subset of tokens used in JS are set in `global.scs
 
 Font: **Indivisible** by Connary Fagen (custom web font, `.woff2`). Loaded via `next/font/local`, exposed as CSS variable `--font-indivisible`.
 
-**Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) plus `Button size="dense"`, for inspectors and toolbars. All share one metric set — `$control-height-dense` (28px) tall, `$text-small`, `$font-dense`, `$radius-micro` (5px), 1px `$demure` border, 8px (`$space-4`) inline padding — so a dropdown, dimension fields, and action buttons line up edge-to-edge as one family (Figma: the Gridfinity build-plate properties panel). Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font. `NumberInput` also takes an inline `label` prop (a muted prefix inside the field) so a labelled dimension collapses into one dense control — `<NumberInput size="sm" label="W" suffix="mm" …>` renders "W 42 mm" (Figma: the Flatland inspector field).
+Printed voice: **IM Fell English** (Igino Marini's digitisation of the 17th-century Fell types, SIL Open Font License) for titles that should read as print. One weight, and the ragged edges are drawn into the outlines — it never needs a texture effect and must never be synthesized bold; small caps are a separate face (`IM Fell English SC`). Loaded via `next/font/local` as `--font-fell` and `--font-fell-sc`. Added Nov 2026 for Subtract's titles after a lab against Indivisible + a letterpress filter.
+
+**Font tokens:** `$font-display` / `$font-text` (Indivisible) · `$font-serif` / `$font-serif-sc` (IM Fell English, its small caps) · `$font-mono` · `$font-dense` — the system UI stack (`-apple-system…` → SF Pro on macOS) used by the **Dense system**: the `size="sm"` variants of tool controls (`TextInput`, `NumberInput`, `Select`, `Textarea`) plus `Button size="dense"`, for inspectors and toolbars. All share one metric set — `$control-height-dense` (28px) tall, `$text-small`, `$font-dense`, `$radius-micro` (5px), 1px `$demure` border, 8px (`$space-4`) inline padding — so a dropdown, dimension fields, and action buttons line up edge-to-edge as one family (Figma: the Gridfinity build-plate properties panel). Indivisible stays the brand voice at `md`+; dense surfaces borrow the platform's own UI font. `NumberInput` also takes an inline `label` prop (a muted prefix inside the field) so a labelled dimension collapses into one dense control — `<NumberInput size="sm" label="W" suffix="mm" …>` renders "W 42 mm" (Figma: the Flatland inspector field).
 
 **Inline-label rule (dense fields):** a label may live INSIDE a dense control only at glyph scale — one character or one icon (`W`, `X`, `↔`, `TL`, a Phosphor glyph). Anything wordier ("Outline", "Smoothing", "Clearance") must render as a dense heading ABOVE an unlabeled control (Label-1 style, `$ink-light`), Figma-inspector style — inline words overflow the 28px field. Consumers should enforce this in their field wrappers rather than per call site.
 
@@ -71,8 +73,16 @@ h1 { @include type-style($text-display-1); }
 | `$text-text-1/2` | `$font-text` | `$text-large` 28px | −2% | 500 / 400 |
 | `$text-body-1/2` | `$font-text` | `$text-base` 17px | −2.5% | 500 / 400 |
 | `$text-label-1/2` | `$font-dense` (SF Pro) | `$text-small` 12.8px | −2.5% | 500 / 400 |
+| `$text-display-serif` | `$font-serif` | `$text-3xl` 144px | +1.2% (`$letter-spacing-serif`), caps | 400 |
+| `$text-title-serif` | `$font-serif` | `$text-2xl` 56px | +1.2%, caps | 400 |
+| `$text-subtitle-serif` | `$font-serif` | `$text-xl` 42px | +1.2%, caps | 400 |
+| `$text-body-serif` | `$font-serif` | `$text-base` 17px | 0 | 400 |
+| `$text-caps-serif` | `$font-serif-sc` (true small caps) | `$text-base` 17px | +1.2% | 400 |
+| `$text-label-serif` | `$font-serif`, italic | `$text-small` 12.8px | 0 | 400 |
 
 Numbered variants step down in weight: **1** = Bold (`$weight-bold` 700, the SemiBold cut), **2** = Medium, **3** = Regular. There is no heavier step: the native Bold cut (800, the old `$weight-extrabold`) left the system in Nov 2026 because it read too heavy at display sizes. Labels sit on the Dense system font. Line-height is auto in Figma, so the mixin leaves it inherited — set it locally when needed.
+
+The **serif styles** are the printed voice (IM Fell English): titles in caps with a little air, the standfirst in true small caps, the date line in italic. They carry `transform`, `style` and `synthesis: none` keys, which the mixin emits as `text-transform`, `font-style` and `font-synthesis` when present — so a `<strong>` inside a serif title never fakes a bold the face does not have. Pair them with Indivisible body copy; they are for titles and header lines, not prose.
 
 ```tsx
 // In the consuming app's root layout:
@@ -88,6 +98,19 @@ const indivisible = localFont({
   ],
   variable: '--font-indivisible',
 })
+// The printed voice, only if the app uses the serif styles:
+const fell = localFont({
+  src: [
+    { path: './public/fonts/IMFellEnglish-Regular.woff2', weight: '400', style: 'normal' },
+    { path: './public/fonts/IMFellEnglish-Italic.woff2',  weight: '400', style: 'italic' },
+  ],
+  variable: '--font-fell',
+})
+const fellSc = localFont({
+  src: [{ path: './public/fonts/IMFellEnglishSC-Regular.woff2', weight: '400', style: 'normal' }],
+  variable: '--font-fell-sc',
+})
+// <html className={`${indivisible.variable} ${fell.variable} ${fellSc.variable}`}>
 // Copy fonts from ds/public/fonts/ to the consuming app's public/fonts/
 ```
 
@@ -102,7 +125,7 @@ This is the complete, canonical type scale — there are no other font-size toke
 | `$text-2xl` | 56px | Large display |
 | `$text-3xl` | 144px | Hero title |
 
-Letter-spacing tokens: `$letter-spacing-hero` (`-0.07em`), `$letter-spacing-tight` (`-0.025rem`), `$letter-spacing-normal` (`0`), `$letter-spacing-label` (`0.08em`).
+Letter-spacing tokens: `$letter-spacing-hero` (`-0.07em`), `$letter-spacing-tight` (`-0.025rem`), `$letter-spacing-normal` (`0`), `$letter-spacing-label` (`0.08em`), `$letter-spacing-serif` (`0.012em`, the serif caps and small caps).
 
 Font weights: `$weight-regular` (400), `$weight-medium` (500), `$weight-semibold` (600), `$weight-bold` (700, SemiBold face, the top of the scale). The Bold face (800) is not part of the system.
 
@@ -332,7 +355,7 @@ No custom icon SVG files — all icons sourced from `@phosphor-icons/react`.
 
 ## 6. Asset management
 
-**Fonts:** `public/fonts/` — Indivisible family in `.woff2`, `.woff`, `.eot` formats. The preview app copies them at build time from `ds/public/fonts/` → `preview/public/fonts/` via a `predev`/`prebuild` script.
+**Fonts:** `public/fonts/` — Indivisible family in `.woff2`, `.woff`, `.eot` formats, plus IM Fell English (`IMFellEnglish-Regular/-Italic`, `IMFellEnglishSC-Regular`, `.woff2`, SIL Open Font License) for the serif styles. The preview app copies them at build time from `ds/public/fonts/` → `preview/public/fonts/` via a `predev`/`prebuild` script.
 
 Consuming apps must copy the font files to their own `public/fonts/` directory and load them with `next/font/local`.
 

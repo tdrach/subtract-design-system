@@ -42,6 +42,16 @@ $font-mono:    'Mono', monospace;
 // stays the brand voice at md+; dense surfaces borrow the platform's own UI font.
 $font-dense: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
+// The printed voice: IM Fell English (Igino Marini's digitisation of the
+// 17th-century Fell types, SIL Open Font License). One weight, and the
+// ragged edges are drawn into the outlines, so it never needs a texture
+// effect and must never be synthesized bold. Small caps are a separate
+// face. Consumers load both via next/font/local as --font-fell and
+// --font-fell-sc (files in ds/public/fonts/IMFell*). Chosen Nov 2026 for
+// Subtract's titles, from a lab against Indivisible + a letterpress filter.
+$font-serif:    var(--font-fell, 'IM Fell English', serif);
+$font-serif-sc: var(--font-fell-sc, 'IM Fell English SC', serif);
+
 // Font weights — $weight-bold (700) and $weight-semibold (600) both load the
 // SemiBold cut, and 700 is the top of the scale. The native Bold cut (800,
 // the old $weight-extrabold) left the system in Nov 2026: it read too heavy
@@ -67,6 +77,8 @@ $letter-spacing-tight: -0.025rem;
 $letter-spacing-normal: 0;
 // Uppercase label letter-spacing (small caps, section labels)
 $letter-spacing-label: 0.08em;
+// A little air for the serif caps and small caps (the printed titles)
+$letter-spacing-serif: 0.012em;
 
 // ─── Type styles ──────────────────────────────────────────────────────────────
 // The high-level typography tokens — one per Figma text style (SDS → Styles →
@@ -101,12 +113,34 @@ $text-body-2:     (family: $font-text,    size: $text-base,  weight: $weight-reg
 $text-label-1:    (family: $font-dense,   size: $text-small, weight: $weight-medium,    tracking: -0.025em); // -2.5%
 $text-label-2:    (family: $font-dense,   size: $text-small, weight: $weight-regular,   tracking: -0.025em);
 
-// Applies a type-style token's four properties.
+// Serif styles — the printed voice, one per size the titles use. Titles are
+// caps with a little air; the standfirst is true small caps from the SC
+// face; the date line is italic. Every one is the Fell's single weight with
+// synthesis off, so a <strong> inside never fakes a bold.
+$text-display-serif:  (family: $font-serif,    size: $text-3xl,   weight: $weight-regular, tracking: $letter-spacing-serif,  transform: uppercase, synthesis: none);
+$text-title-serif:    (family: $font-serif,    size: $text-2xl,   weight: $weight-regular, tracking: $letter-spacing-serif,  transform: uppercase, synthesis: none);
+$text-subtitle-serif: (family: $font-serif,    size: $text-xl,    weight: $weight-regular, tracking: $letter-spacing-serif,  transform: uppercase, synthesis: none);
+$text-body-serif:     (family: $font-serif,    size: $text-base,  weight: $weight-regular, tracking: $letter-spacing-normal, synthesis: none);
+$text-caps-serif:     (family: $font-serif-sc, size: $text-base,  weight: $weight-regular, tracking: $letter-spacing-serif,  synthesis: none);
+$text-label-serif:    (family: $font-serif,    size: $text-small, weight: $weight-regular, tracking: $letter-spacing-normal, style: italic, synthesis: none);
+
+// Applies a type-style token: the four properties every style has, plus
+// font-style, text-transform and font-synthesis when the style carries them
+// (the serif styles do).
 @mixin type-style($style) {
   font-family: map.get($style, family);
   font-size: map.get($style, size);
   font-weight: map.get($style, weight);
   letter-spacing: map.get($style, tracking);
+  @if map.has-key($style, style) {
+    font-style: map.get($style, style);
+  }
+  @if map.has-key($style, transform) {
+    text-transform: map.get($style, transform);
+  }
+  @if map.has-key($style, synthesis) {
+    font-synthesis: map.get($style, synthesis);
+  }
 }
 
 // ─── Spacing (8px base) ───────────────────────────────────────────────────────

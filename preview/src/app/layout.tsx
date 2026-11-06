@@ -16,11 +16,26 @@ const indivisible = localFont({
   variable: '--font-indivisible',
 })
 
+// The printed voice ($font-serif / $font-serif-sc): one weight, small caps
+// are their own face.
+const fell = localFont({
+  src: [
+    { path: '../../../public/fonts/IMFellEnglish-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../../../public/fonts/IMFellEnglish-Italic.woff2',  weight: '400', style: 'italic' },
+  ],
+  variable: '--font-fell',
+})
+
+const fellSc = localFont({
+  src: [{ path: '../../../public/fonts/IMFellEnglishSC-Regular.woff2', weight: '400', style: 'normal' }],
+  variable: '--font-fell-sc',
+})
+
 export const metadata = { title: 'Design System Preview' }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={indivisible.variable}>
+    <html lang="en" className={`${indivisible.variable} ${fell.variable} ${fellSc.variable}`}>
       <body>{children}</body>
     </html>
   )
